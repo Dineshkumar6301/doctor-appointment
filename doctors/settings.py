@@ -21,11 +21,7 @@ load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 DEBUG = True
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-vu68sctmx^_7na5tu%xzn#hyg@io&@4-pjlk%3_qk9*znf$s@n'
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
