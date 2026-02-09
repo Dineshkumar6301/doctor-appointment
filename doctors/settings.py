@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'doctorsapp',
     'crispy_forms',
     'django_extensions',
-    'blockchain',
+    
 
 ]
 
