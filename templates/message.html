@@ -1,0 +1,487 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>Docpro - Messages</title>
+    <!-- Fav Icon -->
+    
+    <link rel="apple-touch-icon" href="{% static 'assets/images/apple-touch-icon.png' %}">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+
+    <!-- Stylesheets -->
+    <link href="{% static 'assets/css/font-awesome-all.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/flaticon.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/owl.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/bootstrap.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/jquery.fancybox.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/animate.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/color.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/responsive.css' %}" rel="stylesheet">
+
+    <!-- Inline CSS to fix overlapping -->
+    <style>
+        .doctors-dashboard {
+            display: flex;
+            flex-wrap: wrap;
+            min-height: 100%;
+            padding: 40px 0;
+        }
+        .left-panel {
+            width: 250px;
+            min-height: 100%;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 80px;
+        }
+        .right-panel {
+            flex: 1;
+            padding: 20px;
+            background: #f8f9fa;
+            min-height: 100%;
+        }
+        .chat-container {
+            display: flex;
+            grid-template-columns: 1;
+            height: 80vh;
+            border: 10px solid #fff;
+            box-shadow: border-box 0 1 10px rgba(0,0,0,0.1);
+            background: #fff;
+        }
+        #sidepanel {
+            width: 30%;
+            background: #fff;
+            border-right: 2px solid #ddd;
+            overflow-y: auto;
+        }
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .messages ul {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 0px 10px;
+            list-style: none;
+        }
+        .message-input {
+            padding: 10px;
+            background: #fff;
+            border-top: 1px solid #ddd;
+        }
+        .contact {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .contact.active {
+            background: #e9ecef;
+        }
+        @media (max-width: 768px) {
+            .left-panel {
+                width: 100%;
+                position: static;
+            }
+            .right-panel {
+                width: 100%;
+            }
+            #sidepanel {
+                width: 100%;
+            }
+            .chat-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="boxed_wrapper">
+        <!-- Preloader -->
+        <div class="preloader"></div>
+
+        <!-- Main Header -->
+        <header class="main-header style-two">
+            <div class="header-top">
+                <div class="auto-container">
+                    <div class="top-inner clearfix">
+                        <div class="top-left pull-left">
+                            <ul class="info clearfix">
+                                <li><i class="fas fa-map-marker-alt"></i> Discover St, New York, NY 10012, USA</li>
+                                <li><i class="fas fa-phone"></i><a href="tel:2512353256">+251-235-3256</a></li>
+                            </ul>
+                        </div>
+                        <div class="top-right pull-right">
+                            <ul class="info clearfix">
+                                <li><a href="{% url 'register' %}">Sign in</a></li>
+                                <li><a href="">Career</a></li>
+                                <li><a href="">Contact</a></li>
+                                <li class="language">
+                                    <a href="{% url 'home' %}">Language</a>
+                                    <ul class="language-dropdown">
+                                        <li><a href="">English</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Header Lower -->
+            <div class="header-lower">
+                <div class="auto-container">
+                    <div class="outer-box">
+                        <div class="logo-box">
+                            <figure class="logo"><a href="{% url 'home' %}"><img src="{% static 'assets/images/logo-3.png' %}" alt="Logo"></a></figure>
+                        </div>
+                        <div class="menu-area">
+                            <!-- Mobile Navigation Toggler -->
+                            <div class="mobile-nav-toggler">
+                                <i class="icon-bar"></i>
+                                <i class="icon-bar"></i>
+                                <i class="icon-bar"></i>
+                            </div>
+                            <nav class="main-menu navbar-expand-md navbar-light">
+                                <div class="collapse navbar-collapse show clearfix" id="navbarSupportedContent">
+                                    <ul class="navigation clearfix">
+                                        <li><a href="{% url 'home' %}">Home</a></li>
+                                        {% if doctor %}
+                                        <li class="dropdown">
+                                            <a href="{% url 'doctor_dashboard' %}">Doctors</a>
+                                            <ul>
+                                                <li><a href="{% url 'doctor_dashboard' %}">Dashboard</a></li>
+                                                <li><a href="{% url 'doctor_appointment_list' %}">Appointments</a></li>
+                                                <li><a href="{% url 'my_patients' %}">My Patients</a></li>
+                                                <li><a href="{% url 'add_listing' %}">Add Listing</a></li>
+                                                <li><a href="{% url 'schedule_timing' %}">Schedule Timing</a></li>
+                                                <li><a href="{% url 'my_profile' %}">My Profile</a></li>
+                                                <li><a href="{% url 'change_password' %}">Change Password</a></li>
+                                                <li><a href="{% url 'logout' %}">Logout</a></li>
+                                            </ul>
+                                        </li>
+                                        {% endif %}
+                                        {% if patient %}
+                                        <li class="dropdown"><a href="">Doctors</a>
+                                            <ul>
+                                                <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
+                                                {% if doctor %}
+                                                <li><a href="{% url 'doctor_detail' doctor.id %}">Doctor Details</a></li>
+                                                {% endif %}
+                                            </ul>
+                                        </li>
+                                        <li class="dropdown"><a href="{% url 'patient_dashboard' %}">Patients</a>
+                                            <ul>
+                                                <li><a href="{% url 'patient_dashboard' %}">Dashboard</a></li>
+                                                <li><a href="{% url 'profile' %}">My Profile</a></li>
+                                                <li><a href="{% url 'change_password2' %}">Change Password</a></li>
+                                                <li><a href="{% url 'logout' %}">Logout</a></li>
+                                            </ul>
+                                        </li>
+                                        {% endif %}
+                                        <li class="dropdown"><a href="">Pages</a>
+                                            <ul>
+                                                <li><a href="">About Us</a></li>
+                                                <li><a href="">Contact Us</a></li>
+                                                <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
+                                                {% if doctor %}
+                                                <li><a href="{% url 'doctor_detail' doctor.id %}">Doctor Details</a></li>
+                                                {% endif %}
+                                            </ul>
+                                        </li>
+                                        <li class="dropdown"><a href="">News</a>
+                                            <ul>
+                                                <li><a href="">Blog Grid</a></li>
+                                                <li><a href="">Blog Details</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </nav>
+                        </div>
+                        <div class="btn-box"><a href="{% url 'register' %}" class="theme-btn-one"><i class="icon-image"></i> Join Now</a></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sticky Header -->
+            <div class="sticky-header">
+                <div class="auto-container">
+                    <div class="outer-box">
+                        <div class="logo-box">
+                            <figure class="logo"><a href="{% url 'home' %}"><img src="{% static 'assets/images/small-logo.png' %}" alt="Small Logo"></a></figure>
+                        </div>
+                        <div class="menu-area">
+                            <nav class="main-menu clearfix"></nav>
+                        </div>
+                        <div class="btn-box"><a href="{% url 'register' %}" class="theme-btn-one"><i class="icon-image"></i> Join Now</a></div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Main Header End -->
+
+        <!-- Page Title -->
+        <section class="page-title-two">
+            <div class="title-box centred bg-color-2">
+                <div class="pattern-layer">
+                    <div class="pattern-1" style="background-image: url({% static 'assets/images/shape/shape-70.png' %});"></div>
+                    <div class="pattern-2" style="background-image: url({% static 'assets/images/shape/shape-71.png' %});"></div>
+                </div>
+                <div class="auto-container">
+                    <div class="title">
+                        <h1>Messages</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="lower-content">
+                <ul class="bread-crumb clearfix">
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li>Messages</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Doctors Dashboard Section -->
+        <section class="doctors-dashboard bg-color-3">
+            <div class="left-panel">
+                <div class="profile-box">
+                    <div class="upper-box">
+                        <img src="{% if doctor.profile_image %}{{ doctor.profile_image.url }}{% else %}{% static 'images/resource/profile-2.png' %}{% endif %}" alt="Doctor Profile">
+                        <div class="title-box centred">
+                            <div class="inner">
+                                <h3>Dr. {{ request.user.get_full_name|default:"Doctor Name" }}</h3>
+                                <p>{{ request.user.doctor_profile.specialization|default:"Specialization" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-info">
+                        <ul class="list clearfix">
+                            <li><a href="{% url 'doctor_dashboard' %}"><i class="fas fa-columns"></i> Dashboard</a></li>
+                            <li><a href="{% url 'doctor_appointment_list' %}"><i class="fas fa-calendar-alt"></i> Appointments</a></li>
+                            <li><a href="{% url 'my_patients' %}"><i class="fas fa-wheelchair"></i> My Patients</a></li>
+                            <li><a href="{% url 'add_listing' %}"><i class="fas fa-plus-circle"></i> Add Listing</a></li>
+                            <li><a href="{% url 'schedule_timing' %}"><i class="fas fa-clock"></i> Schedule Timing</a></li>
+                            <li><a href="{% url 'my_profile' %}"><i class="fas fa-user"></i> My Profile</a></li>
+                            <li><a href="{% url 'change_password' %}"><i class="fas fa-unlock-alt"></i> Change Password</a></li>
+                            <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="right-panel">
+                <div class="content-container">
+                    <div class="outer-container">
+                        <div class="message-box">
+                            <div class="title-box">
+                                <h3>Messages</h3>
+                                <a href="{% url 'add_listing' %}" class="menu"><i class="icon-Dot-menu"></i></a>
+                            </div>
+                            <div class="chat-room">
+                                <div class="chat-container" id="frame">
+                                    <div id="sidepanel">
+                                        <div class="side-title"><h3>Chats</h3></div>
+                                        <div id="search">
+                                            <button><i class="far fa-search"></i></button>
+                                            <input type="text" placeholder="Search" id="chat-search" onkeyup="filterChats()" />
+                                        </div>
+                                        <div id="contacts">
+                                            <ul>
+                                                {% for chat in contacts %}
+                                                    <li class="contact {% if chat.user.id == selected_contact.id %}active{% endif %}">
+                                                        <a href="?conversation_id={{ chat.conversation_id }}">
+                                                            <div class="wrap">
+                                                                <span class="contact-status {{ chat.status }}"></span>
+                                                                <img src="{% static 'images/resource/patient-placeholder.png' %}" alt="User">
+                                                                <div class="meta">
+                                                                    <h5>{{ chat.user.get_full_name }}</h5>
+                                                                    <p class="preview">{{ chat.last_message|truncatechars:30 }}</p>
+                                                                    <span class="chat-time">{{ chat.timestamp|date:"H:i" }}</span>
+                                                                    {% if chat.unread_count > 0 %}
+                                                                        <span class="hidden-chat">{{ chat.unread_count }}</span>
+                                                                    {% endif %}
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                    </li>
+                                                {% empty %}
+                                                    <li>No chats available.</li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="content">
+                                        {% if selected_contact %}
+                                            <div class="contact-profile">
+                                                <img src="{% static 'images/resource/patient-placeholder.png' %}" alt="Profile">
+                                                <div class="meta">
+                                                    <h5>{{ selected_contact.get_full_name }}</h5>
+                                                    <p>{{ selected_contact.status }}</p>
+                                                </div>
+                                                <div class="chat-option">
+                                                    <a href="{% url 'call' selected_contact.id %}"><i class="icon-phone"></i></a>
+                                                    <a href="{% url 'video_call' selected_contact.id %}"><i class="icon-Video"></i></a>
+                                                </div>
+                                            </div>
+                                            <div class="messages">
+                                                <ul>
+                                                    {% for message in messages %}
+                                                        <li class="{% if message.sender == request.user %}sent{% else %}replies{% endif %} clearfix">
+                                                            <img src="{% static 'images/resource/'|add:doctor_or_patient|add:'-placeholder.png' %}" alt="{{ message.sender.get_full_name }}">
+                                                            <div class="text">
+                                                                <p>{{ message.content }}</p>
+                                                                <span class="time">{{ message.timestamp|date:"H:i" }}</span>
+                                                            </div>
+                                                        </li>
+                                                    {% empty %}
+                                                        <li>No messages yet.</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                            <div class="message-input">
+                                                <form method="post" action="{% url 'send_message' selected_conversation.id %}">
+                                                    {% csrf_token %}
+                                                    <div class="wrap">
+                                                        <input type="text" name="content" placeholder="Type something..." required>
+                                                        <i class="icon-Attatchment attachment" aria-hidden="true"></i>
+                                                        <button type="submit" class="submit"><i class="icon-Arrow-Right"></i></button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        {% else %}
+                                            <div class="no-chat-selected">
+                                                <p>Select a chat to start messaging.</p>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Footer -->
+        <footer class="main-footer">
+            <div class="footer-top">
+                <div class="pattern-layer">
+                    <div class="pattern-1" style="background-image: url({% static 'assets/images/shape/shape-30.png' %});"></div>
+                    <div class="pattern-2" style="background-image: url({% static 'assets/images/shape/shape-31.png' %});"></div>
+                </div>
+                <div class="auto-container">
+                    <div class="widget-section">
+                        <div class="row clearfix">
+                            <div class="col-lg-4 col-md-6 col-sm-12 footer-column">
+                                <div class="footer-widget logo-widget">
+                                    <figure class="footer-logo"><a href="#"><img src="{% static 'assets/images/footer-logo.png' %}" alt=""></a></figure>
+                                    <div class="text">
+                                        <p>Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-6 col-sm-12 footer-column">
+                                <div class="footer-widget links-widget">
+                                    <div class="widget-title">
+                                        <h3>About</h3>
+                                    </div>
+                                    <div class="widget-content">
+                                        <ul class="links clearfix">
+                                            <li><a href="#">About Us</a></li>
+                                            <li><a href="#">Listing</a></li>
+                                            <li><a href="#">How It Works</a></li>
+                                            <li><a href="#">Our Services</a></li>
+                                            <li><a href="#">Our Blog</a></li>
+                                            <li><a href="#">Contact Us</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 col-sm-12 footer-column">
+                                <div class="footer-widget links-widget">
+                                    <div class="widget-title">
+                                        <h3>Useful Links</h3>
+                                    </div>
+                                    <div class="widget-content">
+                                        <ul class="links clearfix">
+                                            <li><a href="#">Specialist</a></li>
+                                            <li><a href="#">Clinic</a></li>
+                                            <li><a href="#">Hospital</a></li>
+                                            <li><a href="#">Download App</a></li>
+                                            <li><a href="#">Join as a Doctor</a></li>
+                                            <li><a href="#">Privacy Policy</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 col-sm-12 footer-column">
+                                <div class="footer-widget contact-widget">
+                                    <div class="widget-title">
+                                        <h3>Contacts</h3>
+                                    </div>
+                                    <div class="widget-content">
+                                        <ul class="info-list clearfix">
+                                            <li><i class="fas fa-map-marker-alt"></i> Flat 20, Reynolds Neck, North Helenaville, FV77 8WS</li>
+                                            <li><i class="fas fa-microphone"></i> <a href="tel:23055873407">+2(305) 587-3407</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="auto-container">
+                    <div class="inner-box clearfix">
+                        <div class="copyright pull-left"><p><a href="#">Docpro</a> © 2020 All Right Reserved</p></div>
+                        <ul class="footer-nav pull-right clearfix">
+                            <li><a href="#">Terms of Service</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Main Footer End -->
+
+        <!-- Scroll to Top -->
+        <button class="scroll-top scroll-to-target" data-target="html">
+            <span class="fa fa-arrow-up"></span>
+        </button>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{% static 'assets/js/jquery.js' %}"></script>
+    <script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/owl.js' %}"></script>
+    <script src="{% static 'assets/js/wow.js' %}"></script>
+    <script src="{% static 'assets/js/validation.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.fancybox.js' %}"></script>
+    <script src="{% static 'assets/js/appear.js' %}"></script>
+    <script src="{% static 'assets/js/scrollbar.js' %}"></script>
+    <script src="{% static 'assets/js/tilt.jquery.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.paroller.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.nice-select.min.js' %}"></script>
+    <script src="{% static 'assets/js/product-filter.js' %}"></script>
+    <script src="{% static 'assets/js/script.js' %}"></script>
+    <script>
+        function filterChats() {
+            const input = document.getElementById("chat-search").value.toLowerCase();
+            const chats = document.querySelectorAll("#contacts ul li");
+            chats.forEach(chat => {
+                const name = chat.querySelector(".meta h5").textContent.toLowerCase();
+                chat.style.display = name.includes(input) ? "" : "none";
+            });
+        }
+    </script>
+</body>
+</html>

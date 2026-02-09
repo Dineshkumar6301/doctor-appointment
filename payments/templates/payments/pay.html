@@ -1,0 +1,5 @@
+<form method="POST">
+    {% csrf_token %}
+    <input type="number" name="amount" placeholder="Enter Amount" required>
+    <button type="submit">Proceed to Pay</button>
+</form>

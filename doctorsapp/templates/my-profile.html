@@ -1,0 +1,862 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docpro - My Profile</title>
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
+    <!-- CSS Imports -->
+    <link href="https://fonts.googleapis.com/css2?family=Jost&family=Poppins&display=swap" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'assets/css/font-awesome-all.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/flaticon.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/owl.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/jquery.fancybox.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/animate.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/color.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/nice-select.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/responsive.css' %}" rel="stylesheet">
+    <!-- Inline Styles -->
+    <style>
+        input[type=checkbox][name$='-DELETE'] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="boxed_wrapper">
+        <!-- Preloader -->
+        <div class="preloader"></div>
+        <!-- Main Header -->
+        <header class="main-header style-two">
+            <div class="header-top">
+                <div class="auto-container">
+                    <div class="top-inner clearfix">
+                        <div class="top-left pull-left">
+                            <ul class="info clearfix">
+                                <li><i class="fas fa-map-marker-alt"></i> Discover St, New York, NY 10012, USA</li>
+                                <li><i class="fas fa-phone"></i><a href="tel:2512353256">+251-235-3256</a></li>
+                            </ul>
+                        </div>
+                        <div class="top-right pull-right">
+                            <ul class="info clearfix">
+                                <li><a href="{% url 'register' %}">Sign in</a></li>
+                                <li><a href="">Career</a></li>
+                                <li><a href="{% url 'contact' %}">Contact</a></li>
+                                <li class="language">
+                                    <a href="{% url 'home' %}">Language</a>
+                                    <ul class="language-dropdown">
+                                        <li><a href="">English</a></li>  
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Header Lower -->
+            <div class="header-lower">
+                <div class="auto-container">
+                    <div class="outer-box">
+                        <div class="logo-box">
+                            <figure class="logo"><a href="{% url 'home' %}"><img src="{% static 'assets/images/logo-3.png' %}" alt="Logo"></a></figure>
+                        </div>
+                        <div class="menu-area">
+                            <!-- Mobile Navigation Toggler -->
+                            <div class="mobile-nav-toggler">
+                                <i class="icon-bar"></i>
+                                <i class="icon-bar"></i>
+                                <i class="icon-bar"></i>
+                            </div>
+                            <nav class="main-menu navbar-expand-md navbar-light">
+                                <div class="collapse navbar-collapse show clearfix" id="navbarSupportedContent">
+                                    <ul class="navigation clearfix">
+                                        <li><a href="{% url 'home' %}">Home</a></li>
+                                         <!-- Doctor Menu -->
+                                        {% if doctor %}
+                                        <li class="dropdown">
+                                            <a href="{% url 'doctor_dashboard' %}">Doctors</a>
+                                            <ul>
+                                                <li class="dropdown"><a href="{% url 'doctor_dashboard' %}">Doctors Dashboard</a>
+                                                    <ul>
+                                                        <li><a href="{% url 'doctor_dashboard' %}">Dashboard</a></li>
+                                                        <li><a href="{% url 'doctor_appointment_list' %}">Appointments</a></li>
+                                                        <li><a href="{% url 'my_patients' %}">My Patients</a></li>
+                                                        <li><a href="{% url 'add_listing' %}">Add Listing</a></li>
+                                                        <li><a href="{% url 'schedule_timing' %}">Schedule Timing</a></li>
+                                                        <!--
+                                                        <li>
+                                                            {% if doctor and doctor.id %}
+                                                                <a href="{% url 'doctor_reviews' doctor.id %}"><i class="fas fa-star"></i> Reviews</a>
+                                                            {% else %}
+                                                                <a href="#"><i class="fas fa-star"></i> Reviews</a>
+                                                            {% endif %}
+                                                        </li>
+                                                        <li><a href="{% url 'messages' %}">Messages</a></li>
+                                                        -->
+                                                        <li><a href="{% url 'my_profile' %}">My Profile</a></li>
+                                                        <li><a href="{% url 'change_password' %}">Change Password</a></li>
+                                                        <li><a href="{% url 'logout' %}">Logout</a></li>
+                                                    </ul>
+                                                </li>
+                                                <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
+                                                <li>
+                                                    {% if doctor.id %}
+                                                        <a href="{% url 'doctor_detail' doctor.id %}">Doctor Details</a>
+                                                    {% else %}
+                                                        <span>No details available</span>
+                                                    {% endif %}    
+                                                </li>     
+                                            </ul>
+                                        </li>
+                                        {% endif %}
+                                        <!-- Patient Menu -->
+                                        {% if patient %}
+                                        <li class = "dropdown"><a href ="">Doctors</a>
+                                            <ul>
+                                                <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
+                                                {% if doctor %}
+                                                <li>
+                                                    <a href="{% url 'doctor_detail' doctor.id %}">Doctor Details</a>
+                                                </li>
+                                                {% endif %} 
+                                            </ul>
+                                        </li>
+                                        <li class="dropdown"><a href="{% url 'home' %}">Patients</a>
+                                            <ul>
+                                                <li class="dropdown">
+                                                    <a href="{% url 'patient_dashboard' %}">Patient Dashboard</a>
+                                                    <ul>
+                                                        <li><a href="{% url 'patient_dashboard' %}">Dashboard</a></li>
+                                                        <!--
+                                                        <li><a href="{% url 'favourite_doctors' %}">Favourite Doctors</a></li>
+                                                        <li><a href="#">Schedule Timing</a></li>
+                                                      
+                                                        <li>
+                                                            {% if doctor %}
+                                                                <a href="{% url 'book_appointment' doctor.id %}">Book Appointment</a>
+                                                            {% endif %}
+                                                        </li>
+                                                        <li><a href="{% url 'message_dashboard' %}">Messages</a></li>
+                                                         -->
+                                                        <li><a href="{% url 'profile' %}">My Profile</a></li>
+                                                        <li><a href="{% url 'change_password2' %}">Change Password</a></li>
+                                                        <li><a href="{% url 'logout'%}">Logout</a></li>
+                                                    </ul>
+                                                </li>
+                                                <li><a href="{% url 'submit_review' %}">Submit Review</a></li>
+                                                <li><a href="{% url 'register' %}">Register Page</a></li>
+                                            </ul>
+                                        </li>
+                                        {% endif %}
+                                        <li class="dropdown"><a href="">Pages</a>
+                                            <div class="megamenu">
+                                                <div class="row clearfix">
+                                                    <div class="col-lg-6 column">
+                                                        <ul>
+                                                            <li><h4>Page List 01</h4></li>
+                                                            <li><a href="{% url 'about' %}">About Us</a></li>
+                                                            <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="col-lg-6 column">
+                                                        <ul>
+                                                            <li><h4>Page List 02</h4></li>
+                                                            <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
+                                                            {% if doctor %}
+                                                                <li><a href="{% url 'doctor_detail' doctor.id %}">Doctor Details</a></li>
+                                                            {% endif %}
+                                                            <li><a href="{% url 'Clinic_list' %}">Clinic List</a></li>
+                                                            <li>
+                                                                {% if clinic.id %}
+                                                                <a href="{% url 'clinic' clinic.id %}">Clinic Details</a>
+                                                                {% else %}
+                                                                    <span>{{ clinic.name }}</span>
+                                                                {% endif %}
+                                                            </li>
+                                                        </ul>
+                                                    </div>                                                    
+                                                </div>                                       
+                                            </div>
+                                        </li>                                        
+                                        <li class="dropdown"><a href="">News</a>
+                                            <ul>
+                                                <li><a href="">Blog Grid 01</a></li> 
+                                                <li><a href="">Blog Details</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </nav>
+                        </div>
+                        <div class="btn-box"><a href="{% url 'register' %}" class="theme-btn-one"><i class="icon-image"></i> Join Now</a></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Sticky Header -->
+            <div class="sticky-header">
+                <div class="auto-container">
+                    <div class="outer-box">
+                        <div class="logo-box">
+                            <figure class="logo"><a href="{% url 'home' %}"><img src="{% static 'assets/images/small-logo.png' %}" alt="Small Logo"></a></figure>
+                        </div>
+                        <div class="menu-area">
+                            <nav class="main-menu clearfix"></nav>
+                        </div>
+                        <div class="btn-box"><a href="{% url 'register' %}" class="theme-btn-one"><i class="icon-image"></i> Join Now</a></div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Main Header End -->
+         <!-- Mobile Menu  -->
+        <div class="mobile-menu">
+            <div class="menu-backdrop"></div>
+            <div class="close-btn"><i class="fas fa-times"></i></div>
+            <nav class="menu-box">
+                <div class="nav-logo"><a href=""><img src="/static/assets/images/logo-2.png" alt="" title=""></a></div>
+                <div class="menu-outer"></div>
+                <div class="contact-info">
+                    <h4>Contact Info</h4>
+                    <ul>
+                        <li>Chicago 12, Melborne City, USA</li>
+                        <li><a href="tel:+8801682648101">+88 01682648101</a></li>
+                    </ul>
+                </div>
+                <div class="social-links">
+                    <ul class="clearfix">
+                        <li><a href=""><span class="fab fa-twitter"></span></a></li>
+                        <li><a href=""><span class="fab fa-facebook-square"></span></a></li>
+                        <li><a href=""><span class="fab fa-pinterest-p"></span></a></li>
+                        <li><a href=""><span class="fab fa-instagram"></span></a></li>
+                        <li><a href=""><span class="fab fa-youtube"></span></a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+        <!-- End Mobile Menu -->
+        <!-- Page Title -->
+        <section class="page-title-two">
+            <div class="title-box centred bg-color-2">
+                <div class="pattern-layer">
+                    <div class="pattern-1" style="background-image: url({% static 'assets/images/shape/shape-70.png' %});"></div>
+                    <div class="pattern-2" style="background-image: url({% static 'assets/images/shape/shape-71.png' %});"></div>
+                </div>
+                <div class="auto-container">
+                    <div class="title">
+                        <h1>My Profile</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="lower-content">
+                <ul class="bread-crumb clearfix">
+                    <li><a href="{% url 'doctor_dashboard' %}">Dashboard</a></li>
+                    <li>Profile</li>
+                </ul>
+            </div>
+        </section>
+        <!-- Doctors Dashboard -->
+        <section class="doctors-dashboard bg-color-3">
+            <div class="left-panel">
+                <div class="profile-box">
+                    <div class="upper-box">
+                        <div class="profile-image-wrapper">
+                            <img src="{% if doctor.profile_image and doctor.profile_image.name %}{{ doctor.profile_image.url }}{% else %}{% static 'assets/images/default-profile.jpg' %}{% endif %}" 
+                                alt="Profile" class="profile-img">
+                        </div>
+                        <div class="title-box centred">
+                            <div class="inner">
+                                <h3>Dr. {{ request.user.get_full_name|default:"Doctor Name" }}</h3>
+                                <p>{{ request.user.doctor_profile.specialization|default:"Specialization" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-info">
+                        <ul class="list clearfix">
+                            <li><a href="{% url 'doctor_dashboard' %}"><i class="fas fa-columns"></i> Dashboard</a></li>
+                            <li><a href="{% url 'doctor_appointment_list' %}"><i class="fas fa-calendar-alt"></i> Appointments</a></li>
+                            <li><a href="{% url 'my_patients' %}" class="current"><i class="fas fa-wheelchair"></i> My Patients</a></li>
+                            <li><a href="{% url 'add_listing' %}"><i class="fas fa-plus-circle"></i> Add Listing</a></li>
+                            <li><a href="{% url 'schedule_timing' %}"><i class="fas fa-clock"></i> Schedule Timing</a></li>
+                            <li><a href="{% url 'my_profile' %}"><i class="fas fa-user"></i> My Profile</a></li>
+                            <li><a href="{% url 'change_password' %}"><i class="fas fa-unlock-alt"></i> Change Password</a></li>
+                            <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        </ul>
+                        <!--
+                        <li>
+                            {% if doctor and doctor.id %}
+                                <a href="{% url 'doctor_reviews' doctor.id %}"><i class="fas fa-star"></i> Reviews</a>
+                            {% else %}
+                                <a href="#"><i class="fas fa-star"></i> Reviews</a>
+                            {% endif %}
+                        </li>
+                        <li><a href="{% url 'messages' %}"><i class="fas fa-comments"></i> Messages{% if unread_messages > 0 %} <span>{{ unread_messages }}</span>{% endif %}</a></li>
+                        -->
+                    </div>
+                </div>
+            </div>
+            <div class="right-panel">
+                <div class="content-container">
+                    <div class="outer-container">
+                        <div class="add-listing my-profile">
+                        <!-- Profile Form -->
+                            <form action="{% url 'my_profile' %}" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <!-- Basic Information -->
+                                <div class="single-box">
+                                    <div class="title-box">
+                                        <h3>Basic Information</h3>
+                                    </div>
+                                    <div class="inner-box">
+                                        <div class="profile-title">
+                                            <figure class="image-box">
+                                                <img src="{% if doctor.profile_image %}{{ doctor.profile_image.url }}{% else %}{% static 'images/resource/profile-3.png' %}{% endif %}" alt="">
+                                            </figure>
+                                            <div class="upload-photo">
+                                                <label for="{{ profile_form.profile_image.id_for_label }}">Profile Picture</label>
+                                                {{ profile_form.profile_image }}
+                                                <span>Allowed JPG, GIF or PNG. Max size of 2MB</span>
+                                            </div>
+                                        </div>
+                                        <div class="row clearfix">
+                                            <div class="col-lg-6 col-md-6 col-sm-12 form-group">
+                                                <label for="id_username">Username*</label>
+                                                <input type="text" id="id_username" name="username" value="{{ doctor.user.email }}" readonly>
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-12 form-group">
+                                                <label for="{{ profile_form.first_name.id_for_label }}">First Name*</label>
+                                                {{ profile_form.first_name }}
+                                                {% if profile_form.first_name.errors %}
+                                                    <span class="text-danger">{{ profile_form.first_name.errors }}</span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-12 form-group">
+                                                <label for="{{ profile_form.last_name.id_for_label }}">Last Name</label>
+                                                {{ profile_form.last_name }}
+                                                {% if profile_form.last_name.errors %}
+                                                    <span class="text-danger">{{ profile_form.last_name.errors }}</span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-12 form-group">
+                                                <label for="{{ profile_form.email.id_for_label }}">Email</label>
+                                                {{ profile_form.email }}
+                                                {% if profile_form.email.errors %}
+                                                    <span class="text-danger">{{ profile_form.email.errors }}</span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-12 form-group">
+                                                <label for="{{ profile_form.mobile_number.id_for_label }}">Mobile Number</label>
+                                                {{ profile_form.mobile_number }}
+                                                {% if profile_form.mobile_number.errors %}
+                                                    <span class="text-danger">{{ profile_form.mobile_number.errors }}</span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-12 form-group">
+                                                <label for="{{ profile_form.gender.id_for_label }}">Gender</label>
+                                                {{ profile_form.gender }}
+                                                {% if profile_form.gender.errors %}
+                                                    <span class="text-danger">{{ profile_form.gender.errors }}</span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-12 form-group">
+                                                <label for="{{ profile_form.date_of_birth.id_for_label }}">Date of Birth(format: Y/M/D)</label>
+                                                {{ profile_form.date_of_birth }}
+                                                {% if profile_form.date_of_birth.errors %}
+                                                    <span class="text-danger">{{ profile_form.date_of_birth.errors }}</span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-12 form-group">
+                                                <label for="{{ profile_form.specialization.id_for_label }}">Specialization*</label>
+                                                {{ profile_form.specialization }}
+                                                {% if profile_form.specialization.errors %}
+                                                    <span class="text-danger">{{ profile_form.specialization.errors }}</span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-12 form-group">
+                                                <label for="{{ profile_form.qualification.id_for_lable }}">Qualification</label>
+                                                {{ profile_form.qualification }}
+                                                {% if profile_form.qualification.errors %}
+                                                    <span class="text-danger">{{ profile_form.qualification.errors }}</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Biography -->
+                                <div class="single-box">
+                                    <div class="title-box">
+                                        <h3>About Me</h3>
+                                    </div>
+                                    <div class="inner-box">
+                                        <div class="row clearfix">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 form-group">
+                                                <label for="{{ profile_form.biography.id_for_label }}">Biography</label>
+                                                {{ profile_form.biography }}
+                                                {% if profile_form.biography.errors %}
+                                                    <span class="text-danger">{{ profile_form.biography.errors }}</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Contact Details -->
+                                <div class="single-box">
+                                    <div class="title-box">
+                                        <h3>Contact Details</h3>
+                                    </div>
+                                    <div class="inner-box">
+                                        <div class="row clearfix">
+                                            <div class="col-lg-6 col-md-6 col-sm-12 form-group">
+                                                <label for="{{ profile_form.Address1.id_for_label }}">Address 1</label>
+                                                {{ profile_form.Address1 }}
+                                                {% if profile_form.Address1.errors %}
+                                                    <span class="text-danger">{{ profile_form.Address1.errors }}</span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-12 form-group">
+                                                <label for="{{ profile_form.Address2.id_for_label }}">Address 2</label>
+                                                {{ profile_form.Address2 }}
+                                                {% if profile_form.Address2.errors %}
+                                                    <span class="text-danger">{{ profile_form.Address2.errors }}</span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-12 form-group">
+                                                <label for="{{ profile_form.city.id_for_label }}">City</label>
+                                                {{ profile_form.city }}
+                                                {% if profile_form.city.errors %}
+                                                    <span class="text-danger">{{ profile_form.city.errors }}</span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-12 form-group">
+                                                <label for="{{ profile_form.state.id_for_label }}">State</label>
+                                                {{ profile_form.state }}
+                                                {% if profile_form.state.errors %}
+                                                    <span class="text-danger">{{ profile_form.state.errors }}</span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-12 form-group">
+                                                <label for="{{ profile_form.zip_code.id_for_label }}">Zip Code</label>
+                                                {{ profile_form.zip_code }}
+                                                {% if profile_form.zip_code.errors %}
+                                                    <span class="text-danger">{{ profile_form.zip_code.errors }}</span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-12 form-group">
+                                                <label for="{{ profile_form.country.id_for_label }}">Country</label>
+                                                {{ profile_form.country }}
+                                                {% if profile_form.country.errors %}
+                                                    <span class="text-danger">{{ profile_form.country.errors }}</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Social Network Info -->
+                                <div class="single-box">
+                                    <div class="title-box">
+                                        <h3>Social Network Info</h3>
+                                    </div>
+                                    <div class="inner-box">
+                                        <div class="row clearfix">
+                                            <div class="col-lg-6 col-md-6 col-sm-12 form-group">
+                                                <label>Facebook URL</label>
+                                                {{ profile_form.facebook_url }}
+                                                {% if profile_form.facebook_url.errors %}
+                                                    <div class="error-msg">{{ profile_form.facebook_url.errors }}</div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-12 form-group">
+                                                <label>Twitter URL</label>
+                                                {{ profile_form.twitter_url }}
+                                                {% if profile_form.twitter_url.errors %}
+                                                    <div class="error-msg">{{ profile_form.twitter_url.errors }}</div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-12 form-group">
+                                                <label>Google Plus URL</label>
+                                                {{ profile_form.google_plus_url }}
+                                                {% if profile_form.google_plus_url.errors %}
+                                                    <div class="error-msg">{{ profile_form.google_plus_url.errors }}</div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-12 form-group">
+                                                <label>Instagram URL</label>
+                                                {{ profile_form.instagram_url }}
+                                                {% if profile_form.instagram_url.errors %}
+                                                    <div class="error-msg">{{ profile_form.instagram_url.errors }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Clinic Info -->
+                                <div class="single-box">
+                                    <div class="title-box">
+                                        <h3>Clinic Info</h3>
+                                        <a href="javascript:void(0);" class="theme-btn-one add-clinic">Add More <i class="icon-image"></i></a>
+                                    </div>
+                                    <div class="inner-box" id="clinic_formset-container">
+                                        {{ clinic_formset.management_form }}
+                                        {% for form in clinic_formset %}
+                                            <div class="row clearfix clinic-formset">
+                                                {{ form.id }}
+                                                <div class="col-lg-6 col-md-6 col-sm-12 form-group">
+                                                    <label for="{{ form.name.id_for_label }}">Clinic Name*</label>
+                                                    {{ form.name }}
+                                                    {% if form.name.errors %}
+                                                        <span class="text-danger">{{ form.name.errors }}</span>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-lg-5 col-md-5 col-sm-10 form-group">
+                                                    <label for="{{ form.address.id_for_label }}">Clinic Address*</label>
+                                                    {{ form.address }}
+                                                    {% if form.address.errors %}
+                                                        <span class="text-danger">{{ form.address.errors }}</span>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-lg-1 col-md-1 col-sm-2 form-group">
+                                                    <label>&nbsp;</label>
+                                                    <button type="button" class="btn btn-danger remove-formset">Delete</button>
+                                                    {{ form.DELETE }}
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <!-- Education -->
+                                <div class="single-box">
+                                    <div class="title-box">
+                                        <h3>Education</h3>
+                                        <a href="javascript:void(0);" class="theme-btn-one add-education">Add More <i class="icon-image"></i></a>
+                                    </div>
+                                    <div class="inner-box" id="education_formset-container">
+                                        {{ education_formset.management_form }}
+                                        {% for form in education_formset %}
+                                            <div class="row clearfix education-formset">
+                                                {{ form.id }}
+                                                <div class="col-lg-4 col-md-6 col-sm-12 form-group">
+                                                    <label for="{{ form.degree.id_for_label }}">Degree</label>
+                                                    {{ form.degree }}
+                                                    {% if form.degree.errors %}
+                                                        <span class="text-danger">{{ form.degree.errors }}</span>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-lg-4 col-md-6 col-sm-12 form-group">
+                                                    <label for="{{ form.institute.id_for_label }}">Institute</label>
+                                                    {{ form.institute }}
+                                                    {% if form.institute.errors %}
+                                                        <span class="text-danger">{{ form.institute.errors }}</span>
+                                                    {% endif %}
+                                                </div> 
+                                                <div class="col-lg-1 col-md-1 col-sm-2 form-group">
+                                                    <label>&nbsp;</label>
+                                                    <button type="button" class="btn btn-danger remove-formset">Delete</button>
+                                                    {{ form.DELETE }}
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <!-- Experience -->
+                                <div class="single-box">
+                                    <div class="title-box">
+                                        <h3>Experience</h3>
+                                        <a href="javascript:void(0);" class="theme-btn-one add-experience">Add More <i class="icon-image"></i></a>
+                                    </div>
+                                    <div class="inner-box" id="experience_formset-container">
+                                        {{ experience_formset.management_form }}
+                                        {% for form in experience_formset %}
+                                            <div class="row clearfix experience-formset">
+                                                {{ form.id }}
+                                                <div class="col-lg-3 col-md-6 col-sm-12 form-group">
+                                                    <label for="{{ form.hospital_name.id_for_label }}">Hospital Name</label>
+                                                    {{ form.hospital_name }}
+                                                    {% if form.hospital_name.errors %}
+                                                        <span class="text-danger">{{ form.hospital_name.errors }}</span>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-lg-3 col-md-6 col-sm-12 form-group">
+                                                    <label for="{{ form.designation.id_for_label }}">Designation</label>
+                                                    {{ form.designation }}
+                                                    {% if form.designation.errors %}
+                                                        <span class="text-danger">{{ form.designation.errors }}</span>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-lg-2 col-md-6 col-sm-12 form-group">
+                                                    <label for="{{ form.from_date.id_for_label }}">From(Y/M/D)</label>
+                                                    {{ form.from_date }}
+                                                    {% if form.from_date.errors %}
+                                                        <span class="text-danger">{{ form.from_date.errors }}</span>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-lg-2 col-md-5 col-sm-10 form-group">
+                                                    <label for="{{ form.to_date.id_for_label }}">To(Y/M/D)</label>
+                                                    {{ form.to_date }}
+                                                    {% if form.to_date.errors %}
+                                                        <span class="text-danger">{{ form.to_date.errors }}</span>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-lg-2 col-md-1 col-sm-2 form-group">
+                                                    <label>&nbsp;</label>
+                                                    <button type="button" class="btn btn-danger remove-formset">Delete</button>
+                                                    {{ form.DELETE }}
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <!-- Awards -->
+                                <div class="single-box">
+                                    <div class="title-box">
+                                        <h3>Awards</h3>
+                                        <a href="javascript:void(0);" class="theme-btn-one add-award">Add More <i class="icon-image"></i></a>
+                                    </div>
+                                    <div class="inner-box" id="award_formset-container">
+                                        {{ award_formset.management_form }}
+                                        {% for form in award_formset %}
+                                            <div class="row clearfix award-formset">
+                                                {{ form.id }}
+                                                <div class="col-lg-6 col-md-6 col-sm-12 form-group">
+                                                    <label for="{{ form.name.id_for_label }}">Award Name</label>
+                                                    {{ form.name }}
+                                                    {% if form.name.errors %}
+                                                        <span class="text-danger">{{ form.name.errors }}</span>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-lg-4 col-md-5 col-sm-10 form-group">
+                                                    <label for="{{ form.year.id_for_label }}">Year</label>
+                                                    {{ form.year }}
+                                                    {% if form.year.errors %}
+                                                        <span class="text-danger">{{ form.year.errors }}</span>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-lg-2 col-md-1 col-sm-2 form-group">
+                                                    <label>&nbsp;</label>
+                                                    <button type="button" class="btn btn-danger remove-formset">Delete</button>
+                                                    {{ form.DELETE }}
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="single-box">
+                                    <div class="title-box">
+                                        <h3>Specialities</h3>
+                                         <a href="javascript:void(0);" class="theme-btn-one add-speciality">Add More<i class="icon-image"></i></a>   
+                                    </div>
+                                    <div class="inner-box" id="speciality_formset-container">
+                                        {{ speciality_formset.management_form }}
+                                        {% for form in speciality_formset %}
+                                            <div class="row clearfix speciality-formset">
+                                                {{ form.id }}
+                                                <div class="col-lg-10 col-md-10 col-sm-12 form-group">
+                                                    <label for="{{ form.name.id_for_label }}">Speciality</label>
+                                                    {{ form.name }}
+                                                    {% if form.name.errors %}
+                                                        <span class="text-danger">{{ form.name.errors }}</span>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-lg-2 col-md-2 col-sm-12 form-group">
+                                                    <label>&nbsp;</label>
+                                                    <button type="button" class="btn btn-danger remove-formset">Delete</button>
+                                                    {{ form.DELETE }}
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <!-- Submit/Cancel Buttons -->
+                                <div class="btn-box">
+                                    <button type="submit" class="theme-btn-one">Save Changes <i class="icon-Arrow-Right"></i></button>
+                                    <a href="{% url 'doctor_dashboard' %}" class="cancel-btn">Cancel</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="agent-section mb-5">
+            <div class="auto-container">
+                <div class="inner-container bg-color-2 p-4 rounded shadow">
+                    <div class="row g-4 align-items-center">
+                        <!-- Emergency Call -->
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="content_block_3">
+                                <div class="content-box">
+                                    <h3 class="text-white">Emergency Call</h3>
+                                    <div class="support-box d-flex align-items-center gap-3 mt-3">
+                                        <div class="icon-box text-white fs-2">
+                                            <i class="fas fa-phone"></i>
+                                        </div>
+                                        <div>
+                                            <span class="d-block text-white-50 small">Telephone</span>
+                                            <h4 class="mb-0">
+                                                <a href="tel:11165458856" class="text-info">+(111) 65_458_856</a>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Subscribe Form -->
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="content_block_4">
+                                <div class="content-box">
+                                    <h3 class="text-white">Sign up for Email</h3>
+                                    <form action="" method="post" class="subscribe-form mt-3">
+                                        {% csrf_token %}
+                                        <div class="form-group d-flex flex-column flex-sm-row gap-2">
+                                            <input type="email" name="email" placeholder="Your Email" required class="form-control">
+                                            <button type="submit" class="btn btn-info text-white px-4">
+                                                Submit Now <i class="icon-Arrow-Right ms-1"></i>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Agent Section End -->
+        <!-- Main Footer -->
+        <footer class="main-footer" style="position: relative; background-color: #0a0f2c;">
+            <div class="footer-top position-relative py-5 text-white">
+                <!-- Background Patterns -->
+                <div class="pattern-layer position-absolute w-100 h-100" style="top: 0; left: 0; z-index: 1;">
+                    <div class="pattern-1" style="background-image: url({% static 'assets/images/shape/shape-30.png' %});"></div>
+                    <div class="pattern-2" style="background-image: url({% static 'assets/images/shape/shape-31.png' %});"></div>
+                </div>
+
+                <!-- Footer Content -->
+                <div class="container" style="margin-top: 50px; position: relative; z-index: 2;">
+                    <div class="row gy-4">
+                        <!-- Logo & Description -->
+                        <div class="col-lg-4 col-md-6 col-sm-12 text-center text-md-start">
+                            <figure class="footer-logo mb-3">
+                                <a href="{% url 'home' %}">
+                                    <img src="{% static 'assets/images/footer-logo.png' %}" alt="Footer Logo" class="img-fluid">
+                                </a>
+                            </figure>
+                            <p class="text-white-50">Bringing healthcare closer to you — securely and professionally.</p>
+                        </div>
+
+                        <!-- About -->
+                        <div class="col-lg-2 col-md-6 col-sm-12">
+                            <h5 class="text-white fw-bold mb-3">About</h5>
+                            <ul class="list-unstyled footer-links">
+                                <li><a href="{% url 'about' %}">About Us</a></li>
+                                <li><a href="#">How It Works</a></li>
+                                <li><a href="#">Our Services</a></li>
+                                <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Useful Links -->
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <h5 class="text-white fw-bold mb-3">Useful Links</h5>
+                            <ul class="list-unstyled footer-links">
+                                <li><a href="{% url 'doctor_list' %}">Find Doctors</a></li>
+                                <li><a href="{% url 'register' %}">Join Now</a></li>
+                                <li><a href="#">Download App</a></li>
+                                <li><a href="#">Privacy Policy</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Contact Info -->
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <h5 class="text-white fw-bold mb-3">Contacts</h5>
+                            <ul class="list-unstyled footer-links">
+                                <li><i class="fas fa-map-marker-alt me-2"></i> Flat 20, Reynolds Neck, North Helenaville, FV77 8WS</li>
+                                <li><i class="fas fa-phone me-2"></i> <a href="tel:23055873407">+2(305) 587-3407</a></li>
+                                <li><i class="fas fa-envelope me-2"></i> <a href="mailto:info@docpro.com">info@docpro.com</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <hr class="border-light my-4" />
+
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center text-white-50 small text-center text-md-start">
+                        <p class="mb-2 mb-md-0">© 2020 <a href="{% url 'home' %}" class="text-info">Docpro</a>. All rights reserved.</p>
+                        <ul class="list-inline mb-0">
+                            <li class="list-inline-item"><a href="#" class="text-white-50">Terms of Service</a></li>
+                            <li class="list-inline-item"><a href="#" class="text-white-50">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Main Footer End -->
+
+        <!-- Scroll to top -->
+        <!-- Scroll to Top -->
+        <button class="scroll-top scroll-to-target" data-target="html" aria-label="Scroll to top">
+            <span class="fa fa-arrow-up"></span>
+        </button>
+    </div>
+    <!-- JavaScript Imports -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/owl.js' %}"></script>
+    <script src="{% static 'assets/js/wow.js' %}"></script>
+    <script src="{% static 'assets/js/validation.js' %}"></script>
+    <script src="{% static 'assets/js/scrollbar.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.nice-select.min.js' %}"></script>
+    <script src="{% static 'assets/js/script.js' %}"></script>
+    <!-- Inline JavaScript -->
+    <script>
+        $(document).ready(function() {
+            function cloneFormset(prefix, containerSelector, formClass) {
+                let formIdx = $('#id_' + prefix + '-TOTAL_FORMS').val();
+                let newForm = $('.' + formClass + ':first').clone(false);
+                newForm.find(':input').each(function() {
+                    let name = $(this).attr('name');
+                    if (name) {
+                        let newName = name.replace('-0-', '-' + formIdx + '-');
+                        let id = 'id_' + newName;
+                        $(this).attr({'name': newName, 'id': id});
+                        if (!name.includes('-DELETE')) {
+                            $(this).val('');
+                        }
+                    }
+                });
+                newForm.find('input[type=checkbox]').prop('checked', false);
+                $(containerSelector).append(newForm);
+                $('#id_' + prefix + '-TOTAL_FORMS').val(parseInt(formIdx) + 1);
+            }
+
+            $('.add-clinic').click(function() {
+                cloneFormset('clinic_formset', '#clinic_formset-container', 'clinic-formset');
+            });
+
+            $('.add-education').click(function() {
+                cloneFormset('education_formset', '#education_formset-container', 'education-formset');
+            });
+
+            $('.add-experience').click(function() {
+                cloneFormset('experience_formset', '#experience_formset-container', 'experience-formset');
+            });
+            $('.add-award').click(function() {
+                cloneFormset('award_formset', '#award_formset-container', 'award-formset');
+            });
+            $('.add-speciality').click(function() {
+                cloneFormset('speciality_formset', '#speciality_formset-container', 'speciality-formset');
+            });
+            $(document).on('click', '.remove-formset', function() {
+                let parent = $(this).closest('.row');
+                parent.find('input[type=checkbox][name$="-DELETE"]').prop('checked', true);
+                parent.hide();
+            });
+        });
+    </script>
+</body>
+</html>

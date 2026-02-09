@@ -1,0 +1,536 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>Docpro - Schedule Timing</title>
+
+    <!-- Fav Icon -->
+    <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
+    <link rel="apple-touch-icon" href="{% static 'assets/images/apple-touch-icon.png' %}">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.2/main.min.css" rel="stylesheet">
+    <link href="{% static 'assets/css/font-awesome-all.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/flaticon.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/owl.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/bootstrap.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/jquery.fancybox.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/animate.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/color.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/nice-select.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/responsive.css' %}" rel="stylesheet">
+     <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
+
+    <!-- FullCalendar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
+
+    <!-- Moment.js (only if you're using it to format dates) -->
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+
+
+    <style>
+        .schedule-timing .form-group { margin-bottom: 1.5rem; }
+        .schedule-timing label { font-weight: 500; margin-bottom: 0.5rem; display: block; }
+        .schedule-timing input, .schedule-timing select { width: 100%; padding: 0.75rem; border-radius: 5px; border: 1px solid #ddd; }
+        .schedule-timing .theme-btn-one { margin-top: 1rem; }
+        .appointments-box { background: #fff; padding: 2rem; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .appointments-box h4 { margin-bottom: 1.5rem; }
+        .appointments-box ul { list-style: none; padding: 0; }
+        .appointments-box ul li { padding: 0.75rem 0; border-bottom: 1px solid #eee; }
+        #calendar { max-width: 100%; margin: 2rem 0; }
+        .fc-event { cursor: pointer; }
+    </style>
+</head>
+<body>
+      <div class="boxed_wrapper">
+        <!-- preloader -->
+        <div class="preloader"></div>
+                <!-- main header -->
+                <header class="main-header style-two">
+                    <div class="header-top">
+                <div class="auto-container">
+                    <div class="top-inner clearfix">
+                        <div class="top-left pull-left">
+                            <ul class="info clearfix">
+                                <li><i class="fas fa-map-marker-alt"></i>Discover St, New York, NY 10012, USA</li>
+                                <li><i class="fas fa-phone"></i><a href="tel:2512353256">+251-235-3256</a></li>
+                            </ul>
+                        </div>
+                        <div class="top-right pull-right">
+                            <ul class="info clearfix">
+                                <li><a href="{% url 'register' %}">Sign in</a></li>
+                                <li><a href="#">Career</a></li>
+                                <li><a href="#">Contact</a></li>
+                                <li class="language">
+                                    <a href="{% url 'home' %}">Language</a>
+                                    <ul class="language-dropdown">
+                                        <li><a href="#">English</a></li>
+                                        <li><a href="#">Spanish</a></li>
+                                        <li><a href="#">China</a></li>
+                                        <li><a href="#">Latin</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="header-lower">
+                <div class="auto-container">
+                    <div class="outer-box">
+                        <div class="logo-box">
+                            <figure class="logo"><a href="{% url 'home' %}"><img src="{% static 'assets/images/logo-3.png' %}" alt=""></a></figure>
+                        </div>
+                        <div class="menu-area">
+                        <!--Mobile Navigation Toggler-->
+                        <div class="mobile-nav-toggler">
+                            <i class="icon-bar"></i>
+                            <i class="icon-bar"></i>
+                            <i class="icon-bar"></i>
+                        </div>
+                        <nav class="main-menu navbar-expand-md navbar-light">
+                            <div class="collapse navbar-collapse show clearfix" id="navbarSupportedContent">
+                                <ul class="navigation clearfix">
+                                    <li class="dropdown"><a href="{% url 'home' %}">Home</li>
+                                        <ul>
+                                            <li><a href="#">Home Page 01</a></li>
+                                            <li><a href="#">OnePage Home</a></li>
+                                            <li><a href="#">RTL Home</a></li>
+                                            <li class="dropdown"><a href="#">Header Style</a>
+                                                <ul>
+                                                    <li><a href="#">Header Style 01</a></li>
+                                                    <li><a href="#">Header Style 02</a></li>
+                                                    <li><a href="#">Header Style 03</a></li>
+                                                    <li><a href="#">Header Style 04</a></li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="dropdown"><a href="#">Doctors</a>
+                                        <ul>
+                                            <li class="dropdown"><a href="{% url 'doctor_dashboard' %}">Doctors Dashboard</a>
+                                                <ul>
+                                                    <li><a href="{% url 'doctor_dashboard' %}">Dashboard</a></li>
+                                                    <li><a href="{% url 'doctor_appointment_list' %}">Appointments</a></li>
+                                                    <li><a href="{% url 'my_patients' %}">My Patients</a></li>
+                                                    <li><a href="{% url 'add_listing' %}">Add Listing</a></li>
+                                                    <li><a href="{% url 'schedule_timing' %}">Schedule Timing</a></li>
+                                                    <li>
+                                                        {% if doctor and doctor.id %}
+                                                        <a href="{% url 'doctor_reviews' doctor.id %}"><i class="fas fa-star"></i> Reviews</a>
+                                                        {% else %}
+                                                        <a href="#"><i class="fas fa-star"></i> Reviews</a>
+                                                        {% endif %}
+                                                    </li>
+                                                    <li><a href="{% url 'messages' %}">Messages</a></li>
+                                                    <li><a href="{% url 'my_profile' %}">My Profile</a></li>
+                                                    <li><a href="{% url 'change_password'%}">Change Password</a></li>
+                                                    <li><a href="{% url 'doctor_dashboard' %}">Login</a></li>
+                                                </ul>
+                                            </li>
+                                            <li><a href="#">Doctors Details</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="current dropdown"><a href="#">Patients</a>
+                                        <ul>
+                                            <li class="dropdown"><a href="{% url 'patient_dashboard' %}">Patient Dashboard</a>
+                                                <ul>
+                                                    <li><a href="{% url 'patient_dashboard' %}">Dashboard</a></li>
+                                                    <li><a href="{% url 'favourite_doctors' %}">Favourite Doctors</a></li>
+                                                    <li><a href="{% url 'schedule_timing' %}">Schedule Timing</a></li>
+                                                    <li><a href="{% url 'message_dashboard'%}">Messages</a></li>
+                                                    <li><a href="{% url 'profile' %}">My Profile</a></li>
+                                                    <li><a href="{% url 'change_password2' %}">Change Password</a></li>
+                                                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                                                </ul>
+                                            </li>
+                                                <li><a href="{% url 'submit_review' %}">Submit Review</a></li>
+                                                <li><a href="{% url 'book_appointment' %}">Book Appointment</a></li>
+                                                <li><a href="{% url 'register' %}">Register Page</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="dropdown"><a href="#">Pages</a>
+                                        <div class="megamenu">
+                                            <div class="row clearfix">
+                                                <div class="col-lg-6 column">
+                                                    <ul>
+                                                        <li><h4>Page List 01</h4></li>
+                                                        <li><a href="#">About Us</a></li>
+                                                        <li><a href="#">Service 01</a></li>
+                                                        <li><a href="#">Service 02</a></li>
+                                                        <li><a href="#">Faq's</a></li>
+                                                        <li><a href="#">Our Pricing</a></li>
+                                                        <li><a href="#">Contact Us</a>  
+                                                        <li><a href="#">404</a></li>
+                                                    </ul>
+                                                </div>
+                                                <div class="col-lg-6 column">
+                                                    <ul>
+                                                       <li><h4>Page List 02</h4></li>
+                                                                  
+                                                      
+                                                    </ul>
+                                                </div>                                   
+                                            </div>                                        
+                                        </div>
+                                    </li>
+                                    <li class="dropdown"><a href="#">Elements</a>
+                                        <div class="megamenu">
+                                            <div class="row clearfix">
+                                                <div class="col-lg-6 col-md-12 col-sm-12 column">
+                                                    <ul>
+                                                        <li><h4>Elements 1</h4></li>
+                                                        <li><a href="#">About Block 01</a></li>
+                                                        <li><a href="#">About Block 02</a></li>
+                                                        <li><a href="#">About Block 03</a></li>
+                                                        <li><a href="#">Feature Block 01</a></li>
+                                                        <li><a href="#">Feature Block 02</a></li>
+                                                        <li><a href="#">Process Block 01</a></li>
+                                                        <li><a href="#">Process Block 02</a></li>
+                                                        <li><a href="#">Team Block 01</a></li>
+                                                    </ul>
+                                                </div>
+                                                <div class="col-lg-6 col-md-12 col-sm-12 column">
+                                                    <ul>
+                                                        <li><h4>Elements 2</h4></li>
+                                                        <li><a href="#">Team Block 02</a></li>
+                                                        <li><a href="#">News Block 01</a></li>
+                                                        <li><a href="#">News Block 02</a></li>
+                                                        <li><a href="#">Category Block 01</a></li>
+                                                        <li><a href="#">Category Block 02</a></li>
+                                                        <li><a href="#">Faq Block</a></li>
+                                                        <li><a href="#">CTA Block</a></li>
+                                                        <li><a href="#">Clients Block</a></li>
+                                                     </ul>
+                                                </div>                                    
+                                            </div>                                        
+                                        </div>
+                                    </li>  
+                                    <li class="dropdown"><a href="#">News</a>
+                                        <ul>
+                                            <li><a href="#">Blog Grid 01</a></li>
+                                            <li><a href="#">Blog Grid 02</a></li>
+                                            <li><a href="#">Blog Standard</a></li>
+                                            <li><a href="#">Blog Details</a></li>
+                                        </ul>
+                                    </li> 
+                                </ul>
+                            </div>
+                        </nav>
+                    </div>
+                    <div class="btn-box"><a href="{% url 'register' %}" class="theme-btn-one"><i class="icon-image"></i>Join Now</a></div>
+                </div>
+            </div>
+        </div>
+            <!--sticky Header-->
+            <div class="sticky-header">
+                <div class="auto-container">
+                    <div class="outer-box">
+                        <div class="logo-box">
+                            <figure class="logo"><a href="{% url 'home' %}"><img src="{% static 'assets/images/small-logo.png' %}" alt=""></a></figure>
+                        </div>
+                        <div class="menu-area">
+                            <nav class="main-menu clearfix">
+                                <!--Keep This Empty / Menu will come through Javascript-->
+                            </nav>
+                        </div>
+                        <div class="btn-box"><a href="{% url 'register' %}" class="theme-btn-one"><i class="icon-image"></i>Join Now</a></div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- main-header end -->
+        <!-- Page Title -->
+        <section class="page-title-two">
+            <div class="title-box centred bg-color-2">
+                <div class="pattern-layer">
+                    <div class="pattern-1" style="background-image: url({% static 'assets/images/shape/shape-70.png' %});"></div>
+                    <div class="pattern-2" style="background-image: url({% static 'assets/images/shape/shape-71.png' %});"></div>
+                </div>
+                <div class="auto-container">
+                    <div class="title">
+                        <h1>Schedule Timing</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="lower-content">
+                <div class="auto-container">
+                    <ul class="bread-crumb clearfix">
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li>Schedule Timing</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <!-- Page Title End -->
+
+        <!-- Doctors Dashboard -->
+        <section class="doctors-dashboard bg-color-3">
+            <div class="auto-container">
+                <div class="row clearfix">
+                    <!-- Left Panel -->
+                    <div class="col-lg-3 col-md-12 col-sm-12 left-column">
+                        <div class="profile-box {% if is_patient %}patient-profile{% else %}doctor-profile{% endif %}">
+                            <div class="upper-box">
+                                <figure class="profile-image">
+                                    {% if is_doctor %}
+                                    <img src="{% static 'assets/images/resource/profile-2.png' %}" alt="{{ doctor.name }}">
+
+                                    {% elif is_patient %}
+                                        <img src="{{ patient.profile_image.url|default:'/static/assets/images/resource/profile-1.png' }}" alt="{{ patient.user.get_full_name }}">
+                                    {% else %}
+                                        <img src="{% static 'assets/images/resource/profile-1.png' %}" alt="Profile">
+                                    {% endif %}
+                                </figure>
+                                <div class="title-box centred">
+                                    <div class="inner">
+                                        {% if is_doctor %}
+                                            <h3>{{ doctor.name }}</h3>
+                                            <p>{{ doctor.specialization }}</p>
+                                        {% elif is_patient %}
+                                            <h3>{{ patient.user.get_full_name|default:patient.user.username }}</h3>
+                                            <p><i class="fas fa-calendar-alt"></i> {{ patient.birth_date|date:"M d, Y"|default:"Not set" }}</p>
+                                        {% else %}
+                                            <h3>{{ user.username }}</h3>
+                                            <p>Guest</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="profile-info">
+                                <ul class="list clearfix">
+                                    {% if is_doctor %}
+                                        <li><a href="{% url 'doctor_dashboard' %}"><i class="fas fa-columns"></i>Dashboard</a></li>
+                                        <li><a href="{% url 'doctor_appointment_list' %}"><i class="fas fa-calendar-alt"></i>Appointments</a></li>
+                                        <li><a href="{% url 'my_patients' %}"><i class="fas fa-wheelchair"></i>My Patients</a></li>
+                                        <li><a href="{% url 'add_listing' %}"><i class="fas fa-plus-circle"></i>Add Listing</a></li>
+                                        <li><a href="{% url 'schedule_timing' %}" class="current"><i class="fas fa-clock"></i>Schedule Timing</a></li>
+                                        <li><a href="{% url 'doctor_reviews' doctor.id|default:0 %}"><i class="fas fa-star"></i>Reviews</a></li>
+                                        <li><a href="{% url 'messages' %}"><i class="fas fa-comments"></i>Messages</a></li>
+                                        <li><a href="{% url 'my_profile' %}"><i class="fas fa-user"></i>My Profile</a></li>
+                                        <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
+                                    {% elif is_patient %}
+                                        <li><a href="{% url 'patient_dashboard' %}"><i class="fas fa-columns"></i>Dashboard</a></li>
+                                        <li><a href="{% url 'favourite_doctors' %}"><i class="fas fa-heart"></i>Favourite Doctors</a></li>
+                                        <li><a href="#" class="current"><i class="fas fa-clock"></i>Schedule Timing</a></li>
+                                        <li><a href="#"><i class="fas fa-comments"></i>Messages</a></li>
+                                        <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i>My Profile</a></li>
+                                        <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
+                                    {% else %}
+                                        <li><a href="{% url 'register' %}"><i class="fas fa-sign-in-alt"></i>Register</a></li>
+                                        <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Panel -->
+                     <div class="right-panel">
+                        <div class="content-container">
+                            <div class="outer-container">
+                                <div class="schedule-timing">
+                                <div class="title-box clearfix">
+                                    <div class="text pull-left">
+                                    <h4>{% if is_doctor %}My Appointments{% else %}Book Appointment{% endif %}</h4>
+                                    {% if is_patient %}
+                                        <form method="POST">
+                                            {% csrf_token %}
+                                            <div class="form-group">
+                                                <label for="{{ form.doctor.id_for_label }}">Doctor</label>
+                                                {{ form.doctor }}
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="{{ form.time_slot.id_for_label }}">Time Slot</label>
+                                                {{ form.time_slot }}
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="{{ form.appointment_datetime.id_for_label }}">Appointment Date and Time</label>
+                                                {{ form.appointment_datetime }}
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="{{ form.appointment_type.id_for_label }}">Appointment Type</label>
+                                                {{ form.appointment_type }}
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="{{ form.notes.id_for_label }}">Notes</label>
+                                                {{ form.notes }}
+                                            </div>
+                                            {% if form.errors %}
+                                                <div class="alert alert-danger">
+                                                    {{ form.errors }}
+                                                </div>
+                                            {% endif %}
+                                            <button type="submit" class="theme-btn-one">Book Now</button>
+                                        </form>
+                                    {% endif %}
+
+                                    <h4 class="mt-4">Appointments</h4>
+                                    <div id="calendar"></div>
+                                    <ul>
+                                        {% for appt in appointments %}
+                                            <li>
+                                                {{ appt.appointment_datetime|date:"M d, Y H:i" }} - 
+                                                {% if is_doctor %}
+                                                    Patient: {{ appt.patient.user.username }} (Type: {{ appt.appointment_type|title }})
+                                                {% else %}
+                                                    Doctor: {{ appt.doctor.name }} (Type: {{ appt.appointment_type|title }})
+                                                {% endif %}
+                                                (Status: {{ appt.status|title }})
+                                            </li>
+                                        {% empty %}
+                                            <li>No appointments scheduled.</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Doctors Dashboard End -->
+
+        <!-- Main Footer -->
+        <footer class="main-footer">
+            <div class="footer-top">
+                <div class="pattern-layer">
+                    <div class="pattern-1" style="background-image: url({% static 'assets/images/shape/shape-30.png' %});"></div>
+                    <div class="pattern-2" style="background-image: url({% static 'assets/images/shape/shape-31.png' %});"></div>
+                </div>
+                <div class="auto-container">
+                    <div class="widget-section">
+                        <div class="row clearfix">
+                            <div class="col-lg-4 col-md-6 col-sm-12 footer-column">
+                                <div class="footer-widget logo-widget">
+                                    <figure class="footer-logo"><a href="{% url 'home' %}"><img src="{% static 'assets/images/footer-logo.png' %}" alt=""></a></figure>
+                                   
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-6 col-sm-12 footer-column">
+                                <div class="footer-widget links-widget">
+                                    <div class="widget-title">
+                                        <h3>About</h3>
+                                    </div>
+                                    <div class="widget-content">
+                                        <ul class="links clearfix">
+                                            <li><a href="#">About Us</a></li>
+                                            <li><a href="#">Listing</a></li>
+                                            <li><a href="#">How It Works</a></li>
+                                            <li><a href="#">Our Services</a></li>
+                                            <li><a href="#">Our Blog</a></li>
+                                            <li><a href="#">Contact Us</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 col-sm-12 footer-column">
+                                <div class="footer-widget links-widget">
+                                    <div class="widget-title">
+                                        <h3>Useful Links</h3>
+                                    </div>
+                                    <div class="widget-content">
+                                        <ul class="links clearfix">
+                                            <li><a href="#">Specialist</a></li>
+                                            <li><a href="#">Clinic</a></li>
+                                            <li><a href="#">Hospital</a></li>
+                                            <li><a href="#">Download App</a></li>
+                                            <li><a href="{% url 'register' %}">Join as a Doctor</a></li>
+                                            <li><a href="#">Privacy Policy</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 col-sm-12 footer-column">
+                                <div class="footer-widget contact-widget">
+                                    <div class="widget-title">
+                                        <h3>Contacts</h3>
+                                    </div>
+                                    <div class="widget-content">
+                                        <ul class="info-list clearfix">
+                                            <li><i class="fas fa-map-marker-alt"></i>Flat 20, Reynolds Neck, North Helenaville, FV77 8WS</li>
+                                            <li><i class="fas fa-microphone"></i><a href="tel:23055873407">+2(305) 587-3407</a></li>
+                                            <li><i class="fas fa-envelope"></i><a href="mailto:info@example.com">info@example.com</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="auto-container">
+                    <div class="inner-box clearfix">
+                        <div class="copyright pull-left"><p><a href="{% url 'home' %}">Docpro</a> © 2020 All Right Reserved</p></div>
+                        <ul class="footer-nav pull-right clearfix">
+                            <li><a href="#">Terms of Service</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Main Footer End -->
+
+        <!-- Scroll to Top -->
+        <button class="scroll-top scroll-to-target" data-target="html">
+            <span class="fa fa-arrow-up"></span>
+        </button>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="{% static 'assets/js/jquery.js' %}"></script>
+    <script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/owl.js' %}"></script>
+    <script src="{% static 'assets/js/wow.js' %}"></script>
+    <script src="{% static 'assets/js/validation.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.fancybox.js' %}"></script>
+    <script src="{% static 'assets/js/appear.js' %}"></script>
+    <script src="{% static 'assets/js/scrollbar.js' %}"></script>
+    <script src="{% static 'assets/js/tilt.jquery.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.paroller.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.nice-select.min.js' %}"></script>
+    <script src="{% static 'assets/js/product-filter.js' %}"></script>
+ 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.2/main.min.js"></script>
+    <script src="{% static 'assets/js/script.js' %}"></script>
+
+
+
+    <!-- Calendar Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events: [
+                    {% for appt in appointments %}
+                    {
+                        title: '{% if is_doctor %}{{ appt.patient.user.username }}{% else %}{{ appt.doctor.name }}{% endif %} ({{ appt.status|title }})',
+                        start: '{{ appt.appointment_datetime|date:"Y-m-d\TH:i:s" }}',
+                        backgroundColor: {% if appt.status == 'confirmed' %}'#28a745'{% elif appt.status == 'pending' %}'#ffc107'{% elif appt.status == 'cancelled' %}'#dc3545'{% else %}'#17a2b8'{% endif %}
+                    },
+                    {% endfor %}
+                ],
+                eventClick: function(info) {
+                    alert('Appointment: ' + info.event.title + '\nDate: ' + moment(info.event.start).format('MMMM D, YYYY h:mm A'));
+                }
+            });
+            calendar.render();
+        });
+    </script>
+</body>
+</html>

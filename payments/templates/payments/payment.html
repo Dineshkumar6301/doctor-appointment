@@ -1,0 +1,29 @@
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+var options = {
+    "key": "{{ api_key }}",
+    "amount": "{{ amount }}",
+    "currency": "INR",
+    "name": "Test Sandbox Payment",
+    "description": "Django Razorpay Sandbox",
+    "order_id": "{{ order_id }}",
+    "method": {
+        "card": true,
+        "netbanking": true,
+        "upi": true,
+        "wallet": true,
+        "emi": true,
+        "paylater": true
+    },
+    "handler": function (response){
+        fetch('/payment/success/', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: new URLSearchParams(response)
+        }).then(() => window.location.href = '/payment/success/');
+    },
+    "theme": {"color": "#3399cc"}
+};
+var rzp1 = new Razorpay(options);
+rzp1.open();
+</script>

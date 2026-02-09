@@ -1,0 +1,604 @@
+{% load static %}
+{% load custom_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>Docpro - doctor details</title>
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <!-- Stylesheets -->
+    <link href="{% static 'assets/css/font-awesome-all.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/flaticon.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/owl.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/bootstrap.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/jquery.fancybox.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/animate.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/color.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/nice-select.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/responsive.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body>
+    <div class="boxed_wrapper">
+        <!-- Preloader -->
+        <div class="preloader"></div>
+        <!-- Main Header -->
+        <header class="main-header style-two">
+            <!-- Header Top -->
+            <div class="header-top">
+                <div class="auto-container">
+                    <div class="top-inner clearfix">
+                        <div class="top-left pull-left">
+                            <ul class="info clearfix">
+                                <li><i class="fas fa-map-marker-alt"></i>Discover St, New York, NY 10012, USA</li>
+                                <li><i class="fas fa-phone"></i><a href="tel:2512353256">+251-235-3256</a></li>
+                            </ul>
+                        </div>
+                        <div class="top-right pull-right">
+                            <ul class="info clearfix">
+                                <li><a href="{% url 'register' %}">Sign in</a></li>
+                                <li><a href="">Career</a></li>
+                                <li><a href="{% url 'contact' %}">Contact</a></li>
+                                <li class="language">
+                                    <a href="{% url 'home' %}">Language</a>
+                                    <ul class="language-dropdown">
+                                        <li><a href="">English</a></li>  
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Header Lower -->
+            <div class="header-lower">
+                <div class="auto-container">
+                    <div class="outer-box">
+                        <div class="logo-box">
+                            <figure class="logo">
+                                <a href="{% url 'home' %}"><img src="{% static 'assets/images/logo-3.png' %}" alt="Logo"></a>
+                            </figure>
+                        </div>
+                        <div class="menu-area">
+                            <!-- Mobile Navigation Toggler -->
+                            <div class="mobile-nav-toggler">
+                                <i class="icon-bar"></i>
+                                <i class="icon-bar"></i>
+                                <i class="icon-bar"></i>
+                            </div>
+                            <nav class="main-menu navbar-expand-md navbar-light">
+                                <div class="collapse navbar-collapse show clearfix" id="navbarSupportedContent">
+                                    <ul class="navigation clearfix">
+                                        <li><a href="{% url 'home' %}">Home</a></li>
+                                        {% if request.user.is_authenticated %}
+                                            {% if doctor_profile %}
+                                                <!-- Doctor Menu -->
+                                                <li class="dropdown">
+                                                    <a href="{% url 'doctor_dashboard' %}">Doctors</a>
+                                                    <ul>
+                                                        <li><a href="{% url 'doctor_dashboard' %}">Doctors Dashboard</a></li>
+                                                        <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
+                                                        <li><a href="{% url 'doctor_detail' doctor_profile.id %}">Doctor Details</a></li>
+                                                    </ul>
+                                                </li>
+                                            {% elif patient %}
+                                                <!-- Patient Menu -->
+                                                <li class="dropdown">
+                                                    <a href="{% url 'patient_dashboard' %}">Patients</a>
+                                                    <ul>
+                                                        <li><a href="{% url 'patient_dashboard' %}">Patient Dashboard</a></li>
+                                                        <li><a href = "{% url 'submit_review' %}">Submit Review</a></li>
+                                                        <li><a href="{% url 'register' %}">Register Page</a></li>
+                                                    </ul>
+                                                </li>
+                                            {% endif %}
+                                        {% endif %}
+                                        <li class="dropdown"><a href="">Pages</a>
+                                            <div class="megamenu">
+                                                <div class="row clearfix">
+                                                    <div class="col-lg-6 column">
+                                                        <ul>
+                                                            <li><h4>Page List 01</h4></li>
+                                                            <li><a href="{% url 'about' %}">About Us</a></li>
+                                                            <li><a href="{% url 'contact'%}">Contact Us</a></li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="col-lg-6 column">
+                                                        <ul>
+                                                            <li><h4>Page List 02</h4></li>
+                                                            <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
+                                                            {% if doctor %}
+                                                                <li><a href="{% url 'doctor_detail' doctor.id %}">Doctor Details</a></li>
+                                                            {% endif %}
+                                                            <li><a href="{% url 'Clinic_list' %}">Clinic List</a></li>
+                                                            <li>
+                                                                {% if clinic.id %}
+                                                                <a href="{% url 'clinic' clinic.id %}">Clinic Details</a>
+                                                                {% else %}
+                                                                    <span>{{ clinic.name }}</span>
+                                                                {% endif %}
+                                                            </li>
+                                                        </ul>
+                                                    </div> 
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="dropdown"><a href="">News</a>
+                                            <ul>
+                                                <li><a href="">Blog Grid 01</a></li>
+                                                <li><a href="">Blog Details</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </nav>
+                        </div>                  
+                        <div class="btn-box">
+                            <a href="{% url 'register' %}" class="theme-btn-one"><i class="icon-image"></i>Join Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Sticky Header -->
+            <div class="sticky-header">
+                <div class="auto-container">
+                    <div class="outer-box">
+                        <div class="logo-box">
+                            <figure class="logo">
+                                <a href="{% url 'home' %}"><img src="{% static 'assets/images/small-logo.png' %}" alt="Small Logo"></a>
+                            </figure>
+                        </div>
+                        <div class="menu-area">
+                            <nav class="main-menu clearfix"></nav>
+                        </div>
+                        <div class="btn-box">
+                            <a href="{% url 'register' %}" class="theme-btn-one"><i class="icon-image"></i>Join Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Main Header End -->
+         <!-- Mobile Menu  -->
+        <div class="mobile-menu">
+            <div class="menu-backdrop"></div>
+            <div class="close-btn"><i class="fas fa-times"></i></div>
+            <nav class="menu-box">
+                <div class="nav-logo"><a href=""><img src="/static/assets/images/logo-2.png" alt="" title=""></a></div>
+                <div class="menu-outer"></div>
+                <div class="contact-info">
+                    <h4>Contact Info</h4>
+                    <ul>
+                        <li>Chicago 12, Melborne City, USA</li>
+                        <li><a href="tel:+8801682648101">+88 01682648101</a></li>
+                    </ul>
+                </div>
+                <div class="social-links">
+                    <ul class="clearfix">
+                        <li><a href=""><span class="fab fa-twitter"></span></a></li>
+                        <li><a href=""><span class="fab fa-facebook-square"></span></a></li>
+                        <li><a href=""><span class="fab fa-pinterest-p"></span></a></li>
+                        <li><a href=""><span class="fab fa-instagram"></span></a></li>
+                        <li><a href=""><span class="fab fa-youtube"></span></a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+        <!-- End Mobile Menu -->
+
+        <!-- Doctor Details Section -->
+        <section class="doctor-details bg-color-3">
+            <div class="auto-container">
+                <div class="row clearfix">
+                    <!-- Doctor Detail Content -->
+                    <div class="col-lg-8 col-md-12 col-sm-12 content-side">
+                        <div class="clinic-details-content doctor-details-content">
+                            <div class="clinic-block-one">
+                                <div class="inner-box">
+                                    <figure class="image-box">
+                                        {% if doctor.profile_image %}
+                                            <img src="{{ doctor.profile_image.url }}" alt="Doctor Image">
+                                        {% else %}
+                                            <img src="{% static 'images/default-profile.png' %}" alt="Default Image">
+                                        {% endif %}
+                                    </figure>
+                                    <div class="content-box">
+                                        <ul class="name-box clearfix">
+                                            <li class="name"><h2>Dr. {{ doctor.get_full_name }},{{doctor.gender}}</li>
+                                            {% if doctor.is_verified %}<li><i class="icon-Trust-1"></i></li>{% endif %}
+                                            <li><i class="icon-Trust-2"></i></li>
+                                        </ul>
+                                        <span class="designation">{{ doctor.qualification }}</span>
+                                        <div class="rating-box clearfix">
+                                            <ul class="rating clearfix">
+                                                {% for _ in "12345"|slice:":doctor.average_rating|floatformat:0" %}<li><i class="icon-Star"></i></li>{% endfor %} 
+                                                <li><a href="">({{ total_reviews }})</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="text">
+                                            <p>{{ doctor.biography|default:"Biography not available." }}</p>
+                                        </div>
+                                        <div class="lower-box clearfix">
+                                            <ul class="info clearfix">
+                                                <li><i class="fas fa-map-marker-alt"></i>{{ doctor.city }}, {{ doctor.state }}, {{ doctor.country }}</li>
+                                                <li><i class="fas fa-phone"></i><a href="tel:{{ doctor.mobile_number }}">{{ doctor.mobile_number }}</a></li>
+                                            </ul>
+                                            <div class="view-map"><a href="">View Map</a></div>
+                                        </div>   
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Tab Content -->
+                            <div class="tabs-box">
+                                <div class="tab-btn-box centred">
+                                    <ul class="tab-btns tab-buttons clearfix">
+                                        <li class="tab-btn active-btn" data-tab="#tab-1">Overview</li>
+                                        <li class="tab-btn" data-tab="#tab-2">Experience</li>
+                                        <li class="tab-btn" data-tab="#tab-3">Location</li>
+                                        <li class="tab-btn" data-tab="#tab-4">Reviews</li>
+                                    </ul>
+                                </div>
+                                <div class="tabs-content">
+                                    <div class="tab active-tab" id="tab-1">
+                                        <div class="inner-box">
+                                            <div class="text">
+                                                <h3>About Dr. {{ doctor.get_full_name }}:</h3>
+                                                <p>{{ doctor.biography|default:"Biography not available." }}</p>
+                                               <h3>Specialities</h3>
+                                                <ul>
+                                                {% for speciality in doctor.specialities.all %}
+                                                    <li>{{ speciality.name }}</li>
+                                                {% empty %}
+                                                    <li>No specialities added.</li>
+                                                {% endfor %}
+                                                </ul>
+                                                <h3>Educational Background</h3>
+                                                <ul class="list clearfix">
+                                                    {% for edu in doctor.education_set.all %}
+                                                        <li>{{ edu.institute }} <span>- {{ edu.degree }}</span> ({{ edu.passing_year }})</li>
+                                                    {% empty %}
+                                                        <li>No education records available.</li>
+                                                    {% endfor %}
+                                                </ul>
+                                                <div class="accordion-box">
+                                                    <h3>Offered Services</h3>
+                                                    <div class="title-box">
+                                                        <h6>Service - Visit<span>Price</span></h6>
+                                                    </div>
+                                                    <ul class="accordion-inner">
+                                                        {% for service in doctor.services.all %}
+                                                        <li class="accordion block {% if forloop.first %}active-block{% endif %}">
+                                                            <div class="acc-btn {% if forloop.first %}active{% endif %}">
+                                                                <div class="icon-outer"></div>
+                                                                <h6>{{ service.name }}<span>INR {{ service.price }}</span></h6>
+                                                            </div>
+                                                        </li>
+                                                        {% empty %}
+                                                        <li><p>No services added yet.</p></li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                    <div class="award-box">
+                                                        <h3>Awards</h3>
+                                                        <ul class="list clearfix">
+                                                            {% for award in doctor.awards.all %}
+                                                                <li>{{ award.name }}</li>
+                                                            {% empty %}
+                                                                <li>No awards added yet.</li>
+                                                            {% endfor %}
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab" id="tab-2">
+                                        <div class="experience-box">
+                                            <h3>Professional Experience</h3>
+                                            <ul class="experience-list clearfix">
+                                                {% for exp in experience_data %}
+                                                    <li>{{ exp.hospital_name }}:
+                                                        <p>
+                                                            {{ exp.designation }}
+                                                            <span>({{ exp.from_date }} - {{ exp.to_date|default:"Present" }})</span><br>
+                                                            <strong>Experience:</strong> {{ exp.duration }}
+                                                        </p>
+                                                    </li>
+                                                {% empty %}
+                                                    <li>No experience records available.</li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="tab" id="tab-3">
+                                        <div class="location-box">
+                                            <h3>Location</h3>
+                                            <ul class="location-info clearfix">
+                                                <li><i class="fas fa-map-marker-alt"></i>{{doctor.Address1}},{{doctor.Address2}},{{ doctor.city }}, {{doctor.state}},{{doctor.country}},{{doctor.zip_code}}</li>
+                                                <li><i class="fas fa-phone"></i><a href="tel:{{ doctor.mobile_number }}">{{ doctor.mobile_number }}</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="tab" id="tab-4">
+                                        <div class="review-box">
+                                            <h3>Reviews</h3>
+                                            <p>{{ total_reviews }} reviews with average rating {{ average_rating }}</p>
+                                            {% for review in reviews %}
+                                            <div class="review-entry" style="border-bottom: 1px solid #ddd; padding: 15px 0;">
+                                                <!-- Review Title -->
+                                                <h4 style="margin-bottom: 5px;">{{ review.title }}</h4>
+                                                <!-- Name & Rating -->
+                                                <p style="margin: 0;">
+                                                    <strong>{{ review.name }}</strong> rated 
+                                                    <span style="color: #f39c12;">
+                                                        {% for i in "12345"|make_list %}
+                                                            {% if forloop.counter <= review.rating %}
+                                                                ★
+                                                            {% else %}
+                                                                ☆
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </span>
+                                                    ({{ review.rating }} stars)
+                                                </p>
+                                                <!-- Message -->
+                                                <p style="margin-top: 8px;">{{ review.message }}</p>
+                                                <!-- Date -->
+                                                <p class="text-muted" style="font-size: 0.9em;">{{ review.created_at|date:"M d, Y" }}</p>
+                                            </div>
+                                        {% empty %}
+                                            <p>No reviews available.</p>
+                                        {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Sidebar Booking Form -->
+                    <div class="col-lg-4 col-md-12 col-sm-12 sidebar-side">
+                        <div class="doctors-sidebar">
+                            <div class="form-widget">
+                                <div class="form-title">
+                                    <h3>Book Appointment</h3>
+                                    {% if grouped_slots %}
+                                        {% for group in grouped_slots %}
+                                            <p>
+                                                {% for day_range in group.day_ranges %}
+                                                    {% if day_range.0 == day_range.1 %}
+                                                        {{ day_range.0 }}
+                                                    {% else %}
+                                                        {{ day_range.0 }} to {{ day_range.1 }}
+                                                    {% endif %}
+                                                    {% if not forloop.last %}, {% endif %}
+                                                {% endfor %}:
+                                                {{ group.start_time|time:"g:i A" }} - {{ group.end_time|time:"g:i A" }}
+                                                <span class="text-success">(Available)</span>
+                                            </p>
+                                        {% endfor %}
+                                    {% else %}
+                                        <p>No available time slots for booking.</p>
+                                    {% endif %}
+                                </div>
+            
+                                {% if user.is_authenticated %} 
+                                    <form method="get" action="{% url 'book_appointment' doctor.id %}">
+                                {% else %}
+                                    <form onsubmit="showLoginToast(); return false;">
+                                {% endif %}
+                                    <div class="form-inner">
+                                        <div class="appointment-time">
+                                            <div class="form-group">
+                                                <label>Select Date</label>
+                                                <input type="date" name="date" class="form-control" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Select Time</label>
+                                                <input type="time" name="time" class="form-control" required>
+                                            </div>
+                                        </div>
+            
+                                        <div class="choose-service">
+                                            <h4>Choose Service</h4>
+                                            {% for service in services %}
+                                                <div class="custom-check-box">
+                                                    <label class="custom-control material-checkbox">
+                                                        <input type="checkbox" name="services" value="{{ service.id }}">
+                                                        <span class="material-control-indicator"></span>
+                                                        <span class="description">{{ service.name }} <span class="price">INR{{ service.price }}</span></span>
+                                                    </label>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+            
+                                        <button type="submit" class="theme-btn-one">
+                                            Book Appointment <i class="icon-Arrow-Right"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+            
+                    {% if not user.is_authenticated %}
+                        <div id="loginToast" class="alert alert-warning alert-dismissible fade" role="alert" 
+                            style="border-radius: 10px; margin: 20px; display: none; background-color: #fef6d9; color: #333; font-weight: 500;">
+                            <strong>⚠️ Please login to continue</strong><br>
+                            You need to be logged in to book an appointment.
+                            <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-sm btn-success" style="margin-left: 10px;">Login</a>
+                            <button type="button" class="close" onclick="this.parentElement.style.display='none';" aria-label="Close" 
+                                    style="border: none; background: none; font-size: 20px; float: right;">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endif %}
+                </div>
+        </section>
+
+        <section class="agent-section mb-5">
+            <div class="auto-container">
+                <div class="inner-container bg-color-2 p-4 rounded shadow">
+                    <div class="row g-4 align-items-center">
+                        <!-- Emergency Call -->
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="content_block_3">
+                                <div class="content-box">
+                                    <h3 class="text-white">Emergency Call</h3>
+                                    <div class="support-box d-flex align-items-center gap-3 mt-3">
+                                        <div class="icon-box text-white fs-2">
+                                            <i class="fas fa-phone"></i>
+                                        </div>
+                                        <div>
+                                            <span class="d-block text-white-50 small">Telephone</span>
+                                            <h4 class="mb-0">
+                                                <a href="tel:11165458856" class="text-info">+(111) 65_458_856</a>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Subscribe Form -->
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="content_block_4">
+                                <div class="content-box">
+                                    <h3 class="text-white">Sign up for Email</h3>
+                                    <form action="" method="post" class="subscribe-form mt-3">
+                                        {% csrf_token %}
+                                        <div class="form-group d-flex flex-column flex-sm-row gap-2">
+                                            <input type="email" name="email" placeholder="Your Email" required class="form-control">
+                                            <button type="submit" class="btn btn-info text-white px-4">
+                                                Submit Now <i class="icon-Arrow-Right ms-1"></i>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Agent Section End -->
+        <!-- Main Footer -->
+        <footer class="main-footer" style="position: relative; background-color: #0a0f2c;">
+            <div class="footer-top position-relative py-5 text-white">
+                <!-- Background Patterns -->
+                <div class="pattern-layer position-absolute w-100 h-100" style="top: 0; left: 0; z-index: 1;">
+                    <div class="pattern-1" style="background-image: url({% static 'assets/images/shape/shape-30.png' %});"></div>
+                    <div class="pattern-2" style="background-image: url({% static 'assets/images/shape/shape-31.png' %});"></div>
+                </div>
+
+                <!-- Footer Content -->
+                <div class="container" style="margin-top: 50px; position: relative; z-index: 2;">
+                    <div class="row gy-4">
+                        <!-- Logo & Description -->
+                        <div class="col-lg-4 col-md-6 col-sm-12 text-center text-md-start">
+                            <figure class="footer-logo mb-3">
+                                <a href="{% url 'home' %}">
+                                    <img src="{% static 'assets/images/footer-logo.png' %}" alt="Footer Logo" class="img-fluid">
+                                </a>
+                            </figure>
+                            <p class="text-white-50">Bringing healthcare closer to you — securely and professionally.</p>
+                        </div>
+
+                        <!-- About -->
+                        <div class="col-lg-2 col-md-6 col-sm-12">
+                            <h5 class="text-white fw-bold mb-3">About</h5>
+                            <ul class="list-unstyled footer-links">
+                                <li><a href="{% url 'about' %}">About Us</a></li>
+                                <li><a href="#">How It Works</a></li>
+                                <li><a href="#">Our Services</a></li>
+                                <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Useful Links -->
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <h5 class="text-white fw-bold mb-3">Useful Links</h5>
+                            <ul class="list-unstyled footer-links">
+                                <li><a href="{% url 'doctor_list' %}">Find Doctors</a></li>
+                                <li><a href="{% url 'register' %}">Join Now</a></li>
+                                <li><a href="#">Download App</a></li>
+                                <li><a href="#">Privacy Policy</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Contact Info -->
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <h5 class="text-white fw-bold mb-3">Contacts</h5>
+                            <ul class="list-unstyled footer-links">
+                                <li><i class="fas fa-map-marker-alt me-2"></i> Flat 20, Reynolds Neck, North Helenaville, FV77 8WS</li>
+                                <li><i class="fas fa-phone me-2"></i> <a href="tel:23055873407">+2(305) 587-3407</a></li>
+                                <li><i class="fas fa-envelope me-2"></i> <a href="mailto:info@docpro.com">info@docpro.com</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <hr class="border-light my-4" />
+
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center text-white-50 small text-center text-md-start">
+                        <p class="mb-2 mb-md-0">© 2020 <a href="{% url 'home' %}" class="text-info">Docpro</a>. All rights reserved.</p>
+                        <ul class="list-inline mb-0">
+                            <li class="list-inline-item"><a href="#" class="text-white-50">Terms of Service</a></li>
+                            <li class="list-inline-item"><a href="#" class="text-white-50">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Main Footer End -->
+
+        <!-- Scroll to top -->
+        <!-- Scroll to Top -->
+        <button class="scroll-top scroll-to-target" data-target="html" aria-label="Scroll to top">
+            <span class="fa fa-arrow-up"></span>
+        </button>
+    </div>
+        <!-- Scripts -->
+        <script src="{% static 'assets/js/jquery.js' %}"></script>
+        <script src="{% static 'assets/js/popper.min.js' %}"></script>
+        <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'assets/js/owl.js' %}"></script>
+        <script src="{% static 'assets/js/wow.js' %}"></script>
+        <script src="{% static 'assets/js/validation.js' %}"></script>
+        <script src="{% static 'assets/js/jquery.fancybox.js' %}"></script>
+        <script src="{% static 'assets/js/scrollbar.js' %}"></script>
+        <script src="{% static 'assets/js/tilt.jquery.js' %}"></script>
+        <script src="{% static 'assets/js/jquery.paroller.min.js' %}"></script>
+        <script src="{% static 'assets/js/jquery.nice-select.min.js' %}"></script>
+        <script src="{% static 'assets/js/product-filter.js' %}"></script>
+        <script src="{% static 'assets/js/timePicker.js' %}"></script>
+        <script src="{% static 'assets/js/jquery-ui.js' %}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <script src="{% static 'assets/js/script.js' %}"></script>
+        <style>
+            #ptTimeSelectCntr {
+                display: none !important;
+            }
+        </style>
+        <!-- JavaScript to trigger login modal -->
+        <script>
+             function redirectToLogin() {
+        // Redirect to login page with ?next= to return here after login
+        const currentPath = window.location.pathname + window.location.search;
+        window.location.href = "{% url 'login' %}?next=" + encodeURIComponent(currentPath);
+    }
+            function showLoginToast() {
+                var toast = document.getElementById('loginToast');
+                if (toast) {
+                    toast.style.display = 'block';
+                    toast.classList.add('show');
+                }
+            }
+        </script>
+</body>
+</html>

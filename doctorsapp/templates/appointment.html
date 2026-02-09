@@ -1,0 +1,921 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta Tags -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Doctor Dashboard for managing appointments, patients, and schedules.">
+    <!-- Title and Favicon -->
+    <title>Docpro - Doctor Appointment</title>
+    <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Stylesheets -->
+    <link href="{% static 'assets/css/font-awesome-all.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/flaticon.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/owl.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/bootstrap.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/jquery.fancybox.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/animate.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/color.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/nice-select.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/responsive.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/modal.css' %}" rel="stylesheet">
+
+    <!-- Modal Styles -->
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1050;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            margin: 5% auto;
+            padding: 25px;
+            border-radius: 8px;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            animation: slideIn 0.3s ease-in-out;
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-modal:hover {
+            color: #f44336;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #1e88e5;
+            outline: none;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-save,
+        .btn-cancel {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-save {
+            background-color: #1e88e5;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background-color: #1565c0;
+        }
+
+        .btn-cancel {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background-color: #d32f2f;
+        }
+
+        .single-item.card {
+            display: flex;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .single-item.card:hover {
+            transform: translateY(-5px);
+        }
+
+        .image-box img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-right: 20px;
+        }
+
+        .inner h4 {
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .info-list li {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .confirm-list li {
+            margin-right: 10px;
+        }
+
+        .btn-success,
+        .btn-danger,
+        .btn-warning {
+            padding: 8px 15px;
+            font-size: 14px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-success:hover {
+            background-color: #28a745;
+        }
+
+        .btn-danger:hover {
+            background-color: #dc3545;
+        }
+
+        .btn-warning:hover {
+            background-color: #ffc107;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                margin: 10% 5%;
+                padding: 15px;
+            }
+
+            .single-item.card {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .image-box img {
+                margin-bottom: 15px;
+            }
+
+            .confirm-list {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="boxed_wrapper">
+        <!-- Preloader -->
+        <div class="preloader"></div>
+        <!-- Main Header -->
+        <header class="main-header style-two">
+            <div class="header-top">
+                <div class="auto-container">
+                    <div class="top-inner clearfix">
+                        <div class="top-left pull-left">
+                            <ul class="info clearfix">
+                                <li><i class="fas fa-map-marker-alt"></i> Discover St, New York, NY 10012, USA</li>
+                                <li><i class="fas fa-phone"></i><a href="tel:2512353256">+251-235-3256</a></li>
+                            </ul>
+                        </div>
+                        <div class="top-right pull-right">
+                            <ul class="info clearfix">
+                                <li><a href="{% url 'register' %}">Sign in</a></li>
+                                <li><a href="">Career</a></li>
+                                <li><a href="{% url 'contact' %}">Contact</a></li>
+                                <li class="language">
+                                    <a href="{% url 'home' %}">Language</a>
+                                    <ul class="language-dropdown">
+                                        <li><a href="">English</a></li>   
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Header Lower -->
+            <div class="header-lower">
+                <div class="auto-container">
+                    <div class="outer-box">
+                        <div class="logo-box">
+                            <figure class="logo"><a href="{% url 'home' %}"><img src="{% static 'assets/images/logo-3.png' %}" alt="Logo"></a></figure>
+                        </div>
+                        <div class="menu-area">
+                            <!-- Mobile Navigation Toggler -->
+                            <div class="mobile-nav-toggler">
+                                <i class="icon-bar"></i>
+                                <i class="icon-bar"></i>
+                                <i class="icon-bar"></i>
+                            </div>
+                            <nav class="main-menu navbar-expand-md navbar-light">
+                                <div class="collapse navbar-collapse show clearfix" id="navbarSupportedContent">
+                                    <ul class="navigation clearfix">
+                                        <li><a href="{% url 'home' %}">Home</a></li>
+                                         <!-- Doctor Menu -->
+                                        {% if doctor %}
+                                        <li class="dropdown">
+                                            <a href="{% url 'doctor_dashboard' %}">Doctors</a>
+                                            <ul>
+                                                <li class="dropdown"><a href="{% url 'doctor_dashboard' %}">Doctors Dashboard</a>
+                                                    <ul>
+                                                        <li><a href="{% url 'doctor_dashboard' %}">Dashboard</a></li>
+                                                        <li><a href="{% url 'doctor_appointment_list' %}">Appointments</a></li>
+                                                        <li><a href="{% url 'my_patients' %}">My Patients</a></li>
+                                                        <li><a href="{% url 'add_listing' %}">Add Listing</a></li>
+                                                        <li><a href="{% url 'schedule_timing' %}">Schedule Timing</a></li>
+                                                        <!--
+                                                        <li>
+                                                            {% if doctor and doctor.id %}
+                                                                <a href="{% url 'doctor_reviews' doctor.id %}"><i class="fas fa-star"></i> Reviews</a>
+                                                            {% else %}
+                                                                <a href="#"><i class="fas fa-star"></i> Reviews</a>
+                                                            {% endif %}
+                                                        </li>
+                                                        <li><a href="{% url 'messages' %}">Messages</a></li>
+                                                        -->
+                                                        <li><a href="{% url 'my_profile' %}">My Profile</a></li>
+                                                        <li><a href="{% url 'change_password' %}">Change Password</a></li>
+                                                        <li><a href="{% url 'logout' %}">Logout</a></li>
+                                                    </ul>
+                                                </li>
+                                                <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
+                                                <li>
+                                                    {% if doctor.id %}
+                                                    <a href="{% url 'doctor_detail' doctor.id %}">Doctor Details</a>
+                                                    {% else %}
+                                                    <span>No details available</span>
+                                                    {% endif %}    
+                                                </li>   
+                                            </ul>
+                                        </li>
+                                        {% endif %} 
+                                        <!-- Patient Menu -->
+                                        {% if patient %}
+                                        <li class = "dropdown"><a href ="">Doctors</a>
+                                            <ul>
+                                                <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
+                                                {% if doctor %}
+                                                <li>
+                                                    <a href="{% url 'doctor_detail' doctor.id %}">Doctor Details</a>
+                                                </li>
+                                                {% endif %} 
+                                            </ul>
+                                        </li>
+                                        <li class="dropdown"><a href="{% url 'home' %}">Patients</a>
+                                            <ul>
+                                                <li class="dropdown">
+                                                    <a href="{% url 'patient_dashboard' %}">Patient Dashboard</a>
+                                                    <ul>
+                                                        <li><a href="{% url 'patient_dashboard' %}">Dashboard</a></li>
+                                                        <!--
+                                                        <li><a href="{% url 'favourite_doctors' %}">Favourite Doctors</a></li>
+                                                        <li><a href="#">Schedule Timing</a></li>
+                                                      
+                                                        <li>
+                                                            {% if doctor %}
+                                                                <a href="{% url 'book_appointment' doctor.id %}">Book Appointment</a>
+                                                            {% endif %}
+                                                        </li>
+                                                        <li><a href="{% url 'message_dashboard' %}">Messages</a></li>
+                                                         -->
+                                                        <li><a href="{% url 'profile' %}">My Profile</a></li>
+                                                        <li><a href="{% url 'change_password2' %}">Change Password</a></li>
+                                                        <li><a href="{% url 'logout'%}">Logout</a></li>
+                                                    </ul>
+                                                </li>
+                                                <li><a href="{% url 'submit_review' %}">Submit Review</a></li>
+                                                <li><a href="{% url 'register' %}">Register Page</a></li>
+                                            </ul>
+                                        </li>
+                                        {% endif %}
+                                        <li class="dropdown"><a href="">Pages</a>
+                                            <div class="megamenu">
+                                                <div class="row clearfix">
+                                                    <div class="col-lg-6 column">
+                                                        <ul>
+                                                            <li><h4>Page List 01</h4></li>
+                                                            <li><a href="{% url 'about' %}">About Us</a></li>
+                                                            <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="col-lg-6 column">
+                                                        <ul>
+                                                            <li><h4>Page List 02</h4></li>
+                                                            <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
+                                                            {% if doctor %}
+                                                                <li><a href="{% url 'doctor_detail' doctor.id %}">Doctor Details</a></li>
+                                                            {% endif %}
+                                                            <li><a href="{% url 'Clinic_list' %}">Clinic List</a></li>
+                                                            <li>
+                                                                {% if clinic.id %}
+                                                                <a href="{% url 'clinic' clinic.id %}">Clinic Details</a>
+                                                                {% else %}
+                                                                    <span>{{ clinic.name }}</span>
+                                                                {% endif %}
+                                                            </li>
+                                                        </ul>
+                                                    </div>  
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="dropdown"><a href="">News</a>
+                                            <ul>
+                                                <li><a href="">Blog Grid 01</a></li>
+                                                <li><a href="">Blog Details</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </nav>
+                        </div>
+                        <div class="btn-box"><a href="{% url 'register' %}" class="theme-btn-one"><i class="icon-image"></i> Join Now</a></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Sticky Header -->
+            <div class="sticky-header">
+                <div class="auto-container">
+                    <div class="outer-box">
+                        <div class="logo-box">
+                            <figure class="logo"><a href="{% url 'home' %}"><img src="{% static 'assets/images/small-logo.png' %}" alt="Small Logo"></a></figure>
+                        </div>
+                        <div class="menu-area">
+                            <nav class="main-menu clearfix"></nav>
+                        </div>
+                        <div class="btn-box"><a href="{% url 'register' %}" class="theme-btn-one"><i class="icon-image"></i> Join Now</a></div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Main Header End -->
+         <!-- Mobile Menu  -->
+        <div class="mobile-menu">
+            <div class="menu-backdrop"></div>
+            <div class="close-btn"><i class="fas fa-times"></i></div>
+            <nav class="menu-box">
+                <div class="nav-logo"><a href=""><img src="/static/assets/images/logo-2.png" alt="" title=""></a></div>
+                <div class="menu-outer"></div>
+                <div class="contact-info">
+                    <h4>Contact Info</h4>
+                    <ul>
+                        <li>Chicago 12, Melborne City, USA</li>
+                        <li><a href="tel:+8801682648101">+88 01682648101</a></li>
+                    </ul>
+                </div>
+                <div class="social-links">
+                    <ul class="clearfix">
+                        <li><a href=""><span class="fab fa-twitter"></span></a></li>
+                        <li><a href=""><span class="fab fa-facebook-square"></span></a></li>
+                        <li><a href=""><span class="fab fa-pinterest-p"></span></a></li>
+                        <li><a href=""><span class="fab fa-instagram"></span></a></li>
+                        <li><a href=""><span class="fab fa-youtube"></span></a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+        <!-- End Mobile Menu -->
+        <!-- Doctors Dashboard Section -->
+        <section class="doctors-dashboard bg-color-3">
+            <div class="left-panel">
+                <div class="profile-box">
+                    <div class="upper-box text-center">
+                        <div class="profile-image-wrapper">
+                            <img src="{% if doctor.profile_image and doctor.profile_image.name %}{{ doctor.profile_image.url }}{% else %}{% static 'assets/images/default-profile.jpg' %}{% endif %}" 
+                                alt="Profile" class="profile-img">
+                        </div>
+                    <div class="title-box centred">
+                        <div class="inner">
+                            <h3>Dr. {{ request.user.get_full_name|default:"Doctor Name" }}</h3>
+                            <p>{{ request.user.doctor_profile.specialization|default:"Specialization" }}</p>
+                        </div>
+                    </div>
+                </div> 
+                    <div class="profile-info">
+                        <ul class="list clearfix">
+                            <li><a href="{% url 'doctor_dashboard' %}"><i class="fas fa-columns"></i> Dashboard</a></li>
+                            <li><a href="{% url 'doctor_appointment_list' %}"><i class="fas fa-calendar-alt"></i> Appointments</a></li>
+                            <li><a href="{% url 'my_patients' %}" class="current"><i class="fas fa-wheelchair"></i> My Patients</a></li>
+                            <li><a href="{% url 'add_listing' %}"><i class="fas fa-plus-circle"></i> Add Listing</a></li>
+                            <li><a href="{% url 'schedule_timing' %}"><i class="fas fa-clock"></i> Schedule Timing</a></li>
+                            
+                            <li><a href="{% url 'my_profile' %}"><i class="fas fa-user"></i> My Profile</a></li>
+                            <li><a href="{% url 'change_password' %}"><i class="fas fa-unlock-alt"></i> Change Password</a></li>
+                            <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        </ul>
+                        <!--
+                        <li>
+                            {% if doctor and doctor.id %}
+                                <a href="{% url 'doctor_reviews' doctor.id %}"><i class="fas fa-star"></i> Reviews</a>
+                            {% else %}
+                                <a href="#"><i class="fas fa-star"></i> Reviews</a>
+                            {% endif %}
+                        </li>
+                        <li><a href="{% url 'messages' %}"><i class="fas fa-comments"></i> Messages{% if unread_messages > 0 %} <span>{{ unread_messages }}</span>{% endif %}</a></li>
+                        -->
+                    </div>
+                </div>
+            </div>
+            <div class="right-panel">
+                <div class="content-container">
+                    <div class="outer-container">
+                        <div class="appointment-list">
+                            <div class="upper-box clearfix">
+                                <div class="text pull-left">
+                                    <h3>Appointment Lists</h3>
+                                </div>
+                                <div class="btn-box pull-right">
+                                    <button class="theme-btn-one" id="addAppointmentBtn" aria-label="Add New Appointment">
+                                        <i class="fas fa-plus-circle"></i> Add New Appointment
+                                    </button>
+                                </div>
+                                <div class="select-box pull-right">
+                                    <form method="get">
+                                        <select name="status" onchange="this.form.submit()" aria-label="Filter by status">
+                                            <option value="">Any Status</option>
+                                            <option value="approved">Accepted</option>
+                                            <option value="pending">Pending</option>
+                                            <option value="cancelled">Cancelled</option>
+                                        </select>
+                                    </form>
+                                </div>
+                            </div>
+                            <!-- Upcoming Appointments -->
+                            <h4>Upcoming Appointments</h4>
+                            {% for appt in upcoming_appointments %}
+                            <div class="single-item card">
+                                <figure class="image-box">
+                                    {% if appt.patient.profile_image %}
+                                        <img src="{{ appt.patient.profile_image.url }}" alt="{{ appt.patient.name }}" loading="lazy">
+                                    {% else %}
+                                        <img src="{% static 'assets/images/default-user.png' %}" alt="Default Image" loading="lazy">
+                                    {% endif %}
+                                </figure>                       
+                                <div class="inner">
+                                    <h4>{{ appt.patient_name }}</h4>
+                                    <ul class="info-list clearfix">
+                                        <li><i class="fas fa-clock"></i> {{ appt.appointment_datetime }}</li>
+                                        <li><i class="fas fa-map-marker-alt"></i> {{ appt.patient.location }}</li>
+                                        <li><i class="fas fa-hourglass-start"></i> {{ appt.purpose }}</li>
+                                        <li><i class="fas fa-envelope"></i> <a href="mailto:{{ appt.patient_email }}">{{ appt.patient_email }}</a></li>
+                                        <li><i class="fas fa-phone"></i> <a href="tel:{{ appt.patient_mobile_number }}">{{ appt.patient_mobile_number }}</a></li>
+                                        <li>
+                                            <li>
+                                                {% if appt.appointment_mode == "online" %}
+                                                    <i class="fas fa-video"></i> <strong>Online</strong>
+                                                    {% if appt.zoom_link %}
+                                                        – <a href="{{ appt.zoom_link }}" target="_blank" class="zoom-link">Join Zoom</a>
+                                                    {% else %}
+                                                        – <span class="text-danger">Zoom link not provided</span>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <i class="fas fa-hospital-alt"></i> <strong>Offline</strong>
+                                                {% endif %}
+                                            </li>  
+                                        </li>
+                                    </ul>
+                                    <ul class="confirm-list clearfix">
+                                        {% if appt.status == 'Pending' %}
+                                            <li><a href="{% url 'accept_appointment' appt.id %}" class="btn btn-success" aria-label="Accept Appointment"><i class="fas fa-check"></i> Accept</a></li>
+                                            <li><a href="{% url 'cancel_appointment' appt.id %}" class="btn btn-danger" aria-label="Cancel Appointment"><i class="fas fa-times"></i> Cancel</a></li>
+                                        {% elif appt.status == 'Accepted' %}
+                                            <li><span class="badge bg-success">Accepted</span></li>
+                                        {% elif appt.status == 'Cancelled' %}
+                                            <li><span class="badge bg-danger">Cancelled</span></li>
+                                        {% endif %}
+                                        <button class="btn btn-warning edit-btn" 
+                                            data-id="{{ appt.id }}"
+                                            data-name="{{ appt.patient.get_full_name }}"
+                                            data-email="{{ appt.patient.user.email|default_if_none:'' }}"
+                                            data-phone="{{ appt.patient.mobile_number|default_if_none:'' }}"
+                                            data-location="{{ appt.patient.location|default_if_none:'' }}"
+                                            data-purpose="{{ appt.purpose|default_if_none:'' }}"
+                                            data-datetime="{{ appt.appointment_datetime|date:'Y-m-d\\TH:i' }}"
+                                            data-appointmentmode="{{ appt.appointment_mode }}"
+                                            data-zoomlink ="{{ appt.zoom_link }}"
+                                            aria-label="Edit Appointment">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </button>
+                                        <li>
+                                            <a href="{% url 'delete_appointment' appt.id %}" class="btn btn-danger" 
+                                            onclick="return confirm('Are you sure you want to delete this appointment?');" 
+                                            aria-label="Delete Appointment">
+                                                <i class="fas fa-trash-alt"></i> Delete
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <p>No upcoming appointments.</p>
+                            {% endfor %}
+                            <div class="pagination">
+                                {% if upcoming_appointments.has_previous %}
+                                    <a href="?upcoming_page={{ upcoming_appointments.previous_page_number }}">&laquo; Prev</a>
+                                {% endif %}
+
+                                <span>Page {{ upcoming_appointments.number }} of {{ upcoming_appointments.paginator.num_pages }}</span>
+
+                                {% if upcoming_appointments.has_next %}
+                                    <a href="?upcoming_page={{ upcoming_appointments.next_page_number }}">Next &raquo;</a>
+                                {% endif %}
+                            </div>
+                            <!-- Past Appointments -->
+                            <h4>Past Appointments</h4>
+                            {% for appt in past_appointments %}
+                            <div class="single-item card">
+                                <figure class="image-box">
+                                {% if appt.patient.profile_image %}
+                                <img src="{{ appt.patient.profile_image.url }}" alt="{{ appt.patient.name }}" loading="lazy">
+                                {% else %}
+                                <img src="{% static 'assets/images/default-user.png' %}" alt="Default Image" loading="lazy">
+                                {% endif %}
+                                </figure>
+                                <div class="inner">
+                                    <h4>{{ appt.patient_name }}</h4>
+                                    <ul class="info-list clearfix">
+                                        <li><i class="fas fa-clock"></i> {{ appt.appointment_datetime }}</li>
+                                        <li><i class="fas fa-map-marker-alt"></i> {{ appt.patient.location }}</li>
+                                        <li><i class="fas fa-hourglass-start"></i> {{ appt.purpose }}</li>
+                                        <li><i class="fas fa-envelope"></i> <a href="mailto:{{ appt.patient_email }}">{{ appt.patient_email }}</a></li>
+                                        <li><i class="fas fa-phone"></i> <a href="tel:{{ appt.patient_mobile_number }}">{{ appt.patient_mobile_number }}</a></li>
+                                        <!-- Appointment Mode -->
+                                        <li>
+                                            {% if appt.appointment_mode == "online" %}
+                                                <i class="fas fa-video"></i> <strong>Online</strong>
+                                                {% if appt.zoom_link %}
+                                                    – <a href="{{ appt.zoom_link }}" target="_blank" class="zoom-link">Join Zoom</a>
+                                                {% else %}
+                                                    – <span class="text-danger">Zoom link not available yet</span>
+                                                {% endif %}
+                                            {% else %}
+                                                <i class="fas fa-hospital-alt"></i> <strong>Offline</strong>
+                                            {% endif %}
+                                        </li>
+                                    </ul>
+                                    <ul class="confirm-list clearfix">
+                                        <li><span class="badge bg-secondary">{{ appt.status }}</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <p>No past appointments.</p>
+                            {% endfor %}
+                            <div class="pagination">
+                                {% if past_appointments.has_previous %}
+                                    <a href="?past_page={{ past_appointments.previous_page_number }}">&laquo; Prev</a>
+                                {% endif %}
+                                <span>Page {{ past_appointments.number }} of {{ past_appointments.paginator.num_pages }}</span>
+                                {% if past_appointments.has_next %}
+                                    <a href="?past_page={{ past_appointments.next_page_number }}">Next &raquo;</a>
+                                {% endif %}
+                            </div>
+                            <!-- Appointment Modal -->
+                            <div id="appointmentModal" class="modal" role="dialog" aria-labelledby="modalTitle">
+                                <div class="modal-content">
+                                    <span class="close-modal" aria-label="Close">&times;</span>
+                                    <h2 id="modalTitle">Add New Appointment</h2>
+                                    <form id="appointmentForm" method="POST" action="{% url 'add_appointment' %}">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label for="patient_name">Patient Name</label>
+                                            <input type="text" id="patient_name" name="patient_name" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="email">Email</label>
+                                            <input type="email" id="email" name="email" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="phone">Phone</label>
+                                            <input type="text" id="phone" name="phone" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="location">Location</label>
+                                            <input type="text" id="location" name="location" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="purpose">Purpose</label>
+                                            <input type="text" id="purpose" name="purpose" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="appointment_datetime">Date & Time</label>
+                                            <input type="datetime-local" id="appointment_datetime" name="appointment_datetime" required>
+                                        </div>
+
+                                        <!-- Appointment Mode -->
+                                        <div class="form-group">
+                                            <label>Appointment Mode</label><br>
+                                            <label><input type="radio" name="appointment_mode" id="appointment_mode_online" value="online" required> Online</label>
+                                            <label><input type="radio" name="appointment_mode" id="appointment_mode_offline" value="offline"> Offline</label>
+                                        </div>
+                                        <div class="form-group" id="zoom_link_group">
+                                            <label for="zoom_link">Zoom Meeting Link (optional)</label>
+                                            <input type="url" id="zoom_link" name="zoom_link" placeholder="" />
+                                        </div>
+                                        <div class="modal-actions">
+                                            <button type="submit" class="btn-save">Save</button>
+                                            <button type="button" class="btn-cancel" id="cancelBtn">Cancel</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>                
+        </section>
+        <section class="agent-section mb-5">
+            <div class="auto-container">
+                <div class="inner-container bg-color-2 p-4 rounded shadow">
+                    <div class="row g-4 align-items-center">
+                        <!-- Emergency Call -->
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="content_block_3">
+                                <div class="content-box">
+                                    <h3 class="text-white">Emergency Call</h3>
+                                    <div class="support-box d-flex align-items-center gap-3 mt-3">
+                                        <div class="icon-box text-white fs-2">
+                                            <i class="fas fa-phone"></i>
+                                        </div>
+                                        <div>
+                                            <span class="d-block text-white-50 small">Telephone</span>
+                                            <h4 class="mb-0">
+                                                <a href="tel:11165458856" class="text-info">+(111) 65_458_856</a>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Subscribe Form -->
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="content_block_4">
+                                <div class="content-box">
+                                    <h3 class="text-white">Sign up for Email</h3>
+                                    <form action="" method="post" class="subscribe-form mt-3">
+                                        {% csrf_token %}
+                                        <div class="form-group d-flex flex-column flex-sm-row gap-2">
+                                            <input type="email" name="email" placeholder="Your Email" required class="form-control">
+                                            <button type="submit" class="btn btn-info text-white px-4">
+                                                Submit Now <i class="icon-Arrow-Right ms-1"></i>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Agent Section End -->
+        <!-- Main Footer -->
+        <footer class="main-footer" style="position: relative; background-color: #0a0f2c;">
+            <div class="footer-top position-relative py-5 text-white">
+                <!-- Background Patterns -->
+                <div class="pattern-layer position-absolute w-100 h-100" style="top: 0; left: 0; z-index: 1;">
+                    <div class="pattern-1" style="background-image: url({% static 'assets/images/shape/shape-30.png' %});"></div>
+                    <div class="pattern-2" style="background-image: url({% static 'assets/images/shape/shape-31.png' %});"></div>
+                </div>
+
+                <!-- Footer Content -->
+                <div class="container" style="margin-top: 50px; position: relative; z-index: 2;">
+                    <div class="row gy-4">
+                        <!-- Logo & Description -->
+                        <div class="col-lg-4 col-md-6 col-sm-12 text-center text-md-start">
+                            <figure class="footer-logo mb-3">
+                                <a href="{% url 'home' %}">
+                                    <img src="{% static 'assets/images/footer-logo.png' %}" alt="Footer Logo" class="img-fluid">
+                                </a>
+                            </figure>
+                            <p class="text-white-50">Bringing healthcare closer to you — securely and professionally.</p>
+                        </div>
+
+                        <!-- About -->
+                        <div class="col-lg-2 col-md-6 col-sm-12">
+                            <h5 class="text-white fw-bold mb-3">About</h5>
+                            <ul class="list-unstyled footer-links">
+                                <li><a href="{% url 'about' %}">About Us</a></li>
+                                <li><a href="#">How It Works</a></li>
+                                <li><a href="#">Our Services</a></li>
+                                <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Useful Links -->
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <h5 class="text-white fw-bold mb-3">Useful Links</h5>
+                            <ul class="list-unstyled footer-links">
+                                <li><a href="{% url 'doctor_list' %}">Find Doctors</a></li>
+                                <li><a href="{% url 'register' %}">Join Now</a></li>
+                                <li><a href="#">Download App</a></li>
+                                <li><a href="#">Privacy Policy</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Contact Info -->
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <h5 class="text-white fw-bold mb-3">Contacts</h5>
+                            <ul class="list-unstyled footer-links">
+                                <li><i class="fas fa-map-marker-alt me-2"></i> Flat 20, Reynolds Neck, North Helenaville, FV77 8WS</li>
+                                <li><i class="fas fa-phone me-2"></i> <a href="tel:23055873407">+2(305) 587-3407</a></li>
+                                <li><i class="fas fa-envelope me-2"></i> <a href="mailto:info@docpro.com">info@docpro.com</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <hr class="border-light my-4" />
+
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center text-white-50 small text-center text-md-start">
+                        <p class="mb-2 mb-md-0">© 2020 <a href="{% url 'home' %}" class="text-info">Docpro</a>. All rights reserved.</p>
+                        <ul class="list-inline mb-0">
+                            <li class="list-inline-item"><a href="#" class="text-white-50">Terms of Service</a></li>
+                            <li class="list-inline-item"><a href="#" class="text-white-50">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Main Footer End -->
+        <button class="scroll-top scroll-to-target" data-target="html" aria-label="Scroll to top">
+            <span class="fa fa-arrow-up"></span>
+        </button>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById('appointmentModal');
+            const addBtn = document.getElementById('addAppointmentBtn');
+            const closeModal = document.querySelector('.close-modal');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const form = document.getElementById('appointmentForm');
+            const modalTitle = document.querySelector('#modalTitle');
+            const onlineRadio = document.getElementById('appointment_mode_online');
+            const offlineRadio = document.getElementById('appointment_mode_offline');
+            const zoomGroup = document.getElementById('zoom_link_group');
+            const zoomInput = document.getElementById('zoom_link');
+
+            function toggleZoomField() {
+                if (onlineRadio.checked) {
+                    zoomGroup.style.display = 'block';
+                    zoomInput.setAttribute('required', 'required');
+                } else {
+                    zoomGroup.style.display = 'none';
+                    zoomInput.removeAttribute('required');
+                }
+            }
+
+            // Attach listeners to radio buttons
+            if (onlineRadio && offlineRadio) {
+                onlineRadio.addEventListener('change', toggleZoomField);
+                offlineRadio.addEventListener('change', toggleZoomField);
+                toggleZoomField(); // Initial check
+            }
+
+            // Open modal for adding appointment
+            addBtn.addEventListener('click', function () {
+                form.action = "{% url 'add_appointment' %}";
+                form.reset();
+                modalTitle.innerText = "Add New Appointment";
+                modal.style.display = 'block';
+                toggleZoomField(); // Reset visibility
+            });
+
+            // Close modal buttons
+            [closeModal, cancelBtn].forEach(btn =>
+                btn.addEventListener('click', () => modal.style.display = 'none')
+            );
+
+            // Open modal for editing appointment
+            document.querySelectorAll('.edit-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    form.action = `/appointment/edit/${this.dataset.id}/`;
+                    modalTitle.innerText = "Edit Appointment";
+                    modal.style.display = 'block';
+
+                    // Prefill form fields
+                    document.getElementById('patient_name').value = this.dataset.name;
+                    document.getElementById('email').value = this.dataset.email;
+                    document.getElementById('phone').value = this.dataset.phone;
+                    document.getElementById('location').value = this.dataset.location;
+                    document.getElementById('purpose').value = this.dataset.purpose;
+                    document.getElementById('appointment_datetime').value = this.dataset.datetime;
+                    document.getElementById('zoom_link').value = this.dataset.zoomlink || '';
+
+                    // Set radio button for appointment mode
+                    if (this.dataset.appointmentmode === 'online') {
+                        document.getElementById('appointment_mode_online').checked = true;
+                    } else if (this.dataset.appointmentmode === 'offline') {
+                        document.getElementById('appointment_mode_offline').checked = true;
+                    }
+
+                    toggleZoomField(); // Update Zoom field visibility based on mode
+                });
+            });
+
+            // Close modal when clicking outside
+            window.addEventListener('click', function (event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+
+            // Form validation
+            form.addEventListener('submit', function (e) {
+                const inputs = form.querySelectorAll('input[required]');
+                let isValid = true;
+
+                inputs.forEach(input => {
+                    if (!input.value.trim()) {
+                        isValid = false;
+                        input.style.borderColor = '#f44336';
+                    } else {
+                        input.style.borderColor = '#e0e0e0';
+                    }
+                });
+                if (!isValid) {
+                    e.preventDefault();
+                    alert('Please fill out all required fields.');
+                }
+            });
+        });
+    </script>
+    <!-- JavaScript -->
+    <script src="{% static 'assets/js/jquery.js' %}"></script>
+    <script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/owl.js' %}"></script>
+    <script src="{% static 'assets/js/wow.js' %}"></script>
+    <script src="{% static 'assets/js/validation.js' %}"></script>
+    <script src="{% static 'assets/js/scrollbar.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.nice-select.min.js' %}"></script>
+    <script src="{% static 'assets/js/script.js' %}"></script>
+    <script src="{% static 'assets/js/modal.js' %}"></script>
+    
+</body>
+</html>

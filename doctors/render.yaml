@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: doctorsapp
+    env: python
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    startCommand: gunicorn doctors.wsgi:application --bind 0.0.0.0:$PORT
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: doctors.settings
+      - key: PYTHON_VERSION
+        value: 3.10
+      - key: SECRET_KEY
+        value: 6h(o)_(@42n8fls1m@cwyz76i1(g7wgrujghe)8(egp)_*1@u6
+      - key: DEBUG
+        value: False
+
+    disk:
+      name: media
+      mountPath: /app/media
+      sizeGB: 1

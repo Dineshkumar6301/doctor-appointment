@@ -1,0 +1,762 @@
+{% load static %}
+{% load custom_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>Docpro</title>
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+    
+    <!-- Stylesheets -->
+    <link href="{% static 'assets/css/font-awesome-all.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/flaticon.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/owl.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/bootstrap.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/jquery.fancybox.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/animate.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/color.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/nice-select.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/responsive.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+      <!-- Scripts -->
+        <script src="{% static 'assets/js/jquery.js' %}"></script>
+        <script src="{% static 'assets/js/popper.min.js' %}"></script>
+        <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'assets/js/owl.js' %}"></script>
+        <script src="{% static 'assets/js/wow.js' %}"></script>
+        <script src="{% static 'assets/js/validation.js' %}"></script>
+        <script src="{% static 'assets/js/jquery.fancybox.js' %}"></script>
+        <script src="{% static 'assets/js/scrollbar.js' %}"></script>
+        <script src="{% static 'assets/js/tilt.jquery.js' %}"></script>
+        <script src="{% static 'assets/js/jquery.paroller.min.js' %}"></script>
+        <script src="{% static 'assets/js/jquery.nice-select.min.js' %}"></script>
+        <script src="{% static 'assets/js/product-filter.js' %}"></script>
+        <script src="{% static 'assets/js/jquery-ui.js' %}"></script>
+        <script src="{% static 'assets/js/script.js' %}"></script>
+     <style>
+        .mobile-menu .navigation li.dropdown > a::after {
+    content: "▼";
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    float: right;
+}
+</style>
+</head>
+<body>
+    <div class="boxed_wrapper">
+        <!-- Preloader -->
+        <div class="preloader"></div>
+        <!-- Main Header -->
+        <header class="main-header style-two">
+            <!-- Header Top -->
+            <div class="header-top">
+                <div class="auto-container">
+                    <div class="top-inner clearfix">
+                        <div class="top-left pull-left">
+                            <ul class="info clearfix">
+                                <li><i class="fas fa-map-marker-alt"></i>Discover St, New York, NY 10012, USA</li>
+                                <li><i class="fas fa-phone"></i><a href="tel:2512353256">+251-235-3256</a></li>
+                            </ul>
+                        </div>
+                        <div class="top-right pull-right">
+                            <ul class="info clearfix">
+                                <li><a href="{% url 'register' %}">Sign in</a></li>
+                                <li><a href="">Career</a></li>
+                                <li><a href="{% url 'contact' %}">Contact</a></li>
+                                <li class="language">
+                                    <a href="{% url 'home' %}">Language</a>
+                                    <ul class="language-dropdown">
+                                        <li><a href="">English</a></li>                                      
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Header Lower -->
+            <div class="header-lower">
+                <div class="auto-container">
+                    <div class="outer-box">
+                        <div class="logo-box">
+                            <figure class="logo">
+                                <a href="{% url 'home' %}"><img src="{% static 'assets/images/logo-3.png' %}" alt="Logo"></a>
+                            </figure>
+                        </div>
+                        <div class="menu-area">
+                            <!-- Mobile Navigation Toggler -->
+                            <div class="mobile-nav-toggler">
+                                <i class="icon-bar"></i>
+                                <i class="icon-bar"></i>
+                                <i class="icon-bar"></i>
+                            </div>
+                            <nav class="main-menu navbar-expand-md navbar-light">
+                                <div class="collapse navbar-collapse show clearfix" id="navbarSupportedContent">
+                                    <ul class="navigation clearfix">
+                                        <li><a href="{% url 'home' %}">Home</a></li>
+                                        {% if request.user.is_authenticated %}
+                                            {% if request.user.doctor_profile %}
+                                                <!-- Doctor Menu -->
+                                                <li class="dropdown">
+                                                    <a href="{% url 'doctor_dashboard' %}">Doctors</a>
+                                                    <ul>
+                                                        <li><a href="{% url 'doctor_dashboard' %}">Doctors Dashboard</a></li>
+                                                        <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
+                                                        <li>
+                                                            <a href="{% url 'doctor_detail' request.user.doctor_profile.id %}">Doctor Details</a>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                            {% elif request.user.patient_profile %}
+                                                <!-- Patient Menu -->
+                                                <li class="dropdown">
+                                                    <a href="{% url 'patient_dashboard' %}">Patients</a>
+                                                    <ul>
+                                                        <li><a href="{% url 'patient_dashboard' %}">Patient Dashboard</a></li>
+                                                        <li><a href ="{% url 'submit_review' %}">Submit Review</a></li>
+                                                        <li><a href="{% url 'register' %}">Register Page</a></li>
+                                                    </ul>
+                                                </li>
+                                            {% endif %}
+                                        {% endif %}
+                                        <li class="dropdown"><a href="">Pages</a>
+                                            <div class="megamenu">
+                                                <div class="row clearfix">
+                                                    <div class="col-lg-6 column">
+                                                        <ul>
+                                                            <li><h4>Page List 01</h4></li>
+                                                            <li><a href="{% url 'about' %}">About Us</a></li>
+                                                            <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="col-lg-6 column">
+                                                        <ul>
+                                                            <li><h4>Page List 02</h4></li>
+                                                            <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
+                                                            {% if doctor %}
+                                                                <li><a href="{% url 'doctor_detail' doctor.id %}">Doctor Details</a></li>
+                                                            {% endif %}
+                                                            <li><a href="{% url 'Clinic_list' %}">Clinic List</a></li>
+                                                            <li>
+                                                                {% if clinic.id %}
+                                                                <a href="{% url 'clinic' clinic.id %}">Clinic Details</a>
+                                                                {% else %}
+                                                                    <span>{{ clinic.name }}</span>
+                                                                {% endif %}
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="dropdown"><a href="">News</a>
+                                            <ul>
+                                                <li><a href="">Blog Grid 01</a></li>
+                                                <li><a href="">Blog Details</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </nav>
+                        </div>
+                        <div class="btn-box">
+                            <a href="{% url 'register' %}" class="theme-btn-one"><i class="icon-image"></i>Join Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Sticky Header -->
+            <div class="sticky-header">
+                <div class="auto-container">
+                    <div class="outer-box">
+                        <div class="logo-box">
+                            <figure class="logo">
+                                <a href="{% url 'home' %}"><img src="{% static 'assets/images/small-logo.png' %}" alt="Small Logo"></a>
+                            </figure>
+                        </div>
+                        <div class="menu-area">
+                            <nav class="main-menu clearfix"></nav>
+                        </div>
+                        <div class="btn-box">
+                            <a href="{% url 'register' %}" class="theme-btn-one"><i class="icon-image"></i>Join Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Mobile Menu  -->
+        <div class="mobile-menu">
+            <div class="menu-backdrop"></div>
+            <div class="close-btn"><i class="fas fa-times"></i></div>
+            <nav class="menu-box">
+                <div class="nav-logo"><a href=""><img src="/static/assets/images/logo-2.png" alt="" title=""></a></div>
+                <div class="menu-outer"></div>
+                <div class="contact-info">
+                    <h4>Contact Info</h4>
+                    <ul>
+                        <li>Chicago 12, Melborne City, USA</li>
+                        <li><a href="tel:+8801682648101">+88 01682648101</a></li>
+                    </ul>
+                </div>
+                <div class="social-links">
+                    <ul class="clearfix">
+                        <li><a href=""><span class="fab fa-twitter"></span></a></li>
+                        <li><a href=""><span class="fab fa-facebook-square"></span></a></li>
+                        <li><a href=""><span class="fab fa-pinterest-p"></span></a></li>
+                        <li><a href=""><span class="fab fa-instagram"></span></a></li>
+                        <li><a href=""><span class="fab fa-youtube"></span></a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    
+        <!-- banner-section -->
+        <section class="banner-section style-two bg-color-1">
+            <div class="pattern">
+                <div class="pattern-1" style="background-image: url(/static/assets/images/shape/shape-32.png);"></div>
+                <div class="pattern-2" style="background-image: url(/static/assets/images/shape/shape-33.png);"></div>
+                <div class="pattern-3" style="background-image: url(/static/assets/images/shape/shape-34.png);"></div>
+                <div class="pattern-4" style="background-image: url(/static/assets/images/shape/shape-35.png);"></div>
+            </div>
+            <div class="bg-layer" style="background-image: url(/static/assets/images/banner/profile_image_doctors.png);"></div>
+            <div class="auto-container">
+                <div class="row clearfix">
+                    <div class="col-lg-6 col-md-12 col-sm-12 content-column">
+                        <div class="content-box">
+                            <h1>Find Nearest Doctor.</h1>
+                            <p>We are here to help you find the best doctors and clinics near you. Book appointments, view profiles, and get the care you need.</p>
+                            <div class="form-inner">
+                                <form action="{% url 'search_results' %}" method="post">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <input type="text" name="name" placeholder="Ex. Name, Specialization..." required>
+                                    <button type="submit"><i class="icon-Arrow-Right"></i></button>
+                                </div>
+
+                                <ul class="select-box clearfix">
+                                    <li>
+                                        <div class="single-checkbox">
+                                            <input type="radio" name="filter_type" id="check1" value="all" checked>
+                                            <label for="check1"><span></span>All</label>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="single-checkbox">
+                                            <input type="radio" name="filter_type" id="check2" value="doctor">
+                                            <label for="check2"><span></span>Doctor</label>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="single-checkbox">
+                                            <input type="radio" name="filter_type" id="check3" value="clinic">
+                                            <label for="check3"><span></span>Clinic</label>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </form>   
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- about-style-two -->
+         <section class="about-style-two">
+            <div class="auto-container">
+                <div class="row align-items-center clearfix">
+                    <div class="col-lg-6 col-md-12 col-sm-12 image-column">
+                         <div class="bg-layer" style="background-image: url(/static/assets/images/banner/profile_image_doctors.png);"></div>
+                            <div class="pattern">
+                                <div class="pattern-1" style="background-image: url(/static/assets/images/shape/shape-32.png);"></div>
+                                <div class="pattern-2" style="background-image: url(/static/assets/images/shape/shape-33.png);"></div>
+                                <div class="pattern-3" style="background-image: url(/static/assets/images/shape/shape-34.png);"></div>
+                                <div class="pattern-4" style="background-image: url(/static/assets/images/shape/shape-35.png);"></div>
+                            </div>
+                        <div class="image_block_2">
+                            <div class="image-box">
+                                <div class="pattern">
+                                </div>
+                                    <div class="image-block-wrapper">
+                                        <figure class="image image-1">
+                                            <img src="/static/assets/images/resource/about-1.jpeg" alt="Image 1">
+                                        </figure>
+                                        <figure class="image image-2">
+                                            <img src="/static/assets/images/resource/about-2.jpg" alt="Image 2">
+                                        </figure>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6 col-md-12 col-sm-12 content-column">
+                        <div class="content_block_1">
+                            <div class="content-box">
+                                <div class="sec-title">
+                                    <p>About Docpro</p>
+                                    <h2>Bring care to your home with one click</h2>
+                                </div>
+                                <div class="text">
+                                    <div>
+                                    <p style="margin-bottom: 20px;">
+                                        At Docpro, our mission is simple yet profound: to make quality healthcare accessible, affordable, and convenient for everyone. By connecting patients with certified doctors and clinics through intuitive, secure tech, we empower you to take control of your health—right from your phone or computer.
+                                    </p>
+                                                                
+                                    <p>We envision a healthier world where every individual, regardless of location or background, has access to excellent medical care. Through innovative technology and unwavering dedication, Docpro is building the bridge to that future.</p>
+                                </div>
+                                <div class="btn-box"><a href="{% url 'about' %}" class="theme-btn-one">About Us<i class="icon-Arrow-Right"></i></a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+                    
+            <!-- about-style-two end -->
+            <!-- process-style-two -->
+            <section class="process-style-two bg-color-3 centred">
+            <div class="pattern-layer">
+                <div class="pattern-1" style="background-image: url(/static/assets/images/shape/shape-39.png);"></div>
+                <div class="pattern-2" style="background-image: url(/static/assets/images/shape/shape-40.png);"></div>
+                <div class="pattern-3" style="background-image: url(/static/assets/images/shape/shape-41.png);"></div>
+                <div class="pattern-4" style="background-image: url(/static/assets/images/shape/shape-42.png);"></div>
+            </div>
+            <div class="auto-container">
+                <div class="sec-title centred">
+                    <p>Process</p>
+                    <h2>Appointment Process</h2>
+                </div>
+                <div class="inner-content">
+                    <div class="arrow" style="background-image: url(/static/assets/images/icons/arrow-1.png);"></div>
+                    <div class="row clearfix">
+                        <div class="col-lg-4 col-md-6 col-sm-12 processing-block">
+                            <div class="processing-block-two">
+                                <div class="inner-box">
+                                    <figure class="icon-box"><img src="/static/assets/images/icons/icon-9.png" alt=""></figure>
+                                    <h3>Search Best Online Professional</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-6 col-sm-12 processing-block">
+                            <div class="processing-block-two">
+                                <div class="inner-box">
+                                    <figure class="icon-box"><img src="/static/assets/images/icons/icon-10.png" alt=""></figure>
+                                    <h3>View Professional Profile</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-6 col-sm-12 processing-block">
+                            <div class="processing-block-two">
+                                <div class="inner-box">
+                                    <figure class="icon-box"><img src="/static/assets/images/icons/icon-11.png" alt=""></figure>
+                                    <h3>Get Instant Doctor Appoinment</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- process-style-two end -->
+        <!-- banner-section end -->
+        <section class="features-section">
+        <div class="auto-container">
+            <div class="sec-title centred">
+            <h2>Key Features</h2>
+            </div>
+            <div class="row clearfix">
+            <div class="col-lg-3 col-md-6 col-sm-12 feature-block">
+                <div class="feature-box">
+                <img src="/static/assets/images/icons/book.png" alt="Booking Icon">
+                <h4>Quick Appointment Booking</h4>
+                <p>Filter by specialty, view doctor profiles with credentials and ratings, and pick a time that fits your schedule.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-12 feature-block">
+                <div class="feature-box">
+                <img src="/static/assets/images/icons/video.png" alt="Video Icon">
+                <h4>Secure Video Consultations</h4>
+                <p>Enjoy HD video visits from home — complete care without stepping out.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-12 feature-block">
+                <div class="feature-box">
+                <img src="/static/assets/images/icons/prescription.png" alt="Prescription Icon">
+                <h4>Prescription & Records</h4>
+                <p>Get e‑prescriptions, and access visit summaries/medical history anytime.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-12 feature-block">
+                <div class="feature-box">
+                <img src="static\assets\images\icons\family -1.png" alt="Family Icon">
+                <h4>Family Profiles</h4>
+                <p>Manage appointments for your whole family — children, elders, you.</p>
+                </div>
+            </div>
+            </div>
+        </div>
+        </section>
+
+        <section class="why-choose-section">
+        <div class="auto-container">
+            <div class="sec-title centred">
+            <h2>Why Choose Doctpro?</h2>
+            </div>
+            <div class="row clearfix">
+            <div class="col-md-3 col-sm-6">
+                <div class="icon-feature">
+                <img src="/static/assets/images/icons/certified.png" alt="">
+                <p>Certified & Experienced Doctors</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="icon-feature">
+                <img src="/static/assets/images/icons/encrypted.png" alt="">
+                <p>Safe, Encrypted Platform</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="icon-feature">
+                <img src="/static/assets/images/icons/24-7.png" alt="">
+                <p>24/7 Access from Anywhere</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="icon-feature">
+                <img src="/static/assets/images/icons/rupee.png" alt="">
+                <p>Affordable Fees, No Hidden Charges</p>
+                </div>
+            </div>
+            </div>
+        </div>
+        </section>
+        <section class="elementor-section animated-slow elementor-invisible" data-animation="fadeInUp" style="background-color: white;">
+            <div class="faq-container">
+                <div class="pattern-layer">
+                    <div class="pattern" style="background-image: url(/static/assets/images/shape/shape-26.png);"></div>
+                    <div class="pattern-2" style="background-image: url(/static/assets/images/shape/shape-36.png);"></div>
+                </div>
+                <h2 class="faq-title">Frequently Asked Questions (FAQs)</h2>
+                <div class="faq-grid">
+                    <div class="faq-column">
+                        <div class="faq-item active">
+                            <div class="faq-header" onclick="toggleFaq(this)">
+                                <span class="faq-title-text">How do I book a consultation?</span>
+                                <span class="faq-icon">+</span>
+                            </div>
+                            <div class="faq-content active">
+                                <div class="faq-body">
+                                    Just open the app, search for a doctor by specialty or health issue, choose your preferred time slot, and confirm the booking. It only takes a few clicks!
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ Item 2 -->
+                        <div class="faq-item">
+                            <div class="faq-header" onclick="toggleFaq(this)">
+                                <span class="faq-title-text">Are the doctors on Docpro verified?</span>
+                                <span class="faq-icon">+</span>
+                            </div>
+                            <div class="faq-content">
+                                <div class="faq-body">
+                                    Yes, all doctors on our platform are fully certified, licensed, and verified by our medical team before being listed for consultations.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ Item 3 -->
+                        <div class="faq-item">
+                            <div class="faq-header" onclick="toggleFaq(this)">
+                                <span class="faq-title-text">How much does a consultation cost?</span>
+                                <span class="faq-icon">+</span>
+                            </div>
+                            <div class="faq-content">
+                                <div class="faq-body">
+                                    Consultation fees vary depending on the doctor and specialty. You’ll see the fee before confirming the appointment — no hidden charges.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="faq-column">
+                        <!-- FAQ Item 4 -->
+                        <div class="faq-item active">
+                            <div class="faq-header" onclick="toggleFaq(this)">
+                                <span class="faq-title-text">Is my consultation private and secure?</span>
+                                <span class="faq-icon">+</span>
+                            </div>
+                            <div class="faq-content active">
+                                <div class="faq-body">
+                                    Absolutely. Your health data and conversations are encrypted and 100% confidential. We strictly follow data privacy guidelines to protect your information.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ Item 5 -->
+                        <div class="faq-item">
+                            <div class="faq-header" onclick="toggleFaq(this)">
+                                <span class="faq-title-text">Can I consult for my family members too?</span>
+                                <span class="faq-icon">+</span>
+                            </div>
+                            <div class="faq-content">
+                                <div class="faq-body">
+                                    Yes, you can create profiles for your parents, children, or spouse under one account and book consultations for them easily.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ Item 6 -->
+                        <div class="faq-item">
+                            <div class="faq-header" onclick="toggleFaq(this)">
+                                <span class="faq-title-text">Do I get a prescription after the consultation?</span>
+                                <span class="faq-icon">+</span>
+                            </div>
+                            <div class="faq-content">
+                                <div class="faq-body">
+                                    Yes, if the doctor finds it necessary, you'll receive a digital prescription right after your consultation, which you can download or show at your local pharmacy.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- faq-section end -->
+        
+        <!-- Agent Section -->
+        <section class="agent-section mb-5">
+            <div class="auto-container">
+                <div class="inner-container bg-color-2 p-4 rounded shadow">
+                    <div class="row g-4 align-items-center">
+                        <!-- Emergency Call -->
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="content_block_3">
+                                <div class="content-box">
+                                    <h3 class="text-white">Emergency Call</h3>
+                                    <div class="support-box d-flex align-items-center gap-3 mt-3">
+                                        <div class="icon-box text-white fs-2">
+                                            <i class="fas fa-phone"></i>
+                                        </div>
+                                        <div>
+                                            <span class="d-block text-white-50 small">Telephone</span>
+                                            <h4 class="mb-0">
+                                                <a href="tel:11165458856" class="text-info">+(111) 65_458_856</a>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Subscribe Form -->
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="content_block_4">
+                                <div class="content-box">
+                                    <h3 class="text-white">Sign up for Email</h3>
+                                    <form action="" method="post" class="subscribe-form mt-3">
+                                        {% csrf_token %}
+                                        <div class="form-group d-flex flex-column flex-sm-row gap-2">
+                                            <input type="email" name="email" placeholder="Your Email" required class="form-control">
+                                            <button type="submit" class="btn btn-info text-white px-4">
+                                                Submit Now <i class="icon-Arrow-Right ms-1"></i>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Agent Section End -->
+        <!-- Main Footer -->
+        <footer class="main-footer" style="position: relative; background-color: #0a0f2c;">
+            <div class="footer-top position-relative py-5 text-white">
+                <!-- Background Patterns -->
+                <div class="pattern-layer position-absolute w-100 h-100" style="top: 0; left: 0; z-index: 1;">
+                    <div class="pattern-1" style="background-image: url({% static 'assets/images/shape/shape-30.png' %});"></div>
+                    <div class="pattern-2" style="background-image: url({% static 'assets/images/shape/shape-31.png' %});"></div>
+                </div>
+
+                <!-- Footer Content -->
+                <div class="container" style="margin-top: 50px; position: relative; z-index: 2;">
+                    <div class="row gy-4">
+                        <!-- Logo & Description -->
+                        <div class="col-lg-4 col-md-6 col-sm-12 text-center text-md-start">
+                            <figure class="footer-logo mb-3">
+                                <a href="{% url 'home' %}">
+                                    <img src="{% static 'assets/images/footer-logo.png' %}" alt="Footer Logo" class="img-fluid">
+                                </a>
+                            </figure>
+                            <p class="text-white-50">Bringing healthcare closer to you — securely and professionally.</p>
+                        </div>
+
+                        <!-- About -->
+                        <div class="col-lg-2 col-md-6 col-sm-12">
+                            <h5 class="text-white fw-bold mb-3">About</h5>
+                            <ul class="list-unstyled footer-links">
+                                <li><a href="{% url 'about' %}">About Us</a></li>
+                                <li><a href="#">How It Works</a></li>
+                                <li><a href="#">Our Services</a></li>
+                                <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Useful Links -->
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <h5 class="text-white fw-bold mb-3">Useful Links</h5>
+                            <ul class="list-unstyled footer-links">
+                                <li><a href="{% url 'doctor_list' %}">Find Doctors</a></li>
+                                <li><a href="{% url 'register' %}">Join Now</a></li>
+                                <li><a href="#">Download App</a></li>
+                                <li><a href="#">Privacy Policy</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Contact Info -->
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <h5 class="text-white fw-bold mb-3">Contacts</h5>
+                            <ul class="list-unstyled footer-links">
+                                <li><i class="fas fa-map-marker-alt me-2"></i> Flat 20, Reynolds Neck, North Helenaville, FV77 8WS</li>
+                                <li><i class="fas fa-phone me-2"></i> <a href="tel:23055873407">+2(305) 587-3407</a></li>
+                                <li><i class="fas fa-envelope me-2"></i> <a href="mailto:info@docpro.com">info@docpro.com</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <hr class="border-light my-4" />
+
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center text-white-50 small text-center text-md-start">
+                        <p class="mb-2 mb-md-0">© 2020 <a href="{% url 'home' %}" class="text-info">Docpro</a>. All rights reserved.</p>
+                        <ul class="list-inline mb-0">
+                            <li class="list-inline-item"><a href="#" class="text-white-50">Terms of Service</a></li>
+                            <li class="list-inline-item"><a href="#" class="text-white-50">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Main Footer End -->
+
+        <!-- Scroll to Top -->
+        <button class="scroll-top scroll-to-target" data-target="html" aria-label="Scroll to top">
+            <span class="fa fa-arrow-up"></span>
+        </button>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Clone main navigation to mobile menu
+            const mainNav = document.querySelector('.main-menu .navigation');
+            const mobileMenuOuter = document.querySelector('.mobile-menu .menu-outer');
+            if (mainNav && mobileMenuOuter) {
+                mobileMenuOuter.innerHTML = mainNav.outerHTML;
+                console.log('Navigation cloned to mobile menu');
+            } else {
+                console.error('Main navigation or mobile menu container not found');
+            }
+
+            // jQuery for dropdown toggle
+            if (typeof jQuery !== 'undefined') {
+                $('.mobile-menu li.dropdown > a').on('click', function (e) {
+                    if ($(window).width() < 992) {
+                        e.preventDefault();
+                        const $dropdown = $(this).next('ul, .megamenu');
+                        console.log('Dropdown toggled:', $dropdown.length);
+                        $dropdown.slideToggle(300).toggleClass('active');
+                    }
+                });
+
+                // Toggle mobile menu
+                $('.mobile-nav-toggler').on('click', function () {
+                    $('.mobile-menu').addClass('active');
+                    $('.menu-backdrop').fadeIn(300);
+                    console.log('Mobile menu opened');
+                });
+
+                $('.mobile-menu .close-btn, .menu-backdrop').on('click', function () {
+                    $('.mobile-menu').removeClass('active');
+                    $('.menu-backdrop').fadeOut(300);
+                    // Close all dropdowns when closing menu
+                    $('.mobile-menu li.dropdown > ul, .mobile-menu li.dropdown > .megamenu').slideUp(300).removeClass('active');
+                    console.log('Mobile menu closed');
+                });
+            } else {
+                console.error('jQuery not loaded');
+            }
+        });
+        function toggleFaq(header) {
+            const faqItem = header.parentElement;
+            const content = faqItem.querySelector('.faq-content');
+            const icon = header.querySelector('.faq-icon');
+            
+            // Toggle active state
+            faqItem.classList.toggle('active');
+            content.classList.toggle('active');
+            
+            // Change icon
+            if (faqItem.classList.contains('active')) {
+                icon.textContent = '−';
+            } else {
+                icon.textContent = '+';
+            }
+        }
+
+        
+        document.addEventListener("DOMContentLoaded", function () {
+        const mainMenu = document.querySelector(".main-menu .navbar-collapse").innerHTML;
+        const stickyMenu = document.querySelector(".sticky-header .main-menu");
+        if (mainMenu && stickyMenu) {
+            stickyMenu.innerHTML = mainMenu;
+        }
+    });
+    function toggleFaq(header) {
+    const faqItem = header.parentElement;
+    const content = faqItem.querySelector('.faq-content');
+    const icon = header.querySelector('.faq-icon');
+    const allItems = header.closest('.faq-container, .faq-section').querySelectorAll('.faq-item');
+
+    // If already open, close it
+    if (faqItem.classList.contains('active')) {
+        faqItem.classList.remove('active');
+        content.classList.remove('active');
+        icon.textContent = '+';
+        return;
+    }
+
+    // Close all FAQs
+    allItems.forEach(item => {
+        item.classList.remove('active');
+        item.querySelector('.faq-content').classList.remove('active');
+        item.querySelector('.faq-icon').textContent = '+';
+    });
+
+    // Open clicked item
+    faqItem.classList.add('active');
+    content.classList.add('active');
+    icon.textContent = '-';
+}
+
+// On load, make sure all items are closed and icons set to '+'
+document.addEventListener('DOMContentLoaded', function () {
+
+    document.querySelectorAll('.faq-item').forEach(item => {
+        item.classList.remove('active');
+        item.querySelector('.faq-content').classList.remove('active');
+        item.querySelector('.faq-icon').textContent = '+';
+    });
+});
+
+    (function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93aeed4e8fe32e87',t:'MTc0NjQzNDM2Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
+</html> 
