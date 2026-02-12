@@ -51,6 +51,10 @@
 ====================================================================
 
  ***/
+ 
+.header-lower {
+    background-color: #ffffff !important;
+}
 
  .process-style-two .pattern-layer div {
     background-size: contain; /* or cover if you want it to fill */
@@ -10816,4 +10820,18 @@ body.mobile-menu-visible .menu-backdrop {
     .mobile-menu {
         display: block;
     }
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+.boxed_wrapper {
+    margin: 0 auto;
+    padding: 0;
+}
+
+.main-header {
+    margin-top: 0;
 }

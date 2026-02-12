@@ -16,8 +16,6 @@ env/
 .venv/
 
 # Static & media (if auto-generated)
-staticfiles/
-media/
 
 # IDE files
 .vscode/

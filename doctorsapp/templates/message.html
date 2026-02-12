@@ -120,7 +120,7 @@
                         </div>
                         <div class="top-right pull-right">
                             <ul class="info clearfix">
-                                <li><a href="{% url 'register' %}">Sign in</a></li>
+                                <li><a href="{% url 'login' %}">Sign in</a></li>
                                 <li><a href="">Career</a></li>
                                 <li><a href="">Contact</a></li>
                                 <li class="language">
@@ -202,6 +202,9 @@
                                                 <li><a href="">Blog Details</a></li>
                                             </ul>
                                         </li>
+                                        {% if user.is_authenticated %}
+                                        <li><a href="{% url 'logout' %}"></a></li>
+                                        {% endif %}
                                     </ul>
                                 </div>
                             </nav>

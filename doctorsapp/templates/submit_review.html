@@ -78,7 +78,7 @@
                         </div>
                         <div class="top-right pull-right">
                             <ul class="info clearfix">
-                                <li><a href="{% url 'register' %}">Sign In</a></li>
+                                <li><a href="{% url 'login' %}">Sign In</a></li>
                                 <li><a href="{% url 'contact' %}">Contact</a></li>
                                 <li class="language">
                                     <a href="{% url 'home' %}">Language</a>
@@ -139,7 +139,11 @@
                                         <li><a href="{% url 'doctor_list' %}">Find Doctors</a></li>
                                         <li><a href="{% url 'about' %}">About Us</a></li>
                                         <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                                        {% if user.is_authenticated %}
+                                        <li><a href="{% url 'logout' %}"></a></li>
+                                        {% endif %}
                                     </ul>
+
                                 </div>
                             </nav>
                         </div>
@@ -170,6 +174,8 @@
             <nav class="menu-box">
                 <div class="nav-logo"><a href=""><img src="/static/assets/images/logo-2.png" alt="" title=""></a></div>
                 <div class="menu-outer"></div>
+                 <div class="btn-box"><a href="{% url 'register' %}" class="theme-btn-one"><i class="icon-image"></i> Join Now</a></div>
+                
                 <div class="contact-info">
                     <h4>Contact Info</h4>
                     <ul>
@@ -390,6 +396,18 @@
                                 <li><i class="fas fa-phone me-2"></i> <a href="tel:23055873407">+2(305) 587-3407</a></li>
                                 <li><i class="fas fa-envelope me-2"></i> <a href="mailto:info@docpro.com">info@docpro.com</a></li>
                             </ul>
+                            <div class="social-links">
+                                <div class="d-flex justify-content-center justify-content-md-start mt-3">
+                                    <a href="" style="margin-right:15px;"><i class="fab fa-twitter"></i></a>
+                                    <a href="" style="margin-right:15px;"><i class="fab fa-facebook-square"></i></a>
+                                    <a href="" style="margin-right:15px;"><i class="fab fa-pintrest-p"></i></a>
+                                    <a href="" style="margin-right:15px;"><i class="fab fa-instagram"></i></a>
+                                    <a href=""><i class="youtube"><i></a>
+                                
+                                
+                            <div class="social-links">
+                                <div class="d-flex justify-content-center justify-content-md-start mt-3">
+                                    <a href="" style="margin-right:15px;"><i class="fab fa-twitter"></i></a>
                         </div>
                     </div>
 
