@@ -55,8 +55,6 @@ def is_ajax(request):
 def home(request):
     doctor = None
     patient = None
-
-    # Detect current logged-in user type
     if request.user.is_authenticated:
         try:
             doctor = Doctor.objects.get(user=request.user)
@@ -464,12 +462,9 @@ Location: {appointment.location}
 Reason: {appointment.purpose}
 Appointment Mode: {appointment.appointment_mode.capitalize()}
 """
-
-    # Add Zoom link if online
     if appointment.appointment_mode == 'online' and appointment.zoom_link:
         message += f"\nZoom Link: {appointment.zoom_link}\nPlease join the meeting on time."
 
-    # Closing
     message += """
 Please arrive at least 10 minutes early (or join online 5 minutes before start).
 
@@ -757,8 +752,6 @@ def calendar_events(request):
                 "Cancelled": "red",
                 "Pending": "orange"
             }.get(appt.status, "gray")
-
-            # Add Zoom link to description if mode is online
             description = f"Mode: {appointment_mode}\nPurpose: {purpose}"
             if appt.appointment_mode == "online" and appt.zoom_link:
                 description += f"\nZoom Link: {appt.zoom_link}"
@@ -768,8 +761,8 @@ def calendar_events(request):
                 "start": appt.appointment_datetime.isoformat(),
                 "end": appt.appointment_datetime.isoformat(),
                 "color": status_color,
-                "description": description,  # This can be shown in tooltips or modals
-                "url": appt.zoom_link if appt.appointment_mode == "online" and appt.zoom_link else "",  # clickable link (optional)
+                "description": description,  
+                "url": appt.zoom_link if appt.appointment_mode == "online" and appt.zoom_link else "", 
             })
 
     except Doctor.DoesNotExist:
@@ -1102,13 +1095,11 @@ import razorpay
 @login_required(login_url='login')
 def book_appointment(request, doctor_id): 
     doctor = get_object_or_404(Doctor, id=doctor_id)
-
-    # ✅ Safer handling to avoid 404 if patient profile doesn't exist
     try:
         patient = request.user.patient_profile
     except Patient.DoesNotExist:
         messages.error(request, "You must be logged in as a patient to book an appointment.")
-        return redirect('login')  # or return redirect('patient_register') if you have a setup page
+        return redirect('login')
 
     if request.method == 'POST':
         selected_date = request.GET.get('date')
@@ -1121,7 +1112,6 @@ def book_appointment(request, doctor_id):
             timezone.datetime.strptime(f"{selected_date} {selected_time}", "%Y-%m-%d %H:%M")
         )
 
-        # Get form fields from POST
         appointment = Appointment.objects.create(
             patient=patient,
             doctor=doctor,
@@ -1150,7 +1140,6 @@ def book_appointment(request, doctor_id):
 
         return redirect('confirm_appointment', appointment.id)
 
-    # For GET: show appointment details before confirmation
     selected_date = request.GET.get('date')
     selected_time = request.GET.get('time')
     selected_services_ids = request.GET.getlist('services')
@@ -1201,7 +1190,7 @@ def create_razorpay_order(request, appointment_id):
     )
 
     order = client.order.create({
-        "amount": int(appointment.total_amount * 100),  # paise
+        "amount": int(appointment.total_amount * 100),
         "currency": "INR",
         "payment_capture": 1
     })
@@ -1239,13 +1228,8 @@ def payment_success(request):
 
         appointment = Appointment.objects.get(razorpay_order_id=razorpay_order_id)
 
-        # 🔒 Prevent duplicate processing
         if appointment.payment_status == "paid":
             return JsonResponse({"status": "success"})
-
-        # ===============================
-        # ✅ VERIFY RAZORPAY SIGNATURE
-        # ===============================
         client = razorpay.Client(
             auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
         )
@@ -1256,15 +1240,12 @@ def payment_success(request):
             "razorpay_signature": razorpay_signature
         })
 
-        # ===============================
-        # ✅ PAYMENT SUCCESS
-        # ===============================
         appointment.payment_status = "paid"
         appointment.status = "Accepted"
         appointment.razorpay_payment_id = razorpay_payment_id
         appointment.razorpay_signature = razorpay_signature
 
-        # 🎥 Auto video link if ONLINE
+        
         video_text = ""
         if appointment.appointment_mode == "online":
             appointment.video_link = f"https://meet.jit.si/appointment-{appointment.id}"
@@ -1275,7 +1256,6 @@ def payment_success(request):
 
         appointment_time = appointment.appointment_datetime.strftime("%Y-%m-%d %H:%M")
 
-        # 📧 EMAIL → PATIENT
         send_mail(
             subject="Appointment Confirmed ✅",
             message=(
@@ -1292,7 +1272,6 @@ def payment_success(request):
             fail_silently=True,
         )
 
-        # 📧 EMAIL → DOCTOR
         send_mail(
             subject="New Appointment Booked 📅",
             message=(
@@ -1589,16 +1568,14 @@ def doctor_reviews(request, doctor_id):
 def submit_review(request):
     if request.method == 'POST':
         post_data = request.POST.copy()
-        post_data['rating'] = request.POST.get('rating')  # keep if using custom rating logic
+        post_data['rating'] = request.POST.get('rating')
 
         form = SubmitReviewForm(post_data)
         if form.is_valid():
             review = form.save(commit=False)
             review.patient = request.user
-            review.doctor = form.cleaned_data['doctor']  # ✅ get selected doctor
+            review.doctor = form.cleaned_data['doctor'] 
             review.save()
-
-            # Update doctor ratings
             doctor_reviews = SubmitReview.objects.filter(doctor=review.doctor)
             review.doctor.total_reviews = doctor_reviews.count()
             review.doctor.average_rating = round(
@@ -1622,8 +1599,6 @@ def submit_review(request):
 def contact_us(request):
     doctor = None
     patient = None
- 
-
     if request.user.is_authenticated:
         try:
             doctor = Doctor.objects.get(user=request.user)
@@ -1671,7 +1646,6 @@ def clinic(request, clinic_id):
     patient = None
     clinic = Clinic.objects.first()
 
-    # Authenticate user type
     if request.user.is_authenticated:
         try:
             doctor = Doctor.objects.get(user=request.user)
@@ -1912,8 +1886,6 @@ def update_clinic_contact(request, clinic_id):
         doctor = request.user.doctor_profile
     except AttributeError:
         return HttpResponseForbidden("You are not authorized to perform this action.")
-
-    # Check if the logged-in doctor is assigned to this clinic
     if doctor not in clinic.assigned_doctors.all():
         return HttpResponseForbidden("You are not allowed to update this clinic.")
 
@@ -1978,14 +1950,12 @@ def search_results(request):
         doctors = Doctor.objects.none()
         clinics = Clinic.objects.none()
 
-        # Doctor filter logic
         doctor_filter = (
             Q(user__first_name__icontains=query) |
             Q(user__last_name__icontains=query) |
             Q(specialization__icontains=query)
         )
 
-        # Clinic filter logic
         clinic_filter = (
             Q(name__icontains=query) |
             Q(city__icontains=query)

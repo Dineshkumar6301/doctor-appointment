@@ -441,12 +441,9 @@ class Appointment(models.Model):
         default='pending'
     )
 
-    # ✅ Razorpay fields
     razorpay_order_id = models.CharField(max_length=255, null=True, blank=True)
     razorpay_payment_id = models.CharField(max_length=255, null=True, blank=True)
     razorpay_signature = models.CharField(max_length=255, null=True, blank=True)
-
-    # 🎥 Online meeting links
     zoom_link = models.URLField(null=True, blank=True)
     video_link = models.URLField(null=True, blank=True)
 
