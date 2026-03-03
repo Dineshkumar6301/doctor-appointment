@@ -226,6 +226,7 @@
                                         </li>
                                         {% if user.is_authenticated %}
                                         <li><a href="{% url 'logout' %}">Log Out</a></li>
+                                        {% else %}
                                     </ul>
                                 </div>
                             </nav>
