@@ -140,8 +140,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 ALLOWED_HOSTS = [
-    'doctorsapp1-0wua.onrender.com',
-    'www.doctorsapp.com',
+    'doctor-appointment-9u6e.onrender.com',
     'localhost',
     '127.0.0.1',
     '192.168.0.54',
