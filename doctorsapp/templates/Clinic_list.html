@@ -26,7 +26,7 @@
     <link href="{% static 'assets/css/responsive.css' %}" rel="stylesheet">
 </head>
 <body>
-    <div class="boxed_wrapper">
+    <div class="boxed_wrapper" style="background-color: #ffffff;">
         <!-- Preloader -->
         <div class="preloader"></div>
         <!-- Main Header -->
@@ -37,7 +37,7 @@
                     <div class="top-inner clearfix">
                         <div class="top-left pull-left">
                             <ul class="info clearfix">
-                                <li><i class="fas fa-map-marker-alt"></i> Discover St, New York, NY 10012, USA</li>
+                                <li><i class="fas fa-map-marker-alt"></i>Discover St, New York, NY 10012, USA</li>
                                 <li><i class="fas fa-phone"></i><a href="tel:2512353256">+251-235-3256</a></li>
                             </ul>
                         </div>
@@ -49,7 +49,7 @@
                                 <li class="language">
                                     <a href="{% url 'home' %}">Language</a>
                                     <ul class="language-dropdown">
-                                        <li><a href="">English</a></li>
+                                        <li><a href="">English</a></li>                                      
                                     </ul>
                                 </li>
                             </ul>
@@ -61,16 +61,13 @@
             <div class="header-lower">
                 <div class="auto-container">
                     <div class="outer-box">
-                        <!-- Logo -->
                         <div class="logo-box">
                             <figure class="logo">
-                                <a href="{% url 'home' %}">
-                                    <img src="{% static 'assets/images/logo-3.png' %}" alt="Logo">
-                                </a>
+                                <a href="{% url 'home' %}"><img src="{% static 'assets/images/logo-3.png' %}" alt="Logo"></a>
                             </figure>
                         </div>
-                        <!-- Menu Area -->
                         <div class="menu-area">
+                            <!-- Mobile Navigation Toggler -->
                             <div class="mobile-nav-toggler">
                                 <i class="icon-bar"></i>
                                 <i class="icon-bar"></i>
@@ -80,54 +77,32 @@
                                 <div class="collapse navbar-collapse show clearfix" id="navbarSupportedContent">
                                     <ul class="navigation clearfix">
                                         <li><a href="{% url 'home' %}">Home</a></li>
-
-                                        <!-- Doctor Menu -->
-                                        {% if doctor and doctor.id %}
-                                        <li class="dropdown">
-                                            <a href="{% url 'doctor_dashboard' %}">Doctors</a>
-                                            <ul>
+                                        {% if request.user.is_authenticated %}
+                                            {% if request.user.doctor_profile %}
+                                                <!-- Doctor Menu -->
                                                 <li class="dropdown">
-                                                    <a href="{% url 'doctor_dashboard' %}">Doctors Dashboard</a>
+                                                    <a href="{% url 'doctor_dashboard' %}">Doctors</a>
                                                     <ul>
-                                                        <li><a href="{% url 'doctor_dashboard' %}">Dashboard</a></li>
-                                                        <li><a href="{% url 'doctor_appointment_list' %}">Appointments</a></li>
-                                                        <li><a href="{% url 'my_patients' %}">My Patients</a></li>
-                                                        <li><a href="{% url 'add_listing' %}">Add Listing</a></li>
-                                                        <li><a href="{% url 'schedule_timing' %}">Schedule Timing</a></li>
-                                                        <li><a href="{% url 'my_profile' %}">My Profile</a></li>
-                                                        <li><a href="{% url 'change_password' %}">Change Password</a></li>
-                                                        <li><a href="{% url 'logout' %}">Logout</a></li>
+                                                        <li><a href="{% url 'doctor_dashboard' %}">Doctors Dashboard</a></li>
+                                                        <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
+                                                        <li>
+                                                            <a href="{% url 'doctor_detail' request.user.doctor_profile.id %}">Doctor Details</a>
+                                                        </li>
                                                     </ul>
                                                 </li>
-                                                <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
-                                                <li>
-                                                    <a href="{% url 'doctor_detail' doctor.id %}">Doctor Details</a>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        {% endif %}
-                                        <!-- Patient Menu -->
-                                        {% if patient and patient.id %}
-                                        <li class="dropdown">
-                                            <a href="{% url 'home' %}">Patients</a>
-                                            <ul>
+                                            {% elif request.user.patient_profile %}
+                                                <!-- Patient Menu -->
                                                 <li class="dropdown">
-                                                    <a href="{% url 'patient_dashboard' %}">Patient Dashboard</a>
+                                                    <a href="{% url 'patient_dashboard' %}">Patients</a>
                                                     <ul>
-                                                        <li><a href="{% url 'patient_dashboard' %}">Dashboard</a></li>
-                                                        <li><a href="{% url 'profile' %}">My Profile</a></li>
-                                                        <li><a href="{% url 'change_password2' %}">Change Password</a></li>
-                                                        <li><a href="{% url 'logout' %}">Logout</a></li>
+                                                        <li><a href="{% url 'patient_dashboard' %}">Patient Dashboard</a></li>
+                                                        <li><a href ="{% url 'submit_review' %}">Submit Review</a></li>
+                                                        <li><a href="{% url 'register' %}">Register Page</a></li>
                                                     </ul>
                                                 </li>
-                                                <li><a href="{% url 'submit_review' %}">Submit Review</a></li>
-                                                <li><a href="{% url 'register' %}">Register Page</a></li>
-                                            </ul>
-                                        </li>
+                                            {% endif %}
                                         {% endif %}
-                                        <!-- Pages Menu -->
-                                        <li class="dropdown">
-                                            <a href="">Pages</a>
+                                        <li class="dropdown"><a href="">Pages</a>
                                             <div class="megamenu">
                                                 <div class="row clearfix">
                                                     <div class="col-lg-6 column">
@@ -153,31 +128,28 @@
                                                                 {% endif %}
                                                             </li>
                                                         </ul>
-                                                    </div>  
+                                                    </div>
                                                 </div>
                                             </div>
                                         </li>
-                                        <!-- News Menu -->
-                                        <li class="dropdown">
-                                            <a href="">News</a>
+                                        <li class="dropdown"><a href="">News</a>
                                             <ul>
                                                 <li><a href="">Blog Grid 01</a></li>
                                                 <li><a href="">Blog Details</a></li>
                                             </ul>
                                         </li>
-                                        {% if user.is_authenticated %}
-                                        <li><a href="{% url 'logot' %}">Log Out</a></li>
+                                    
+                                         {% if user.is_authenticated %}
+                                        <li><a href="{% url 'logout' %}">Logout</a></li>
                                         {% endif %}
                                     </ul>
                                 </div>
                             </nav>
                         </div>
-                        <!-- Join Now Button -->
                         <div class="btn-box">
-                            <a href="{% url 'register' %}" class="theme-btn-one">
-                                <i class="icon-image"></i> Join Now
-                            </a>
+                            <a href="{% url 'register' %}" class="theme-btn-one"><i class="icon-image"></i>Join Now</a>
                         </div>
+                
                     </div>
                 </div>
             </div>
@@ -187,38 +159,35 @@
                     <div class="outer-box">
                         <div class="logo-box">
                             <figure class="logo">
-                                <a href="{% url 'home' %}">
-                                    <img src="{% static 'assets/images/small-logo.png' %}" alt="Small Logo">
-                                </a>
+                                <a href="{% url 'home' %}"><img src="{% static 'assets/images/small-logo.png' %}" alt="Small Logo"></a>
                             </figure>
                         </div>
                         <div class="menu-area">
                             <nav class="main-menu clearfix"></nav>
                         </div>
                         <div class="btn-box">
-                            <a href="{% url 'register' %}" class="theme-btn-one">
-                                <i class="icon-image"></i> Join Now
-                            </a>
+                            <a href="{% url 'register' %}" class="theme-btn-one"><i class="icon-image"></i>Join Now</a>
                         </div>
                     </div>
                 </div>
             </div>
         </header>
-        <!-- Main Header End -->
-        <!-- Mobile Menu -->
+        <!-- Mobile Menu  -->
         <div class="mobile-menu">
             <div class="menu-backdrop"></div>
             <div class="close-btn"><i class="fas fa-times"></i></div>
             <nav class="menu-box">
-                <div class="nav-logo">
-                    <a href="{% url 'home' %}">
-                        <img src="{% static 'assets/images/logo-2.png' %}" alt="Mobile Logo">
+                <div class="nav-logo"><a href=""><img src="/static/assets/images/logo-2.png" alt="" title=""></a></div>
+                
+                <div class="menu-outer"></div>
+                <div class="btn-box" style="background: transparent;">
+                    <a href="{% url 'register' %}"
+                    class="theme-btn-one"
+                    style="background:#2ec4b6; box-shadow:none; filter:none; border:none;">
+                        <i class="icon-image"></i> Join Now
                     </a>
                 </div>
-                <div class="menu-outer"></div>
-                    <div class="btn-box" style="background: transparent;">
-                        <a href="{% url 'register' %}" class="theme-btn-one" style="background:#2ec4b6; box-shadow:none; filter:none; border:none;"><i class="icon-image"></i>Join Now</a>
-                    </div>
+
                 <div class="contact-info">
                     <h4>Contact Info</h4>
                     <ul>
@@ -226,18 +195,20 @@
                         <li><a href="tel:+8801682648101">+88 01682648101</a></li>
                     </ul>
                 </div>
+               
+                
                 <div class="social-links">
                     <ul class="clearfix">
-                        <li><a href=""><span class="fab fa-twitter" style="color: #ffff;"></span></a></li>
-                        <li><a href=""><span class="fab fa-facebook-square" style="color: #ffff;"></span></a></li>
-                        <li><a href=""><span class="fab fa-pinterest-p" style="color: #ffff;"></span></a></li>
-                        <li><a href=""><span class="fab fa-instagram" style="color: #ffff;"></span></a></li>
-                        <li><a href=""><span class="fab fa-youtube" style="color: #ffff;"></span></a></li>
+                        <li><a href=""><span class="fab fa-twitter" style="color: #ffff"></span></a></li>
+                        <li><a href=""><span class="fab fa-facebook-square" style="color: #ffff"></span></a></li>
+                        <li><a href=""><span class="fab fa-pinterest-p" style="color: #ffff"></span></a></li>
+                        <li><a href=""><span class="fab fa-instagram" style="color: #ffff"></span></a></li>
+                        <li><a href=""><span class="fab fa-youtube" style="color: #ffff"></span></a></li>
                     </ul>
                 </div>
             </nav>
         </div>
-        <!-- Mobile Menu End -->
+    
          <!-- Page Title -->
         <section class="page-title-two">
             <div class="title-box centred bg-color-2">

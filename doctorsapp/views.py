@@ -1938,7 +1938,7 @@ def Clinic_list(request):
         'query': query,  
     }
 
-    return render(request, 'Clinic_list.html', context)
+    return render(request, 'clinic_list.html', context)
 from django.utils.http import urlencode
 from .models import Doctor, Clinic
 
