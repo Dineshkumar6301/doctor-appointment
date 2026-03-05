@@ -9,6 +9,7 @@ from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
 from datetime import date, datetime
 
+from cloudinary.models import CloudinaryField
 
 GENDER_CHOICES = [
         ('Male', 'Male'),
@@ -41,7 +42,7 @@ class CustomUserManager(BaseUserManager):
 class User(AbstractUser):
     username = None
     email = models.EmailField(_('email address'), unique=True, null=True, blank=True)
-    profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
+    profile_image = CloudinaryField('image', folder='profile_images', blank=True, null=True)
     mobile_number = models.CharField(max_length=15, blank=True, null=True)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
@@ -85,7 +86,7 @@ class Doctor(models.Model):
     state = models.CharField(max_length=100, null=True ,blank=True)
     zip_code = models.CharField(max_length=20, blank=True)
     country = models.CharField(max_length=100, blank=True)
-    profile_image = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
+    profile_image = CloudinaryField('image', folder='doctor_profiles', blank=True, null=True)
     facebook_url = models.URLField(blank=True,null =True)
     twitter_url = models.URLField(blank=True,null=True)
     google_plus_url = models.URLField(blank=True,null=True)
@@ -136,7 +137,8 @@ class Clinic(models.Model):
     city = models.CharField(max_length=100, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     tagline = models.CharField(max_length=255, blank=True, null=True)
-    image = models.ImageField(upload_to='clinic_images/', blank=True, null=True)
+    
+    image = CloudinaryField('image', folder='clinic_images', blank=True, null=True)
     gallery_images = models.JSONField(default=list, blank=True, null=True)
     overview = models.TextField(blank=True, null=True)
     specifications = models.JSONField(default=list, blank=True,null =True)
@@ -146,7 +148,7 @@ class Clinic(models.Model):
     working_hours = models.CharField(max_length=255, blank=True, null=True)
     map_lat = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
     map_lng = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
-    map_marker = models.ImageField(upload_to='map_markers/', blank=True, null=True)
+    map_marker = CloudinaryField('image', folder='map_markers/', blank=True, null=True)
     facebook = models.URLField(blank=True, null=True)
     instagram = models.URLField(blank=True, null=True)
     twitter = models.URLField(blank=True, null=True)
@@ -164,7 +166,8 @@ class Branch(models.Model):
 
 class GalleryImage(models.Model):
     clinic = models.ForeignKey(Clinic, on_delete=models.CASCADE, related_name='images')  
-    image = models.ImageField(upload_to='clinic_gallery/')
+    
+    image = CloudinaryField('image', folder='clinic_gallery', blank=True, null=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -246,7 +249,7 @@ class Patient(models.Model):
     address = models.CharField(max_length=255, null=True, blank=True)
     mobile_number = models.CharField(max_length=15, blank=True, null=True)
     doctor_note = models.TextField(blank=True)
-    profile_image = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
+    profile_image = CloudinaryField('image', folder='profile_pics', blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Offline')
     favourites = models.ManyToManyField('Doctor', through='FavouriteDoctor', related_name='favoured_by')
     created_at = models.DateTimeField(default=timezone.now)
@@ -403,11 +406,12 @@ class Appointment(models.Model):
     zip_code = models.CharField(max_length=10, null=True, blank=True)
     location = models.CharField(max_length=255, blank=True, null=True)
 
-    profile_image = models.ImageField(
-        upload_to='profile_pics/',
-        blank=True,
-        null=True
-    )
+    profile_image = CloudinaryField(
+    'image',
+    folder='profile_pics',
+    blank=True,
+    null=True
+)
 
     purpose = models.TextField(blank=True, null=True)
     appointment_notes = models.TextField(blank=True, null=True)
