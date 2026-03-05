@@ -7,6 +7,7 @@ from pathlib import Path
 import dj_database_url
 from decouple import config
 
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ==============================
@@ -42,8 +43,18 @@ INSTALLED_APPS = [
     'doctorsapp',
     'crispy_forms',
     'django_extensions',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv("CLOUDINARY_CLOUD_NAME"),
+    'API_KEY': os.getenv("CLOUDINARY_API_KEY"),
+    'API_SECRET': os.getenv("CLOUDINARY_API_SECRET"),
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 AUTH_USER_MODEL = 'doctorsapp.User'
 
 # ==============================
@@ -109,15 +120,6 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 USE_TZ = True
-
-# ==============================
-# STATIC FILES
-# ==============================
-
-import os
-from pathlib import Path
-
-BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ==============================
 # STATIC FILES
