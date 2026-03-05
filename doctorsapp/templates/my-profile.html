@@ -271,8 +271,8 @@
                 <div class="profile-box">
                     <div class="upper-box">
                         <div class="profile-image-wrapper">
-                            <img src="{% if doctor.profile_image and doctor.profile_image.name %}{{ doctor.profile_image.url }}{% else %}{% static 'assets/images/default-profile.jpg' %}{% endif %}" 
-                                alt="Profile" class="profile-img">
+                            <img src="{% if doctor.profile_image %}{{ doctor.profile_image.url }}{% else %}{% static 'assets/images/default-profile.jpg' %}{% endif %}" 
+alt="Profile" class="profile-img">
                         </div>
                         <div class="title-box centred">
                             <div class="inner">

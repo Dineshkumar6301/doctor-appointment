@@ -284,7 +284,7 @@
                     <div class="col-lg-3 col-md-12 col-sm-12 left-column">
                         <div class="profile-box patient-profile">
                             <div class="upper-box">
-                                {% if patient.profile_image and patient.profile_image.name %}
+                                {% if patient.profile_image and patient.profile_image %}
                                     <img src="{{ patient.profile_image.url }}" alt="Profile" class="img-thumbnail" height="100">
                                 {% else %}
                                     <img src="{% static 'assets/images/default-profile.jpg' %}" alt="Default Profile" class="img-thumbnail" height="100">

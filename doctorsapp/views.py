@@ -961,7 +961,7 @@ def add_listing(request):
                     price=price,
                 )
 
-        return redirect('doctor_dashboard')
+        return redirect('add_listing')
 
     else:
         pricing = DoctorListing.objects.filter(doctor=doctor)
