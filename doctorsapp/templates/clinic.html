@@ -100,6 +100,20 @@
                                 <div class="collapse navbar-collapse show clearfix" id="navbarSupportedContent">
                                     <ul class="navigation clearfix">
                                         <li><a href="{% url 'home' %}">Home</a></li>
+                                         {% if request.user.is_authenticated %}
+                                        {% if request.user.role == "clinic_admin" or request.user.is_clinic %}
+                                            <!-- Clinic Menu -->
+                                            <li class="dropdown">
+                                                <a href="">Clinic</a>
+                                                <ul>
+                                                    <li><a href="{% url 'clinic_admin_dashboard' %}">Dashboard</a></li>
+                                                    <li><a href="{% url 'clinic_appointment_list' %}">Appointments</a></li>
+                                                    <li><a href="{% url 'clinic_listing' %}">Add Listing</a></li>
+                                                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                                                </ul>
+                                            </li>
+                                        {% endif %}
+                                        {% endif %}
 
                                         {% if request.user.is_authenticated %}
                                             {% if doctor %}
@@ -274,7 +288,7 @@
                     <div class="col-lg-8 col-md-12 col-sm-12 content-side">
                         <div class="clinic-details-content card p-4 shadow-sm">
                             <div class="d-flex justify-content-between align-items-center mb-4">
-                                {% if request.user.is_authenticated and request.user == clinic.doctor.user %}
+                                {% if request.user.is_authenticated and request.user == clinic.admin %}
                                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editClinicModal">Edit Clinic Details</button>
                                 {% endif %}
                             </div>
@@ -322,7 +336,7 @@
                                     <!-- Overview Tab -->
                                     <div class="tab-pane fade show active" id="tab-1" role="tabpanel" aria-labelledby="tab-1-btn">
                                         <div class="inner-box p-4 bg-white rounded shadow-sm">
-                                            {% if request.user.is_authenticated and request.user == clinic.doctor.user %}
+                                            {% if request.user.is_authenticated and request.user == clinic.admin %}
                                             <div class="text-end mb-3">
                                                 <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editOverviewModal">
                                                     <i class="fas fa-edit me-1"></i> Edit Overview
@@ -509,7 +523,9 @@
                                     <div class="tab-pane fade" id="tab-3" role="tabpanel" aria-labelledby="tab-3-btn">
                                         <div class="locations p-4 bg-white rounded shadow-sm">
                                             <h3 class="mb-4">Locations</h3>
+
                                             {% for branch in clinic.branches.all %}
+
                                             <div class="location-card border rounded p-3 shadow-sm bg-light mb-3">
                                                 <h5>{{ branch.name }}</h5>
                                                 <p><i class="fas fa-map-marker-alt me-2"></i>{{ branch.address }}</p>
@@ -521,7 +537,7 @@
                                                     <i class="fas fa-directions me-1"></i> Get Directions
                                                 </a>
                                                 {% endif %}
-                                                {% if request.user.is_authenticated and request.user == clinic.doctor.user %}
+                                                {% if request.user.is_authenticated and request.user == clinic.admin %}
                                                 <div class="mt-3 d-flex gap-2">
                                                     <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editBranchModal{{ branch.id }}">
                                                         <i class="fas fa-edit"></i> Edit
@@ -534,9 +550,12 @@
                                                 {% endif %}
                                             </div>
                                             {% endfor %}
-                                            {% if request.user.is_authenticated and request.user == clinic.doctor.user %}
-                                            <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#addLocationModal">Add New Location</button>
+                                           {% if request.user.is_authenticated and request.user == clinic.admin %}
+                                            <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#addLocationModal">
+                                                Add New Location
+                                            </button>
                                             {% endif %}
+                                        
                                         </div>
                                     </div>
                                 </div>
@@ -547,7 +566,7 @@
                     <div class="col-lg-4 col-md-12 col-sm-12 sidebar-side"> 
                         <div class="clinic-sidebar">
                             <div class="info-widget">
-                                {% if is_doctor %}
+                                {% if request.user.is_authenticated and request.user == clinic.admin %}
                                 <button type="button" style="background:blue;color:white;" class="btn"
                                         data-bs-toggle="modal" data-bs-target="#editContactModal">
                                     Edit Contact Info
@@ -632,11 +651,12 @@
         </section>
         <!-- Modals -->
         <!-- Edit Clinic Modal -->
-        {% if request.user.is_authenticated and request.user == clinic.doctor.user %}
+        {% if request.user.is_authenticated and request.user == clinic.admin %}
         <div class="modal fade" id="editClinicModal" tabindex="-1" aria-labelledby="editClinicModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
-                    <form id="clinicEditForm" method="POST" enctype="multipart/form-data" action="{% url 'edit_clinic' %}">
+                    <form id="clinicEditForm" method="POST" enctype="multipart/form-data" action="{% url 'edit_clinic' clinic.id %}">
+    {% csrf_token %}
                         {% csrf_token %}
                         <div class="modal-header">
                             <h5 class="modal-title" id="editClinicModalLabel">Edit Clinic Details</h5>
@@ -686,53 +706,71 @@
         </div>
         {% endif %}
         <!-- Edit Overview Modal -->
-         {% if request.user.is_authenticated and request.user == clinic.doctor.user %}
-        <div class="modal fade" id="editOverviewModal" tabindex="-1" aria-labelledby="editOverviewModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-scrollable">
-                <div class="modal-content">
-                    <form method="POST" action="{% url 'edit_clinic_overview' clinic.id %}" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="editOverviewModalLabel">Edit Clinic Overview</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="mb-3">
-                                <label for="about" class="form-label fw-bold">About Clinic</label>
-                                <textarea class="form-control" id="about" name="about" rows="4">{{ clinic.about }}</textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label for="specifications" class="form-label fw-bold">
-                                    Specifications <small class="text-muted">(format:Numbering.Specification name comma-separated)</small>
-                                </label>
-                                <input type="text" class="form-control" id="specifications" name="specifications" value="{{ specifications|join:', ' }}">
-                            </div>
+        {% if request.user.is_authenticated and request.user == clinic.admin %}
+<div class="modal fade" id="editOverviewModal" tabindex="-1"
+     aria-labelledby="editOverviewModalLabel"
+     aria-hidden="true"
+     data-bs-backdrop="static"
+     data-bs-keyboard="false">
 
-                            <div class="mb-3">
-                                <label for="awards" class="form-label fw-bold">Awards <small class="text-muted">(format:comma-separated)</small></label>
-                                <input type="text" class="form-control" id="awards" name="awards" value="{% if clinic.awards %}{{ clinic.awards|join:', ' }}{% endif %}">
-                            </div>
-                            <div class="mb-3">
-                                <label for="services" class="form-label fw-bold">Services <small class="text-muted">(format: Name-Price| separate using '|')</small></label>
-                                <input type="text" class="form-control" id="services" name="services" value="{% for service in services %}{{ service.name }}-{{ service.price }}{% if not forloop.last %}|{% endif %}{% endfor %}">
-                            </div>
-                            <div class="mb-3">
-                                <label for="gallery_images" class="form-label fw-bold">Upload Gallery Images</label>
-                                <input type="file" class="form-control" name="gallery_images" multiple>
-                                <div class="form-text">You can upload multiple images at once.</div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-success">Save Changes</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        </div>
-                    </form>
-                </div>
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="editOverviewModalLabel">Edit Clinic Overview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+
+            <div class="modal-body">
+
+                <form method="POST" action="{% url 'edit_clinic_overview' clinic.id %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">About Clinic</label>
+                        <textarea class="form-control" name="about" rows="4">{{ clinic.about }}</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">
+                            Specifications
+                            <small class="text-muted">(format:Numbering.Specification name comma-separated)</small>
+                        </label>
+                        <input type="text" class="form-control" name="specifications"
+                               value="{{ numbered_specs|join:'' }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">
+                            Awards
+                            <small class="text-muted">(format:comma-separated)</small>
+                        </label>
+                        <input type="text" class="form-control" name="awards"
+                               value="{% if clinic.awards %}{{ clinic.awards|join:', ' }}{% endif %}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Upload Gallery Images</label>
+                        <input type="file" class="form-control" name="gallery_images" multiple>
+                        <div class="form-text">You can upload multiple images at once.</div>
+                    </div>
+
+            </div>
+
+            <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Save Changes</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </form>
+            </div>
+
         </div>
-        {% endif %}
+
+    </div>
+</div>
+{% endif %}
         <!-- Add Location Modal -->
-        {% if request.user.is_authenticated and request.user == clinic.doctor.user %}
+        {% if request.user.is_authenticated and request.user == clinic.admin %}
         <div class="modal fade" id="addLocationModal" tabindex="-1" aria-labelledby="addLocationModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -772,7 +810,7 @@
 
         <!-- Edit Branch Modals -->
         {% for branch in clinic.branches.all %}
-        {% if request.user.is_authenticated and request.user == clinic.doctor.user %}
+        {% if request.user.is_authenticated and request.user == clinic.admin %}
         <div class="modal fade" id="editBranchModal{{ branch.id }}" tabindex="-1" aria-labelledby="editBranchModalLabel{{ branch.id }}" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -1029,7 +1067,7 @@
                 e.preventDefault();
                 let formData = new FormData(this);
                 $.ajax({
-                    url: "{% url 'edit_clinic' %}",
+                    url: "{% url 'edit_clinic' clinic.id %}",
                     type: 'POST',
                     data: formData,
                     processData: false,

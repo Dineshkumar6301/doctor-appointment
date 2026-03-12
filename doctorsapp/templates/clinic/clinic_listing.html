@@ -1,11 +1,13 @@
 {% load static %}
+{% load custom_tags %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>Docpro -Doctor list</title>
+    <title>Clinic Pricing</title>
     <!-- Favicon -->
     <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
     <!-- Google Fonts -->
@@ -22,9 +24,93 @@
     <link href="{% static 'assets/css/nice-select.css' %}" rel="stylesheet">
     <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
     <link href="{% static 'assets/css/responsive.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <!-- Custom Styles -->
+    <script defer src="{% static 'assets/js/jquery.js' %}"></script>
+    <script defer src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script defer src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+    <script defer src="{% static 'assets/js/jquery-ui.js' %}"></script>
+    <script defer src="{% static 'assets/js/owl.js' %}"></script>
+    <script defer src="{% static 'assets/js/wow.js' %}"></script>
+    <script defer src="{% static 'assets/js/jquery.fancybox.js' %}"></script>
+    <script defer src="{% static 'assets/js/jquery.nice-select.min.js' %}"></script>
+    <script defer src="{% static 'assets/js/product-filter.js' %}"></script>
+    <script defer src="{% static 'assets/js/tilt.jquery.js' %}"></script>
+    <script defer src="{% static 'assets/js/jquery.paroller.min.js' %}"></script>
+    <script defer src="{% static 'assets/js/scrollbar.js' %}"></script>
+    <script defer src="{% static 'assets/js/validation.js' %}"></script>
+    <script defer src="{% static 'assets/js/script.js' %}"></script>
+    <style>
+        .mobile-menu .navigation li.dropdown > a::after {
+    content: "▼";
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    float: right;
+}
+
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* This will push footer down */
+.main-content {
+    flex: 1;
+}
+
+ /* General Footer Styles */
+    .footer-links a {
+        color: #adb5bd;
+        text-decoration: none;
+    }
+    .footer-links a:hover {
+        color: #17a2b8;
+    }
+
+    /* Responsive */
+    @media (max-width: 767px) {
+        /* Agent Section */
+        .agent-section h3 {
+            font-size: 1.2rem;
+        }
+        .agent-section .support-box h4 {
+            font-size: 1rem;
+        }
+        .subscribe-form input {
+            font-size: 0.9rem;
+            padding: 10px;
+        }
+        .subscribe-form button {
+            font-size: 0.9rem;
+            padding: 10px 16px;
+        }
+
+        /* Footer */
+        .footer-top {
+            text-align: center;
+        }
+        .footer-top h5 {
+            margin-top: 1rem;
+        }
+        .footer-links li {
+            margin-bottom: 6px;
+        }
+        .footer-links a {
+            display: inline-block;
+        }
+    }
+</style>
 </head>
 <body>
-    <div class="boxed_wrapper" style="background-color: #ffffff;">
+    <div class="boxed_wrapper">
         <!-- Preloader -->
         <div class="preloader"></div>
         <!-- Main Header -->
@@ -32,26 +118,41 @@
             <!-- Header Top -->
             <div class="header-top">
                 <div class="auto-container">
-                    <div class="top-inner clearfix">
-                        <div class="top-left pull-left">
-                            <ul class="info clearfix">
-                                <li><i class="fas fa-map-marker-alt"></i>Discover St, New York, NY 10012, USA</li>
-                                <li><i class="fas fa-phone"></i><a href="tel:2512353256">+251-235-3256</a></li>
+                    <div class="d-flex flex-wrap justify-content-between align-items-center">
+
+                        <!-- Left: Address & Phone -->
+                        <div class="top-left">
+                            <ul class="list-inline mb-0 small text-muted">
+                                <li class="list-inline-item me-4">
+                                    <i class="fas fa-map-marker-alt me-1 text-white"></i>
+                                    Discover St, New York, NY 10012, USA
+                                </li>
+                                <li class="list-inline-item">
+                                    <i class="fas fa-phone me-1 text-white"></i>
+                                    <a href="tel:2512353256" class="text">+251-235-3256</a>
+                                </li>
                             </ul>
                         </div>
-                        <div class="top-right pull-right">
+
+                        <!-- Center: Links -->
+                        <div class="top-center">
                             <ul class="info clearfix">
-                                <li><a href="{% url 'login' %}">Sign in</a></li>
-                                <li><a href="">Career</a></li>
-                                <li><a href="{% url 'contact' %}">Contact</a></li>
-                                <li class="language">
-                                    <a href="{% url 'home' %}">Language</a>
-                                    <ul class="language-dropdown">
-                                        <li><a href="">English</a></li>                                      
+                                <li class="list-inline-item"><a href="{% url 'login' %}">Sign in</a></li>
+                                <li class="list-inline-item"><a href="#">Career</a></li>
+                                <li class="list-inline-item"><a href="{% url 'contact' %}">Contact</a></li>
+                                <li class="list-inline-item dropdown">
+                                    <a href="{% url 'home' %}" class="dropdown-toggle" data-bs-toggle="dropdown">
+                                        Language
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#">English</a></li>
                                     </ul>
                                 </li>
                             </ul>
                         </div>
+
+                        <!-- Right: Social Icons -->
+                       
                     </div>
                 </div>
             </div>
@@ -75,7 +176,7 @@
                                 <div class="collapse navbar-collapse show clearfix" id="navbarSupportedContent">
                                     <ul class="navigation clearfix">
                                         <li><a href="{% url 'home' %}">Home</a></li>
-                                         {% if request.user.is_authenticated %}
+                                        {% if request.user.is_authenticated %}
                                         {% if request.user.role == "clinic_admin" or request.user.is_clinic %}
                                             <!-- Clinic Menu -->
                                             <li class="dropdown">
@@ -84,32 +185,60 @@
                                                     <li><a href="{% url 'clinic_admin_dashboard' %}">Dashboard</a></li>
                                                     <li><a href="{% url 'clinic_appointment_list' %}">Appointments</a></li>
                                                     <li><a href="{% url 'clinic_listing' %}">Add Listing</a></li>
+                                                                                                   
                                                     <li><a href="{% url 'logout' %}">Logout</a></li>
                                                 </ul>
                                             </li>
                                         {% endif %}
                                         {% endif %}
                                         {% if request.user.is_authenticated %}
-                                            {% if request.user.doctor_profile %}
+                                            {% if doctor %}
                                                 <!-- Doctor Menu -->
-                                                <li class="dropdown">
-                                                    <a href="{% url 'doctor_dashboard' %}">Doctors</a>
-                                                    <ul>
-                                                        <li><a href="{% url 'doctor_dashboard' %}">Doctors Dashboard</a></li>
-                                                        <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
-                                                        <li>
-                                                            <a href="{% url 'doctor_detail' request.user.doctor_profile.id %}">Doctor Details</a>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                            {% elif request.user.patient_profile %}
+                                                 <li class="dropdown">
+                                                <a href="{% url 'doctor_dashboard' %}">Doctors</a>
+                                                <ul>
+                                                    <li class="dropdown"><a href="{% url 'doctor_dashboard' %}">Doctors Dashboard</a>
+                                                        <ul>
+                                                            <li><a href="{% url 'doctor_dashboard' %}">Dashboard</a></li>
+                                                            <li><a href="{% url 'doctor_appointment_list' %}">Appointments</a></li>
+                                                            <li><a href="{% url 'my_patients' %}">My Patients</a></li>
+                                                            <li><a href="{% url 'add_listing' %}">Add Listing</a></li>
+                                                            <li><a href="{% url 'schedule_timing' %}">Schedule Timing</a></li>
+                                                            <!--
+                                                            <li>
+                                                                {% if doctor and doctor.id %}
+                                                                    <a href="{% url 'doctor_reviews' doctor.id %}"><i class="fas fa-star"></i> Reviews</a>
+                                                                {% else %}
+                                                                    <a href="#"><i class="fas fa-star"></i> Reviews</a>
+                                                                {% endif %}
+                                                            </li>
+                                                            <li><a href="{% url 'messages' %}">Messages</a></li>
+                                                            -->
+                                                            <li><a href="{% url 'my_profile' %}">My Profile</a></li>
+                                                            <li><a href="{% url 'change_password' %}">Change Password</a></li>
+                                                            <li><a href="{% url 'logout' %}">Logout</a></li>
+                                                        </ul>
+                                                    </li>
+                                                    <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
+                                                    <li>
+                                                        {% if doctor.id %}
+                                                            <a href="{% url 'doctor_detail' doctor.id %}">Doctor Details</a>
+                                                        {% else %}
+                                                            <span>No details available</span>
+                                                        {% endif %}    
+                                                    </li>                               
+                                                </ul>
+                                            </li> 
+                                            {% elif patient %}
                                                 <!-- Patient Menu -->
                                                 <li class="dropdown">
                                                     <a href="{% url 'patient_dashboard' %}">Patients</a>
                                                     <ul>
                                                         <li><a href="{% url 'patient_dashboard' %}">Patient Dashboard</a></li>
-                                                        <li><a href ="{% url 'submit_review' %}">Submit Review</a></li>
+                                                        
+                                                        <li><a href="{% url 'submit_review' %}">Submit Review</a></li>
                                                         <li><a href="{% url 'register' %}">Register Page</a></li>
+                                                        <li><a href="{% url 'logout' %}">Logout</a></li>
                                                     </ul>
                                                 </li>
                                             {% endif %}
@@ -122,6 +251,7 @@
                                                             <li><h4>Page List 01</h4></li>
                                                             <li><a href="{% url 'about' %}">About Us</a></li>
                                                             <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                                                            
                                                         </ul>
                                                     </div>
                                                     <div class="col-lg-6 column">
@@ -139,6 +269,7 @@
                                                                     <span>{{ clinic.name }}</span>
                                                                 {% endif %}
                                                             </li>
+                                                            
                                                         </ul>
                                                     </div>
                                                 </div>
@@ -150,38 +281,40 @@
                                                 <li><a href="">Blog Details</a></li>
                                             </ul>
                                         </li>
-                                        {% if user.is_authenticated %}
-                                        <li><a href="{% url 'logout' %}">Log Out</a></li>
-                                        {% endif %}
+                        
+                                         {% if request.user.is_authenticated %}
+                                        <li><a href="{% url 'logout' %}">Logout</a></li>
+                                         {% endif %}
                                     </ul>
                                 </div>
                             </nav>
-                        </div>
+                            
+                        </div>                  
                         <div class="btn-box">
                             <a href="{% url 'register' %}" class="theme-btn-one"><i class="icon-image"></i>Join Now</a>
                         </div>
                     </div>
                 </div>
-            </div>
-            <!-- Sticky Header -->
+            </div>   
+            <!--sticky Header-->
             <div class="sticky-header">
                 <div class="auto-container">
                     <div class="outer-box">
                         <div class="logo-box">
-                            <figure class="logo">
-                                <a href="{% url 'home' %}"><img src="{% static 'assets/images/small-logo.png' %}" alt="Small Logo"></a>
-                            </figure>
+                            <figure class="logo"><a href="#"><img src="/static/assets/images/small-logo.png" alt=""></a></figure>
                         </div>
                         <div class="menu-area">
-                            <nav class="main-menu clearfix"></nav>
+                            <nav class="main-menu clearfix">
+                                <!--Keep This Empty / Menu will come through Javascript-->
+                            </nav>
+                            
                         </div>
-                        <div class="btn-box">
-                            <a href="{% url 'register' %}" class="theme-btn-one"><i class="icon-image"></i>Join Now</a>
-                        </div>
+                        <div class="btn-box"><a href="{% url 'register' %}" class="theme-btn-one" id="openRegisterModal"><i class="icon-image"></i>Join Now</a></div>
                     </div>
                 </div>
             </div>
         </header>
+        <!-- main-header end -->
         <!-- Mobile Menu  -->
         <div class="mobile-menu">
             <div class="menu-backdrop"></div>
@@ -189,9 +322,6 @@
             <nav class="menu-box">
                 <div class="nav-logo"><a href=""><img src="/static/assets/images/logo-2.png" alt="" title=""></a></div>
                 <div class="menu-outer"></div>
-                <div class="btn-box" style="background: transparent;">
-                    <a href="{% url 'register' %}" class="theme-btn-one" style="background:#2ecb46; box-shadow:none; filter:none; border:none;"><i class="icon-image"></i>Join Now</a>
-                </div>
                 <div class="contact-info">
                     <h4>Contact Info</h4>
                     <ul>
@@ -201,108 +331,125 @@
                 </div>
                 <div class="social-links">
                     <ul class="clearfix">
-                        <li><a href=""><span class="fab fa-twitter" style="color: #ffff;"></span></a></li>
-                        <li><a href=""><span class="fab fa-facebook-square" style="color: #ffff;"></span></a></li>
-                        <li><a href=""><span class="fab fa-pinterest-p" style="color: #ffff;"></span></a></li>
-                        <li><a href=""><span class="fab fa-instagram" style="color: #ffff;"></span></a></li>
-                        <li><a href=""><span class="fab fa-youtube" style="color: #ffff;"></span></a></li>
+                        <li><a href=""><span class="fab fa-twitter"></span></a></li>
+                        <li><a href=""><span class="fab fa-facebook-square"></span></a></li>
+                        <li><a href=""><span class="fab fa-pinterest-p"></span></a></li>
+                        <li><a href=""><span class="fab fa-instagram"></span></a></li>
+                        <li><a href=""><span class="fab fa-youtube"></span></a></li>
                     </ul>
                 </div>
             </nav>
         </div>
-        <!-- End Mobile Menu -->
-        <section class="clinic-section doctors-page-section">
-            <div class="auto-container">
-                <!-- Filter Form -->
-                <form method="get" class="filter-form mb-4 d-flex gap-2">
-                    <input type="text" name="q" placeholder="Search by name or city..." value="{{ query }}" class="form-control">
-                    <select name="specialization" class="form-select">
-                        <option value="">All Specializations</option>
-                        {% for spec in specializations %}
-                            <option value="{{ spec }}" {% if selected_specialization == spec %}selected{% endif %}>{{ spec }}</option>
-                        {% endfor %}
-                    </select>
-                    <button type="submit" class="btn btn-primary">Filter</button>
-                </form>
-                <!-- Result Count -->
-                <h3>Showing {{ page_obj.paginator.count }} Results</h3>
-                <div class="wrapper list">
-                    <div class="clinic-list-content list-item">
-                        {% for doctor in page_obj %}
-                        <div class="clinic-block-one">
-                            <div class="inner-box">
-                                <div class="pattern">
-                                    <div class="pattern-1" style="background-image: url({% static 'assets/images/shape/shape-24.png' %});"></div>
-                                    <div class="pattern-2" style="background-image: url({% static 'assets/images/shape/shape-25.png' %});"></div>
-                                </div>
-                                <figure class="image-box">
-                                    {% if doctor.profile_image %}
-                                        <img src="{{ doctor.profile_image.url }}" alt="">
-                                    {% else %}
-                                        <img src="{% static 'images/default-profile.png' %}" alt="">
-                                    {% endif %}
-                                </figure>
-                                <div class="content-box">
-                                    <div class="like-box"><a href="{% url 'doctor_detail' doctor.id %}"><i class="far fa-heart"></i></a></div>
-                                    <ul class="name-box clearfix">
-                                        <li class="name">
-                                            <h3><a href="{% url 'doctor_detail' doctor.id %}">Dr. {{ doctor.get_full_name }}</a></h3>
-                                        </li>
-                                        {% if doctor.is_verified %}<li><i class="icon-Trust-1"></i></li>{% endif %}
-                                        <li><i class="icon-Trust-2"></i></li>
-                                    </ul>
-                                    <span class="designation">{{ doctor.qualification }}</span>
-                                    <div class="text">
-                                        <p>{{ doctor.biography|truncatewords:20 }}</p>
-                                    </div>
-                                    <div class="rating-box clearfix">
-                                        <ul class="rating clearfix">
-                                            {% for _ in "12345"|slice:":doctor.average_rating|floatformat:0" %}<li><i class="icon-Star"></i></li>{% endfor %}
-                                            <li><a href="{% url 'doctor_detail' doctor.id %}">({{ doctor.total_reviews }})</a></li>
-                                        </ul>
-                                        <div class="link {% if not doctor.is_available %}not-available{% endif %}">
-                                            <a href="{% url 'doctor_detail' doctor.id %}">{{ doctor.availability_status }}</a>
-                                        </div>
-                                    </div>
-                                    <div class="location-box">
-                                        <p><i class="fas fa-map-marker-alt"></i>  {{ doctor.city }}</p>
-                                    </div>
-                                    <div>
-                                        <div class ="fas fa-phone"></i>  {{doctor.mobile_number}}</p>
-                                    </div>
-                                    <div class="btn-box">
-                                        <a href="{% url 'doctor_detail' doctor.id %}">Book Now</a>
-                                    </div>
-                                </div>
+         <section class="page-title-two">
+            <div class="title-box text-center bg-color-2 position-relative">
+                <div class="pattern-layer">
+                    <div class="pattern-1" style="background-image: url({% static 'assets/images/shape/shape-70.png' %});"></div>
+                    <div class="pattern-2" style="background-image: url({% static 'assets/images/shape/shape-71.png' %});"></div>
+                </div>
+                <div class="container">
+                    <h1>{{ clinic.admin.first_name }} {{ clinic.admin.last_name }}</h1>
+                </div>
+            </div>
+            <div class="lower-content text-center">
+                <ul class="bread-crumb list-unstyled d-flex justify-content-center gap-2">
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li>Clinic Pricings</li>   
+                </ul>
+            </div>
+        </section>
+        <!-- doctors-dashboard -->
+        <section class="doctors-dashboard bg-color-3">
+            <div class="left-panel">
+                <div class="profile-box">
+                    <div class="upper-box text-center">
+                        <div class="text-center mb-3">
+
+                            <div class="rounded-circle overflow-hidden mx-auto shadow"
+                                style="width:120px;height:120px;">
+
+                                <img src="{% if clinic.image %}{{ clinic.image.url }}{% else %}{% static 'images/clinic/placeholder.jpg' %}{% endif %}"
+                                    class="w-100 h-100"
+                                    style="object-fit:cover;"
+                                    alt="{{ clinic.name }}">
+                            </div>
+
+                        </div>
+                        <div class="title-box centred">
+                            <div class="inner">
+                                <h3>{{ request.user.first_name }} {{ request.user.last_name }}</h3>
+                               
                             </div>
                         </div>
-                        {% empty %}
-                        <p>No doctors found matching your criteria.</p>
-                        {% endfor %}
+                    </div>
+                    <div class="profile-info">
+                        <ul class="list clearfix">
+                            <li><a href="{% url 'clinic_admin_dashboard' %}"><i class="fas fa-columns"></i> Dashboard</a></li>
+                            <li><a href = "{% url 'clinic_appointment_list' %}"><i class="fas fa-calendar-check"></i> Appointments</a></li>
+                            <li><a href="{% url 'clinic_listing' %}"><i class="fas fa-plus-circle"></i> Add Listing</a></li>
+                            <li>
+                                <a href="{% url 'logout' %}">
+                                    <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                </a>
+                            </li>
+                            
+                        </ul>
+                        
                     </div>
                 </div>
-                <!-- Pagination -->
-                <div class="pagination-box">
-                    <ul class="pagination">
-                        {% if page_obj.has_previous %}
-                            <li><a href="?page={{ page_obj.previous_page_number }}&q={{ query }}&specialization={{ selected_specialization }}">Prev</a></li>
-                            {% endif %}
-                            {% for num in page_obj.paginator.page_range %}
-                            {% if page_obj.number == num %}
-                                <li class="active"><span>{{ num }}</span></li>
-                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                            <li><a href="?page={{ num }}&q={{ query }}&specialization={{ selected_specialization }}">{{ num }}</a></li>
-                            {% endif %}
-                        {% endfor %}
-                        {% if page_obj.has_next %}
-                            <li><a href="?page={{ page_obj.next_page_number }}&q={{ query }}&specialization={{ selected_specialization }}">Next</a></li>
-                        {% endif %}
-                    </ul>
+            </div>
+            <div class="right-panel">
+                <div class="content-container">
+                    <div class="outer-container">
+                        <div class="add-listing">
+                            <form method="post" enctype="multipart/form-data" class="doctor-form">
+                                {% csrf_token %}
+                                {% if form.non_field_errors %}
+                                <div class="alert alert-danger">
+                                    {{ form.non_field_errors }}
+                                </div>
+                                {% endif %}
+                                <!-- Pricing -->
+                                <div class="single-box">
+                                    <div class="title-box">
+                                        <h3>Pricing</h3>    
+                                        <button type="button" class="theme-btn-one" onclick="addTreatmentRow()">Add More <i class="icon-image"></i></button>
+                                    </div>       
+                                    <div class="inner-box">
+                                        <div class="row clearfix" id="pricing-container">
+                                            {% for item in pricing %}
+                                            <div class="col-12 form-group treatment-row">  
+                                                <div class="row">
+                                                    <div class="col-lg-6 col-md-6">
+                                                        <label>Treatment</label>
+                                                        <input type="text" name="treatment[]" value="{{ item.treatment }}" class="form-control" required>
+                                                    </div>
+                                                    <div class="col-lg-5 col-md-5">
+                                                        <label>Price</label>
+                                                        <input type="number" name="price[]" value="{{ item.price }}" class="form-control" required>
+                                                    </div>
+                                                    <div class="col-lg-1 col-md-1 d-flex align-items-end">
+                                                        <button type="button" class="btn btn-danger mt-4 remove-treatment">Delete</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>    
+                                <!-- Buttons -->
+                                <div class="btn-box">
+                                    <button type="submit" class="theme-btn-one">Save Changes<i class="icon-Arrow-Right"></i></button>
+                                    <a href="{% url 'doctor_dashboard' %}" class="cancel-btn">Cancel</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
         <!-- agent-section -->
-      <section class="agent-section mb-5">
+        <!-- Agent Section -->
+        <section class="agent-section mb-5">
             <div class="auto-container">
                 <div class="inner-container bg-color-2 p-4 rounded shadow">
                     <div class="row g-4 align-items-center">
@@ -409,6 +556,10 @@
                                     <a href=""><i class="fab fa-youtube"></i></a>
                                 </div>
                             </div>
+                                
+                            <div class="social-links">
+                                <div class="d-flex justify-content-center justify-content-md-start mt-3">
+                                    <a href="" style="margin-right:15px;"><i class="fab fa-twitter"></i></a>
                         </div>
                     </div>
 
@@ -425,27 +576,44 @@
             </div>
         </footer>
         <!-- Main Footer End -->
-
-        <!-- Scroll to top -->
-
         <!-- Scroll to Top -->
         <button class="scroll-top scroll-to-target" data-target="html" aria-label="Scroll to top">
             <span class="fa fa-arrow-up"></span>
         </button>
-    </div>
-
-    <script src="{% static 'assets/js/jquery.js' %}"></script>
-    <script src="{% static 'assets/js/popper.min.js' %}"></script>
-    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'assets/js/owl.js' %}"></script>
-    <script src="{% static 'assets/js/wow.js' %}"></script>
-    <script src="{% static 'assets/js/validation.js' %}"></script>
-    <script src="{% static 'assets/js/jquery.fancybox.js' %}"></script>
-    <script src="{% static 'assets/js/scrollbar.js' %}"></script>
-    <script src="{% static 'assets/js/tilt.jquery.js' %}"></script>
-    <script src="{% static 'assets/js/jquery.paroller.min.js' %}"></script>
-    <script src="{% static 'assets/js/jquery.nice-select.min.js' %}"></script>
-    <script src="{% static 'assets/js/product-filter.js' %}"></script>
-    <script src="{% static 'assets/js/script.js' %}"></script>
+    </div>            
+    <!-- JS to add new pricing rows -->
+    <script>
+        function addTreatmentRow() {
+            const container = document.getElementById('pricing-container');
+            const newRow = document.createElement('div');
+            newRow.className = 'col-12 form-group treatment-row';
+            newRow.innerHTML = `
+                <div class="row">
+                    <div class="col-lg-6 col-md-6">
+                        <label>Treatment</label>
+                        <input type="text" name="treatment[]" class="form-control" required>
+                    </div>
+                    <div class="col-lg-5 col-md-5">
+                        <label>Price</label>
+                        <input type="number" name="price[]" class="form-control" required>
+                    </div>
+                    <div class="col-lg-1 col-md-1 d-flex align-items-end">
+                        <button type="button" class="btn btn-danger remove-treatment">Delete</button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(newRow);
+        }
+        // Event delegation to handle remove button clicks
+        document.addEventListener('click', function (e) {
+            if (e.target && e.target.classList.contains('remove-treatment')) {
+                const row = e.target.closest('.treatment-row');
+                if (row) row.remove();
+            }
+        });
+    </script>
 </body>
 </html>
+
+        
+       

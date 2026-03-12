@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9fafc;
+      color: #333;
+    }
+    .email-container {
+      max-width: 600px;
+      margin: 20px auto;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 20px;
+      border: 1px solid #e5e7eb;
+    }
+    .email-header {
+      border-bottom: 1px solid #d1d5db;
+      margin-bottom: 20px;
+    }
+    .status-label {
+      color: #2563eb;
+      font-weight: bold;
+    }
+    .footer {
+      margin-top: 30px;
+      font-size: 12px;
+      color: #6b7280;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="email-header">
+      <h2>Lab Test Booking Status Update</h2>
+    </div>
+    <p>Dear {{ name }},</p>
+    <p>Your lab test booking status has been updated to:</p>
+    <p class="status-label">{{ status }}</p>
+
+    <hr>
+
+    <p><strong>Booking ID:</strong> {{ booking_id }}</p>
+    <p><strong>Preferred Date:</strong> {{ preferred_date|date:"F d, Y" }}</p>
+    <p><strong>Total Amount:</strong> ₹{{ total_price }}</p>
+    {% if status == "Completed" and booking.reports.exists %}
+  <p>Your lab reports are ready. You can download them below:</p>
+  <ul>
+    {% for report in booking.reports.all %}
+      <li>
+        <a href="{{ report.file.url }}" style="color: #2563eb;">
+          📄 {{ report.file.name|cut:"test_reports/" }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+
+    <p>If you have any questions, please contact our support team.</p>
+
+    <div class="footer">
+      &copy; {{ now|date:"Y" }} Your Lab Name. All rights reserved.
+    </div>
+  </div>
+</body>
+</html>

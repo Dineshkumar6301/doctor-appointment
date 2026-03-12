@@ -1,0 +1,728 @@
+{% load static %}
+{% load custom_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>Clinic Dashboard</title>
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link href="{% static 'assets/css/font-awesome-all.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/flaticon.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/owl.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/bootstrap.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/jquery.fancybox.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/animate.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/color.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/nice-select.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/responsive.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+      <!-- Scripts -->
+    <style>
+ /* General Footer Styles */
+    .footer-links a {
+        color: #adb5bd;
+        text-decoration: none;
+    }
+    .footer-links a:hover {
+        color: #17a2b8;
+    }
+
+    /* Responsive */
+    @media (max-width: 767px) {
+        /* Agent Section */
+        .agent-section h3 {
+            font-size: 1.2rem;
+        }
+        .agent-section .support-box h4 {
+            font-size: 1rem;
+        }
+        .subscribe-form input {
+            font-size: 0.9rem;
+            padding: 10px;
+        }
+        .subscribe-form button {
+            font-size: 0.9rem;
+            padding: 10px 16px;
+        }
+
+        /* Footer */
+        .footer-top {
+            text-align: center;
+        }
+        .footer-top h5 {
+            margin-top: 1rem;
+        }
+        .footer-links li {
+            margin-bottom: 6px;
+        }
+        .footer-links a {
+            display: inline-block;
+        }
+    }
+
+    /* ===== FEATURE CARDS ===== */
+@media (max-width: 767px) {
+  .feature-block {
+    flex: 0 0 50% !important;   /* 2 cards per row */
+    max-width: 50% !important;
+  }
+  .feature-block .feature-block-two .inner-box {
+    padding: 15px;
+    text-align: center;
+  }
+  .feature-block h3 {
+    font-size: 18px;
+    margin-bottom: 5px;
+  }
+  .feature-block h5 {
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .feature-block .icon-box {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+}
+
+/* ===== DOCTOR CARDS ===== */
+@media (max-width: 767px) {
+  .doctor-card {
+    padding: 12px;
+  }
+  .doctor-card img {
+    width: 70px !important;
+    height: 70px !important;
+  }
+  .doctor-card h5 {
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .doctor-card p {
+    font-size: 12px;
+    margin-bottom: 2px;
+  }
+  .doctor-card .btn {
+    font-size: 12px;
+    padding: 4px 10px;
+  }
+
+  /* Make doctor grid 2 per row */
+  .col-sm-12.col-md-6.col-lg-4.col-xl-3 {
+    flex: 0 0 50% !important;
+    max-width: 50% !important;
+  }
+}
+
+/* ===== TABLES RESPONSIVE ===== */
+@media (max-width: 767px) {
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .table {
+    font-size: 13px;
+  }
+}
+</style>
+</head>
+<body>
+    <div class="boxed_wrapper">
+        <!-- Preloader -->
+        <div class="preloader"></div>
+        <!-- Main Header -->
+        <header class="main-header style-two">
+            <!-- Header Top -->
+            <div class="header-top">
+                <div class="auto-container">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center">
+
+                        <!-- Left: Address & Phone -->
+                        <div class="top-left">
+                            <ul class="list-inline mb-0 small text-muted">
+                                <li class="list-inline-item me-4">
+                                    <i class="fas fa-map-marker-alt me-1 text-white"></i>
+                                    Discover St, New York, NY 10012, USA
+                                </li>
+                                <li class="list-inline-item">
+                                    <i class="fas fa-phone me-1 text-white"></i>
+                                    <a href="tel:2512353256" class="text">+251-235-3256</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Center: Links -->
+                        <div class="top-center">
+                            <ul class="info clearfix">
+                                <li class="list-inline-item"><a href="{% url 'login' %}">Sign in</a></li>
+                                <li class="list-inline-item"><a href="#">Career</a></li>
+                                <li class="list-inline-item"><a href="{% url 'contact' %}">Contact</a></li>
+                                <li class="list-inline-item dropdown">
+                                    <a href="{% url 'home' %}" class="dropdown-toggle" data-bs-toggle="dropdown">
+                                        Language
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#">English</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+
+                    
+
+                    </div>
+                </div>
+            </div>
+  
+            <!-- Header Lower -->
+            <div class="header-lower">
+                <div class="auto-container">
+                    <div class="outer-box">
+                        <div class="logo-box">
+                            <figure class="logo">
+                                <a href="{% url 'home' %}"><img src="{% static 'assets/images/logo-3.png' %}" alt="Logo"></a>
+                            </figure>
+                        </div>
+                        <div class="menu-area">
+                            <!-- Mobile Navigation Toggler -->
+                            <div class="mobile-nav-toggler">
+                                <i class="icon-bar"></i>
+                                <i class="icon-bar"></i>
+                                <i class="icon-bar"></i>
+                            </div>
+                            <nav class="main-menu navbar-expand-md navbar-light">
+                                <div class="collapse navbar-collapse show clearfix" id="navbarSupportedContent">
+                                    <ul class="navigation clearfix">
+                                        <li><a href="{% url 'home' %}">Home</a></li>
+                                        {% if request.user.is_authenticated %}
+                                        {% if request.user.role == "clinic_admin" or request.user.is_clinic %}
+                                            <!-- Clinic Menu -->
+                                            <li class="dropdown">
+                                                <a href="">Clinic</a>
+                                                <ul>
+                                                    <li><a href="{% url 'clinic_admin_dashboard' %}">Dashboard</a></li>
+                                                    <li><a href="{% url 'clinic_appointment_list' %}">Appointments</a></li>
+                                                    <li><a href="{% url 'clinic_listing' %}">Add Listing</a></li>
+                                                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                                                </ul>
+                                            </li>
+                                        {% endif %}
+                                        {% endif %}
+                                        {% if request.user.is_authenticated %}
+                                            {% if doctor %}
+                                                <!-- Doctor Menu -->
+                                                 <li class="dropdown">
+                                                <a href="{% url 'doctor_dashboard' %}">Doctors</a>
+                                                <ul>
+                                                    <li class="dropdown"><a href="{% url 'doctor_dashboard' %}">Doctors Dashboard</a>
+                                                        <ul>
+                                                            <li><a href="{% url 'doctor_dashboard' %}">Dashboard</a></li>
+                                                            <li><a href="{% url 'doctor_appointment_list' %}">Appointments</a></li>
+                                                            <li><a href="{% url 'my_patients' %}">My Patients</a></li>
+                                                            <li><a href="{% url 'add_listing' %}">Add Listing</a></li>
+                                                            <li><a href="{% url 'schedule_timing' %}">Schedule Timing</a></li>
+                                                            <!--
+                                                            <li>
+                                                                {% if doctor and doctor.id %}
+                                                                    <a href="{% url 'doctor_reviews' doctor.id %}"><i class="fas fa-star"></i> Reviews</a>
+                                                                {% else %}
+                                                                    <a href="#"><i class="fas fa-star"></i> Reviews</a>
+                                                                {% endif %}
+                                                            </li>
+                                                            <li><a href="{% url 'messages' %}">Messages</a></li>
+                                                            -->
+                                                            <li><a href="{% url 'my_profile' %}">My Profile</a></li>
+                                                            <li><a href="{% url 'change_password' %}">Change Password</a></li>
+                                                            <li><a href="{% url 'logout' %}">Logout</a></li>
+                                                        </ul>
+                                                    </li>
+                                                    <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
+                                                    <li>
+                                                        {% if doctor.id %}
+                                                            <a href="{% url 'doctor_detail' doctor.id %}">Doctor Details</a>
+                                                        {% else %}
+                                                            <span>No details available</span>
+                                                        {% endif %}    
+                                                    </li>                               
+                                                </ul>
+                                            </li> 
+                                            {% elif patient %}
+                                                <!-- Patient Menu -->
+                                                <li class="dropdown">
+                                                    <a href="{% url 'patient_dashboard' %}">Patients</a>
+                                                    <ul>
+                                                        <li><a href="{% url 'patient_dashboard' %}">Patient Dashboard</a></li>
+                                            
+                                                        <li><a href="{% url 'submit_review' %}">Submit Review</a></li>
+                                                        <li><a href="{% url 'register' %}">Register Page</a></li>
+                                                        <li><a href="{% url 'logout' %}">Logout</a></li>
+                                                    </ul>
+                                                </li>
+                                            {% endif %}
+                                        {% endif %}
+                                        <li class="dropdown"><a href="">Pages</a>
+                                            <div class="megamenu">
+                                                <div class="row clearfix">
+                                                    <div class="col-lg-6 column">
+                                                        <ul>
+                                                            <li><h4>Page List 01</h4></li>
+                                                            <li><a href="{% url 'about' %}">About Us</a></li>
+                                                            <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                                                            
+                                                        </ul>
+                                                    </div>
+                                                    <div class="col-lg-6 column">
+                                                        <ul>
+                                                            <li><h4>Page List 02</h4></li>
+                                                            <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
+                                                            {% if doctor %}
+                                                                <li><a href="{% url 'doctor_detail' doctor.id %}">Doctor Details</a></li>
+                                                            {% endif %}
+                                                            <li><a href="{% url 'Clinic_list' %}">Clinic List</a></li>
+                                                            <li>
+                                                                {% if clinic.id %}
+                                                                <a href="{% url 'clinic' clinic.id %}">Clinic Details</a>
+                                                                {% else %}
+                                                                    <span>{{ clinic.name }}</span>
+                                                                {% endif %}
+                                                            </li>
+                                                                    
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="dropdown"><a href="">News</a>
+                                            <ul>
+                                                <li><a href="">Blog Grid 01</a></li>
+                                                <li><a href="">Blog Details</a></li>
+                                            </ul>
+                                        </li>
+                                        {% if request.user.is_authenticated %}
+                                        <li><a href="{% url 'logout' %}">Logout</a></li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            </nav>
+                    
+                        </div>                  
+                        <div class="btn-box">
+                            <a href="{% url 'register' %}" class="theme-btn-one"><i class="icon-image"></i>Join Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>   
+            <!--sticky Header-->
+            <div class="sticky-header">
+                <div class="auto-container">
+                    <div class="outer-box">
+                        <div class="logo-box">
+                            <figure class="logo"><a href="#"><img src="/static/assets/images/small-logo.png" alt=""></a></figure>
+                        </div>
+                        <div class="menu-area">
+                            <nav class="main-menu clearfix">
+                                <!--Keep This Empty / Menu will come through Javascript-->
+                            </nav>
+                            
+                        </div>
+                        <div class="btn-box"><a href="{% url 'register' %}" class="theme-btn-one" id="openRegisterModal"><i class="icon-image"></i>Join Now</a></div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- main-header end -->
+        <!-- Mobile Menu  -->
+        <div class="mobile-menu">
+            <div class="menu-backdrop"></div>
+            <div class="close-btn"><i class="fas fa-times"></i></div>
+            <nav class="menu-box">
+                <div class="nav-logo"><a href=""><img src="/static/assets/images/logo-2.png" alt="" title=""></a></div>
+                <div class="menu-outer"></div>
+                <div class="contact-info">
+                    <h4>Contact Info</h4>
+                    <ul>
+                        <li>Chicago 12, Melborne City, USA</li>
+                        <li><a href="tel:+8801682648101">+88 01682648101</a></li>
+                    </ul>
+                </div>
+                <div class="social-links">
+                    <ul class="clearfix">
+                        <li><a href=""><span class="fab fa-twitter"></span></a></li>
+                        <li><a href=""><span class="fab fa-facebook-square"></span></a></li>
+                        <li><a href=""><span class="fab fa-pinterest-p"></span></a></li>
+                        <li><a href=""><span class="fab fa-instagram"></span></a></li>
+                        <li><a href=""><span class="fab fa-youtube"></span></a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+         <section class="page-title-two">
+            <div class="title-box text-center bg-color-2 position-relative">
+                <div class="pattern-layer">
+                    <div class="pattern-1" style="background-image: url({% static 'assets/images/shape/shape-70.png' %});"></div>
+                    <div class="pattern-2" style="background-image: url({% static 'assets/images/shape/shape-71.png' %});"></div>
+                </div>
+                <div class="container">
+                    <h1>{{ request.user.first_name }} {{ request.user.last_name }}</h1>
+                </div>
+            </div>
+            <div class="lower-content text-center">
+                <ul class="bread-crumb list-unstyled d-flex justify-content-center gap-2">
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li>Clinic Dashboard</li>
+                
+                </ul>
+            </div>
+        </section>
+        <!--clinic Dashboard Section -->
+        <section class="doctors-dashboard bg-color-3">
+            <div class="left-panel">
+                <div class="profile-box patient-profile">
+                    <div class="upper-box">
+                        <div class="text-center mb-3">
+
+                            <div class="rounded-circle overflow-hidden mx-auto shadow"
+                                style="width:120px;height:120px;">
+
+                                <img src="{% if clinic.image %}{{ clinic.image.url }}{% else %}{% static 'images/clinic/placeholder.jpg' %}{% endif %}"
+                                    class="w-100 h-100"
+                                    style="object-fit:cover;"
+                                    alt="{{ clinic.name }}">
+                            </div>
+
+                        </div>
+                        <div class="title-box centred">
+                            <div class="inner">
+                                <h3>{{ request.user.first_name }} {{ request.user.last_name }}</h3>
+                               
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-info">
+                        <ul class="list clearfix">
+                            <li><a href="{% url 'clinic_admin_dashboard' %}"><i class="fas fa-columns"></i> Dashboard</a></li>
+                            <li><a href = "{% url 'clinic_appointment_list' %}"><i class="fas fa-calendar-check"></i> Appointments</a></li>
+                            <li><a href="{% url 'clinic_listing' %}"><i class="fas fa-plus-circle"></i> Add Listing</a></li>
+                            <li>
+                                <a href="{% url 'logout' %}">
+                                    <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="right-panel">
+            <div class="content-container">
+                <div class="outer-container">
+                    <div class="feature-content">
+                        <div class="row clearfix">
+                            <!-- Total Doctors -->
+                            <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 feature-block mb-4">
+
+                                <div class="feature-block-two">
+                                    <div class="inner-box">
+                                        <div class="pattern">
+                                            <div class="pattern-1" style="background-image: url({% static 'assets/images/shape/shape-5.png' %});"></div>
+                                            <div class="pattern-2" style="background-image: url({% static 'assets/images/shape/shape-9.png' %});"></div>
+                                        </div>
+                                        <div class="icon-box"><i class="fas fa-user-md"></i></div>
+                                        <h3>{{ total_doctors|default:"0" }}</h3>
+                                        <h5>Total Doctors</h5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Total Patients -->
+                        <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 feature-block mb-4">
+                                <div class="feature-block-two">
+                                    <div class="inner-box">
+                                        <div class="pattern">
+                                            <div class="pattern-1" style="background-image: url({% static 'assets/images/shape/shape-6.png' %});"></div>
+                                            <div class="pattern-2" style="background-image: url({% static 'assets/images/shape/shape-10.png' %});"></div>
+                                        </div>
+                                        <div class="icon-box"><i class="fas fa-hospital-user"></i></div>
+                                        <h3>{{ total_patients|default:"0" }}</h3>
+                                        <h5>Total Patients</h5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Upcoming Appointments -->
+                            <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 feature-block mb-4">
+                                <div class="feature-block-two">
+                                    <div class="inner-box">
+                                        <div class="pattern">
+                                            <div class="pattern-1" style="background-image: url({% static 'assets/images/shape/shape-7.png' %});"></div>
+                                            <div class="pattern-2" style="background-image: url({% static 'assets/images/shape/shape-11.png' %});"></div>
+                                        </div>
+                                        <div class="icon-box"><i class="fas fa-calendar-alt"></i></div>
+                                        <h3>{{ upcoming_appointments|default:"0" }}</h3>
+                                        <h5>Upcoming Appointments</h5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Total Appointments -->
+                            <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 feature-block mb-4">
+                                <div class="feature-block-two">
+                                    <div class="inner-box">
+                                        <div class="pattern">
+                                            <div class="pattern-1" style="background-image: url({% static 'assets/images/shape/shape-8.png' %});"></div>
+                                            <div class="pattern-2" style="background-image: url({% static 'assets/images/shape/shape-12.png' %});"></div>
+                                        </div>
+                                        <div class="icon-box"><i class="fas fa-calendar-check"></i></div>
+                                        <h3>{{ total_appointments|default:"0" }}</h3>
+                                        <h5>Total Appointments</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Approved-->
+                            <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 feature-block mb-4">
+                                <div class="feature-block-two">
+                                    <div class="inner-box">
+                                        <div class="pattern">
+                                            <div class="pattern-1" style="background-image: url({% static 'assets/images/shape/shape-5.png' %});"></div>
+                                            <div class="pattern-2" style="background-image: url({% static 'assets/images/shape/shape-9.png' %});"></div>
+                                        </div>
+                                        <div class="icon-box"><i class="fas fa-check-circle"></i></div>
+                                        <h3>{{ Approved|default:"0" }}</h3>
+                                        <h5>Approved Appointments</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Pending Approvals -->
+                            <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 feature-block mb-4">
+                                <div class="feature-block-two">
+                                    <div class="inner-box">
+                                        <div class="pattern">
+                                            <div class="pattern-1" style="background-image: url({% static 'assets/images/shape/shape-6.png' %});"></div>
+                                            <div class="pattern-2" style="background-image: url({% static 'assets/images/shape/shape-10.png' %});"></div>
+                                        </div>
+                                        <div class="icon-box"><i class="fas fa-hourglass-half"></i></div>
+                                        <h3>{{ pending|default:"0" }}</h3>
+                                        <h5>Pending Approvals</h5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Recent Reviews -->
+                            <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 feature-block mb-4">
+
+                                <div class="feature-block-two">
+                                    <div class="inner-box">
+                                        <div class="pattern">
+                                            <div class="pattern-1" style="background-image: url({% static 'assets/images/shape/shape-7.png' %});"></div>
+                                            <div class="pattern-2" style="background-image: url({% static 'assets/images/shape/shape-11.png' %});"></div>
+                                        </div>
+                                        <div class="icon-box"><i class="fas fa-star"></i></div>
+                                        <h3>{{ reviews_count |default:"0" }}</h3>
+                                        <h5>Reviews</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                        {% for doctor in doctor_list %}
+                            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4">
+                                <!-- Doctor Card -->
+                                <div class="card h-100 doctor-card" style="border: 1px solid #e3e6ef; background: #f8fafc;">
+                                    <div class="card-body text-center">
+                                        <img src="{% if doctor.profile_image %}
+                                                    {{ doctor.profile_image.url }}
+                                                {% else %}
+                                                    {% static 'assets/images/default-profile.jpg' %}
+                                                {% endif %}"
+                                            class="img-fluid rounded-circle mb-3" style="width: 80px; height: 80px; object-fit: cover;">
+                                        
+                                        <h5 class="card-title mb-1 text-dark">
+                                            {{ doctor.user.first_name }} {{ doctor.user.last_name }}
+                                        </h5>
+
+                                        <p class="card-text mb-1 text-muted">
+                                            {{ doctor.specialization|default:"-" }}
+                                        </p>
+
+                                        <p class="card-text mb-2 text-muted text-primary">
+                                            {{ clinic.name }}
+                                        </p>
+
+                                        <a href="{% url 'doctor_detail' doctor.id %}" class="btn btn-primary btn-sm">
+                                            View Profile
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="col-12">
+                                <p class="text-danger text-center">No doctors found in this clinic.</p>
+                            </div>
+                        {% endfor %}
+                    </div>      
+                </div>
+            </div>
+        </section>
+       <section class="agent-section mb-5">
+            <div class="auto-container">
+                <div class="inner-container bg-color-2 p-4 rounded shadow">
+                    <div class="row g-4 align-items-center">
+                        <!-- Emergency Call -->
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="content_block_3">
+                                <div class="content-box">
+                                    <h3 class="text-white">Emergency Call</h3>
+                                    <div class="support-box d-flex align-items-center gap-3 mt-3">
+                                        <div class="icon-box text-white fs-2">
+                                            <i class="fas fa-phone"></i>
+                                        </div>
+                                        <div>
+                                            <span class="d-block text-white-50 small">Telephone</span>
+                                            <h4 class="mb-0">
+                                                <a href="tel:11165458856" class="text-info">+(111) 65_458_856</a>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Subscribe Form -->
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="content_block_4">
+                                <div class="content-box">
+                                    <h3 class="text-white">Sign up for Email</h3>
+                                    <form action="" method="post" class="subscribe-form mt-3">
+                                        {% csrf_token %}
+                                        <div class="form-group d-flex flex-column flex-sm-row gap-2">
+                                            <input type="email" name="email" placeholder="Your Email" required class="form-control">
+                                            <button type="submit" class="btn btn-info text-white px-4">
+                                                Submit Now <i class="icon-Arrow-Right ms-1"></i>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Agent Section End -->
+        <!-- Main Footer -->
+        <footer class="main-footer" style="position: relative; background-color: #0a0f2c;">
+            <div class="footer-top position-relative py-5 text-white">
+                <!-- Background Patterns -->
+                <div class="pattern-layer position-absolute w-100 h-100" style="top: 0; left: 0; z-index: 1;">
+                    <div class="pattern-1" style="background-image: url({% static 'assets/images/shape/shape-30.png' %});"></div>
+                    <div class="pattern-2" style="background-image: url({% static 'assets/images/shape/shape-31.png' %});"></div>
+                </div>
+
+                <!-- Footer Content -->
+                <div class="container" style="margin-top: 50px; position: relative; z-index: 2;">
+                    <div class="row gy-4">
+                        <!-- Logo & Description -->
+                        <div class="col-lg-4 col-md-6 col-sm-12 text-center text-md-start">
+                            <figure class="footer-logo mb-3">
+                                <a href="{% url 'home' %}">
+                                    <img src="{% static 'assets/images/footer-logo.png' %}" alt="Footer Logo" class="img-fluid">
+                                </a>
+                            </figure>
+                            <p class="text-white-50">Bringing healthcare closer to you — securely and professionally.</p>
+                        </div>
+
+                        <!-- About -->
+                        <div class="col-lg-2 col-md-6 col-sm-12">
+                            <h5 class="text-white fw-bold mb-3">About</h5>
+                            <ul class="list-unstyled footer-links">
+                                <li><a href="{% url 'about' %}">About Us</a></li>
+                                <li><a href="">How It Works</a></li>
+                                <li><a href="">Our Services</a></li>
+                                <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Useful Links -->
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <h5 class="text-white fw-bold mb-3">Useful Links</h5>
+                            <ul class="list-unstyled footer-links">
+                                <li><a href="{% url 'doctor_list' %}">Find Doctors</a></li>
+                                <li><a href="{% url 'register' %}">Join Now</a></li>
+                                <li><a href="">Download App</a></li>
+                                <li><a href="">Privacy Policy</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Contact Info -->
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <h5 class="text-white fw-bold mb-3">Contacts</h5>
+                            <ul class="list-unstyled footer-links">
+                                <li><i class="fas fa-map-marker-alt me-2"></i> Flat 20, Reynolds Neck, North Helenaville, FV77 8WS</li>
+                                <li><i class="fas fa-phone me-2"></i> <a href="tel:23055873407">+2(305) 587-3407</a></li>
+                                <li><i class="fas fa-envelope me-2"></i> <a href="mailto:info@docpro.com">info@docpro.com</a></li>
+                            </ul>
+                            <div class="social-links">
+                                <div class="d-flex justify-content-center justify-content-md-start mt-3">
+                                    <a href="" style="margin-right:15px;"><i class="fab fa-twitter"></i></a>
+                                    <a href="" style="margin-right:15px;"><i class="fab fa-facebook-square"></i></a>
+                                    <a href="" style="margin-right:15px;"><i class="fab fa-pinterest-p"></i></a>
+                                    <a href="" style="margin-right:15px;"><i class="fab fa-instagram"></i></a>
+                                    <a href=""><i class="fab fa-youtube"></i></a>
+                                </div>
+                            </div>
+                                
+                        </div>
+                    </div>
+
+                    <hr class="border-light my-4" />
+
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center text-white-50 small text-center text-md-start">
+                        <p class="mb-2 mb-md-0">© 2020 <a href="{% url 'home' %}" class="text-info">Docpro</a>. All rights reserved.</p>
+                        <ul class="list-inline mb-0">
+                            <li class="list-inline-item"><a href="" class="text-white-50">Terms of Service</a></li>
+                            <li class="list-inline-item"><a href="" class="text-white-50">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Main Footer End -->
+        <!-- Scroll to Top -->
+        <button class="scroll-top scroll-to-target" data-target="html" aria-label="Scroll to top">
+            <span class="fa fa-arrow-up"></span>
+        </button>
+    </div>            
+
+
+        
+    <!-- JavaScript and Plugins -->
+    <script src="{% static 'assets/js/jquery.js' %}"></script>
+    <script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/owl.js' %}"></script>
+    <script src="{% static 'assets/js/wow.js' %}"></script>
+    <script src="{% static 'assets/js/validation.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.fancybox.js' %}"></script>
+    <script src="{% static 'assets/js/scrollbar.js' %}"></script>
+    <script src="{% static 'assets/js/tilt.jquery.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.paroller.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.nice-select.min.js' %}"></script>
+    <script src="{% static 'assets/js/product-filter.js' %}"></script>
+    <script src="{% static 'assets/js/script.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+<html>
+
+  

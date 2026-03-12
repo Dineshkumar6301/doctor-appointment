@@ -277,6 +277,20 @@
                                 <div class="collapse navbar-collapse show clearfix" id="navbarSupportedContent">
                                     <ul class="navigation clearfix">
                                         <li><a href="{% url 'home' %}">Home</a></li>
+                                         {% if request.user.is_authenticated %}
+                                        {% if request.user.role == "clinic_admin" or request.user.is_clinic %}
+                                            <!-- Clinic Menu -->
+                                            <li class="dropdown">
+                                                <a href="">Clinic</a>
+                                                <ul>
+                                                    <li><a href="{% url 'clinic_admin_dashboard' %}">Dashboard</a></li>
+                                                    <li><a href="{% url 'clinic_appointment_list' %}">Appointments</a></li>
+                                                    <li><a href="{% url 'clinic_listing' %}">Add Listing</a></li>
+                                                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                                                </ul>
+                                            </li>
+                                        {% endif %}
+                                        {% endif %}
                                          <!-- Doctor Menu -->
                                         {% if doctor %}
                                         <li class="dropdown">
@@ -487,212 +501,352 @@
                 </div>
             </div>
             <div class="right-panel">
-                <div class="content-container">
-                    <div class="outer-container">
-                        <div class="appointment-list">
-                            <div class="upper-box clearfix">
-                                <div class="text pull-left">
-                                    <h3>Appointment Lists</h3>
-                                </div>
-                                <div class="btn-box pull-right">
-                                    <button class="theme-btn-one" id="addAppointmentBtn" aria-label="Add New Appointment">
-                                        <i class="fas fa-plus-circle"></i> Add New Appointment
-                                    </button>
-                                </div>
-                                <div class="select-box pull-right">
-                                    <form method="get">
-                                        <select name="status" onchange="this.form.submit()" aria-label="Filter by status">
-                                            <option value="">Any Status</option>
-                                            <option value="approved">Accepted</option>
-                                            <option value="pending">Pending</option>
-                                            <option value="cancelled">Cancelled</option>
-                                        </select>
-                                    </form>
-                                </div>
-                            </div>
-                            <!-- Upcoming Appointments -->
-                            <h4>Upcoming Appointments</h4>
-                            {% for appt in upcoming_appointments %}
-                            <div class="single-item card">
-                                <figure class="image-box">
-                                    {% if appt.patient.profile_image %}
-                                        <img src="{{ appt.patient.profile_image.url }}" alt="{{ appt.patient.name }}" loading="lazy">
-                                    {% else %}
-                                        <img src="{% static 'assets/images/default-user.png' %}" alt="Default Image" loading="lazy">
-                                    {% endif %}
-                                </figure>                       
-                                <div class="inner">
-                                    <h4>{{ appt.patient_name }}</h4>
-                                    <ul class="info-list clearfix">
-                                        <li><i class="fas fa-clock"></i> {{ appt.appointment_datetime }}</li>
-                                        <li><i class="fas fa-map-marker-alt"></i> {{ appt.patient.location }}</li>
-                                        <li><i class="fas fa-hourglass-start"></i> {{ appt.purpose }}</li>
-                                        <li><i class="fas fa-envelope"></i> <a href="mailto:{{ appt.patient_email }}">{{ appt.patient_email }}</a></li>
-                                        <li><i class="fas fa-phone"></i> <a href="tel:{{ appt.patient_mobile_number }}">{{ appt.patient_mobile_number }}</a></li>
-                                        <li>
-                                            <li>
-                                                {% if appt.appointment_mode == "online" %}
-                                                    <i class="fas fa-video"></i> <strong>Online</strong>
-                                                    {% if appt.zoom_link %}
-                                                        – <a href="{{ appt.zoom_link }}" target="_blank" class="zoom-link">Join Zoom</a>
-                                                    {% else %}
-                                                        – <span class="text-danger">Zoom link not provided</span>
-                                                    {% endif %}
-                                                {% else %}
-                                                    <i class="fas fa-hospital-alt"></i> <strong>Offline</strong>
-                                                {% endif %}
-                                            </li>  
-                                        </li>
-                                    </ul>
-                                    <ul class="confirm-list clearfix">
-                                        {% if appt.status == 'Pending' %}
-                                            <li><a href="{% url 'accept_appointment' appt.id %}" class="btn btn-success" aria-label="Accept Appointment"><i class="fas fa-check"></i> Accept</a></li>
-                                            <li><a href="{% url 'cancel_appointment' appt.id %}" class="btn btn-danger" aria-label="Cancel Appointment"><i class="fas fa-times"></i> Cancel</a></li>
-                                        {% elif appt.status == 'Accepted' %}
-                                            <li><span class="badge bg-success">Accepted</span></li>
-                                        {% elif appt.status == 'Cancelled' %}
-                                            <li><span class="badge bg-danger">Cancelled</span></li>
-                                        {% endif %}
-                                        <button class="btn btn-warning edit-btn" 
-                                            data-id="{{ appt.id }}"
-                                            data-name="{{ appt.patient.get_full_name }}"
-                                            data-email="{{ appt.patient.user.email|default_if_none:'' }}"
-                                            data-phone="{{ appt.patient.mobile_number|default_if_none:'' }}"
-                                            data-location="{{ appt.patient.location|default_if_none:'' }}"
-                                            data-purpose="{{ appt.purpose|default_if_none:'' }}"
-                                            data-datetime="{{ appt.appointment_datetime|date:'Y-m-d\\TH:i' }}"
-                                            data-appointmentmode="{{ appt.appointment_mode }}"
-                                            data-zoomlink ="{{ appt.zoom_link }}"
-                                            aria-label="Edit Appointment">
-                                            <i class="fas fa-edit"></i> Edit
-                                        </button>
-                                        <li>
-                                            <a href="{% url 'delete_appointment' appt.id %}" class="btn btn-danger" 
-                                            onclick="return confirm('Are you sure you want to delete this appointment?');" 
-                                            aria-label="Delete Appointment">
-                                                <i class="fas fa-trash-alt"></i> Delete
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            {% empty %}
-                            <p>No upcoming appointments.</p>
-                            {% endfor %}
-                            <div class="pagination">
-                                {% if upcoming_appointments.has_previous %}
-                                    <a href="?upcoming_page={{ upcoming_appointments.previous_page_number }}">&laquo; Prev</a>
-                                {% endif %}
+<div class="content-container">
+<div class="outer-container">
 
-                                <span>Page {{ upcoming_appointments.number }} of {{ upcoming_appointments.paginator.num_pages }}</span>
+<div class="appointment-list">
 
-                                {% if upcoming_appointments.has_next %}
-                                    <a href="?upcoming_page={{ upcoming_appointments.next_page_number }}">Next &raquo;</a>
-                                {% endif %}
-                            </div>
-                            <!-- Past Appointments -->
-                            <h4>Past Appointments</h4>
-                            {% for appt in past_appointments %}
-                            <div class="single-item card">
-                                <figure class="image-box">
-                                {% if appt.patient.profile_image %}
-                                <img src="{{ appt.patient.profile_image.url }}" alt="{{ appt.patient.name }}" loading="lazy">
-                                {% else %}
-                                <img src="{% static 'assets/images/default-user.png' %}" alt="Default Image" loading="lazy">
-                                {% endif %}
-                                </figure>
-                                <div class="inner">
-                                    <h4>{{ appt.patient_name }}</h4>
-                                    <ul class="info-list clearfix">
-                                        <li><i class="fas fa-clock"></i> {{ appt.appointment_datetime }}</li>
-                                        <li><i class="fas fa-map-marker-alt"></i> {{ appt.patient.location }}</li>
-                                        <li><i class="fas fa-hourglass-start"></i> {{ appt.purpose }}</li>
-                                        <li><i class="fas fa-envelope"></i> <a href="mailto:{{ appt.patient_email }}">{{ appt.patient_email }}</a></li>
-                                        <li><i class="fas fa-phone"></i> <a href="tel:{{ appt.patient_mobile_number }}">{{ appt.patient_mobile_number }}</a></li>
-                                        <!-- Appointment Mode -->
-                                        <li>
-                                            {% if appt.appointment_mode == "online" %}
-                                                <i class="fas fa-video"></i> <strong>Online</strong>
-                                                {% if appt.zoom_link %}
-                                                    – <a href="{{ appt.zoom_link }}" target="_blank" class="zoom-link">Join Zoom</a>
-                                                {% else %}
-                                                    – <span class="text-danger">Zoom link not available yet</span>
-                                                {% endif %}
-                                            {% else %}
-                                                <i class="fas fa-hospital-alt"></i> <strong>Offline</strong>
-                                            {% endif %}
-                                        </li>
-                                    </ul>
-                                    <ul class="confirm-list clearfix">
-                                        <li><span class="badge bg-secondary">{{ appt.status }}</span></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            {% empty %}
-                            <p>No past appointments.</p>
-                            {% endfor %}
-                            <div class="pagination">
-                                {% if past_appointments.has_previous %}
-                                    <a href="?past_page={{ past_appointments.previous_page_number }}">&laquo; Prev</a>
-                                {% endif %}
-                                <span>Page {{ past_appointments.number }} of {{ past_appointments.paginator.num_pages }}</span>
-                                {% if past_appointments.has_next %}
-                                    <a href="?past_page={{ past_appointments.next_page_number }}">Next &raquo;</a>
-                                {% endif %}
-                            </div>
-                            <!-- Appointment Modal -->
-                            <div id="appointmentModal" class="modal" role="dialog" aria-labelledby="modalTitle">
-                                <div class="modal-content">
-                                    <span class="close-modal" aria-label="Close">&times;</span>
-                                    <h2 id="modalTitle">Add New Appointment</h2>
-                                    <form id="appointmentForm" method="POST" action="{% url 'add_appointment' %}">
-                                        {% csrf_token %}
-                                        <div class="form-group">
-                                            <label for="patient_name">Patient Name</label>
-                                            <input type="text" id="patient_name" name="patient_name" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="email">Email</label>
-                                            <input type="email" id="email" name="email" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="phone">Phone</label>
-                                            <input type="text" id="phone" name="phone" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="location">Location</label>
-                                            <input type="text" id="location" name="location" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="purpose">Purpose</label>
-                                            <input type="text" id="purpose" name="purpose" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="appointment_datetime">Date & Time</label>
-                                            <input type="datetime-local" id="appointment_datetime" name="appointment_datetime" required>
-                                        </div>
+<div class="upper-box clearfix">
 
-                                        <!-- Appointment Mode -->
-                                        <div class="form-group">
-                                            <label>Appointment Mode</label><br>
-                                            <label><input type="radio" name="appointment_mode" id="appointment_mode_online" value="online" required> Online</label>
-                                            <label><input type="radio" name="appointment_mode" id="appointment_mode_offline" value="offline"> Offline</label>
-                                        </div>
-                                        <div class="form-group" id="zoom_link_group">
-                                            <label for="zoom_link">Zoom Meeting Link (optional)</label>
-                                            <input type="url" id="zoom_link" name="zoom_link" placeholder="" />
-                                        </div>
-                                        <div class="modal-actions">
-                                            <button type="submit" class="btn-save">Save</button>
-                                            <button type="button" class="btn-cancel" id="cancelBtn">Cancel</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>                
+<div class="text pull-left">
+<h3>Appointment Lists</h3>
+</div>
+
+<div class="btn-box pull-right">
+<button class="theme-btn-one" id="addAppointmentBtn">
+<i class="fas fa-plus-circle"></i> Add New Appointment
+</button>
+</div>
+
+<div class="select-box pull-right">
+<form method="get">
+<select name="status" onchange="this.form.submit()">
+<option value="">Any Status</option>
+<option value="approved">Accepted</option>
+<option value="pending">Pending</option>
+<option value="cancelled">Cancelled</option>
+</select>
+</form>
+</div>
+
+</div>
+
+<h4>Upcoming Appointments</h4>
+
+{% for appt in upcoming_appointments %}
+
+<div class="single-item card">
+
+<figure class="image-box">
+
+{% if appt.patient.profile_image %}
+<img src="{{ appt.patient.profile_image.url }}">
+{% else %}
+<img src="{% static 'assets/images/default-user.png' %}">
+{% endif %}
+
+</figure>
+
+<div class="inner">
+
+<h4>{{ appt.patient_name }}</h4>
+
+<ul class="info-list clearfix">
+
+<li><i class="fas fa-clock"></i> {{ appt.appointment_datetime }}</li>
+
+<li><i class="fas fa-map-marker-alt"></i> {{ appt.patient.location }}</li>
+
+<li><i class="fas fa-hourglass-start"></i> {{ appt.purpose }}</li>
+
+<li><i class="fas fa-envelope"></i>
+<a href="mailto:{{ appt.patient_email }}">{{ appt.patient_email }}</a>
+</li>
+
+<li><i class="fas fa-phone"></i>
+<a href="tel:{{ appt.patient_mobile_number }}">{{ appt.patient_mobile_number }}</a>
+</li>
+
+<li>
+
+{% if appt.appointment_mode == "online" %}
+
+<i class="fas fa-video"></i> <strong>Online</strong>
+
+{% if appt.zoom_link %}
+– <a href="{{ appt.zoom_link }}" target="_blank">Join Zoom</a>
+{% endif %}
+
+{% else %}
+
+<i class="fas fa-hospital-alt"></i> <strong>Offline</strong>
+
+{% endif %}
+
+</li>
+
+</ul>
+
+<ul class="confirm-list clearfix">
+
+{% if appt.status == 'Pending' %}
+
+<li>
+<a href="{% url 'accept_appointment' appt.id %}" class="btn btn-success">
+<i class="fas fa-check"></i> Accept
+</a>
+</li>
+
+<li>
+<a href="{% url 'cancel_appointment' appt.id %}" class="btn btn-danger">
+<i class="fas fa-times"></i> Cancel
+</a>
+</li>
+
+{% elif appt.status == 'Accepted' %}
+
+<li>
+<span class="badge bg-success">Accepted</span>
+</li>
+
+<li>
+<button class="btn btn-primary add-prescription-btn"
+data-id="{{ appt.id }}">
+<i class="fas fa-notes-medical"></i> Complete
+</button>
+</li>
+
+{% elif appt.status == 'Completed' %}
+
+<li>
+<span class="badge bg-info">Completed</span>
+</li>
+
+<li>
+<button class="btn btn-secondary view-prescription-btn"
+data-text="{{ appt.prescription }}"
+data-file="{{ appt.prescription_file.url }}">
+<i class="fas fa-file-prescription"></i> View Prescription
+</button>
+</li>
+
+{% elif appt.status == 'Cancelled' %}
+
+<li>
+<span class="badge bg-danger">Cancelled</span>
+</li>
+
+{% endif %}
+
+
+<li>
+<a href="{% url 'delete_appointment' appt.id %}"
+class="btn btn-danger"
+onclick="return confirm('Delete appointment?')">
+<i class="fas fa-trash-alt"></i> Delete
+</a>
+</li>
+
+</ul>
+
+</div>
+
+</div>
+
+{% empty %}
+
+<p>No upcoming appointments.</p>
+
+{% endfor %}
+
+<div class="pagination">
+
+{% if upcoming_appointments.has_previous %}
+<a href="?upcoming_page={{ upcoming_appointments.previous_page_number }}">
+« Prev
+</a>
+{% endif %}
+
+<span>
+Page {{ upcoming_appointments.number }} of {{ upcoming_appointments.paginator.num_pages }}
+</span>
+
+{% if upcoming_appointments.has_next %}
+<a href="?upcoming_page={{ upcoming_appointments.next_page_number }}">
+Next »
+</a>
+{% endif %}
+
+</div>
+
+<h4>Past Appointments</h4>
+
+{% for appt in past_appointments %}
+
+<div class="single-item card">
+
+<figure class="image-box">
+
+{% if appt.patient.profile_image %}
+<img src="{{ appt.patient.profile_image.url }}">
+{% else %}
+<img src="{% static 'assets/images/default-user.png' %}">
+{% endif %}
+
+</figure>
+
+<div class="inner">
+
+<h4>{{ appt.patient_name }}</h4>
+
+<ul class="info-list clearfix">
+
+<li><i class="fas fa-clock"></i> {{ appt.appointment_datetime }}</li>
+
+<li><i class="fas fa-map-marker-alt"></i> {{ appt.patient.location }}</li>
+
+<li><i class="fas fa-hourglass-start"></i> {{ appt.purpose }}</li>
+
+<li><i class="fas fa-envelope"></i> {{ appt.patient_email }}</li>
+
+<li><i class="fas fa-phone"></i> {{ appt.patient_mobile_number }}</li>
+
+</ul>
+
+<ul class="confirm-list clearfix">
+
+<li>
+<span class="badge bg-secondary">{{ appt.status }}</span>
+</li>
+
+</ul>
+
+</div>
+
+</div>
+
+{% empty %}
+
+<p>No past appointments.</p>
+
+{% endfor %}
+
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- PRESCRIPTION MODAL -->
+
+<div id="prescriptionModal" class="modal">
+
+<div class="modal-content">
+
+<span class="close-prescription">&times;</span>
+
+<h3>Add Prescription</h3>
+
+<form id="prescriptionForm"
+method="POST"
+enctype="multipart/form-data">
+
+{% csrf_token %}
+
+<textarea
+name="prescription"
+class="form-control"
+rows="6"
+placeholder="Write prescription"
+required></textarea>
+
+<br>
+
+<label>Upload Prescription File</label>
+
+<input
+type="file"
+name="prescription_file"
+class="form-control"
+accept=".pdf,.jpg,.png">
+
+<br>
+
+<button type="submit" class="btn btn-success">
+Save & Complete Appointment
+</button>
+
+</form>
+
+</div>
+</div>
+
+
+<!-- VIEW PRESCRIPTION MODAL -->
+
+<div id="viewPrescriptionModal" class="modal">
+
+<div class="modal-content">
+
+<span class="close-view">&times;</span>
+
+<h3>Prescription</h3>
+
+<p id="prescriptionText"></p>
+
+<a id="prescriptionFile"
+class="btn btn-primary"
+target="_blank">
+Download File
+</a>
+
+</div>
+</div>
+
+
+<script>
+
+document.querySelectorAll(".add-prescription-btn").forEach(btn=>{
+
+btn.addEventListener("click",function(){
+
+let id=this.dataset.id
+
+document.getElementById("prescriptionForm").action="/complete-appointment/"+id+"/"
+
+document.getElementById("prescriptionModal").style.display="block"
+
+})
+
+})
+
+document.querySelectorAll(".view-prescription-btn").forEach(btn=>{
+
+btn.addEventListener("click",function(){
+
+document.getElementById("prescriptionText").innerText=this.dataset.text
+
+document.getElementById("prescriptionFile").href=this.dataset.file
+
+document.getElementById("viewPrescriptionModal").style.display="block"
+
+})
+
+})
+
+document.querySelector(".close-prescription").onclick=function(){
+
+document.getElementById("prescriptionModal").style.display="none"
+
+}
+
+document.querySelector(".close-view").onclick=function(){
+
+document.getElementById("viewPrescriptionModal").style.display="none"
+
+}
+
+</script>
         </section>
         <section class="agent-section mb-5">
             <div class="auto-container">

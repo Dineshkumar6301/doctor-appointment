@@ -72,7 +72,21 @@
                             <nav class="main-menu navbar-expand-md navbar-light">
                                 <div class="collapse navbar-collapse show clearfix" id="navbarSupportedContent">
                                     <ul class="navigation clearfix">
-                                        <li><a href="{% url 'home' %}">Home</a></li>     
+                                        <li><a href="{% url 'home' %}">Home</a></li> 
+                                         {% if request.user.is_authenticated %}
+                                        {% if request.user.role == "clinic_admin" or request.user.is_clinic %}
+                                            <!-- Clinic Menu -->
+                                            <li class="dropdown">
+                                                <a href="">Clinic</a>
+                                                <ul>
+                                                    <li><a href="{% url 'clinic_admin_dashboard' %}">Dashboard</a></li>
+                                                    <li><a href="{% url 'clinic_appointment_list' %}">Appointments</a></li>
+                                                    <li><a href="{% url 'clinic_listing' %}">Add Listing</a></li>
+                                                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                                                </ul>
+                                            </li>
+                                        {% endif %}
+                                        {% endif %}    
                                         {% if doctor_profile %}
                                             <!-- Doctor Menu -->
                                             <li class="dropdown">
@@ -215,7 +229,7 @@
                                 <h3>Appointment Information</h3>
                             </div>
                             {% if doctor %}
-                            <form method="post" action="{% url 'book_appointment' doctor.id %}?date={{ selected_date }}&time={{ selected_time }}">
+                            <form method="post" action="{% url 'book_appointment' doctor.id %}">
                                 {% csrf_token %}
                                 <div class="inner-box">
                                     {% if form.errors %}
@@ -316,8 +330,8 @@
                                         </div>
                                     </div>
                                     <!-- Hidden fields to preserve state -->
-                                    <input type="hidden" name="selected_date" value="{{ selected_date }}">
-                                    <input type="hidden" name="selected_time" value="{{ selected_time }}">
+                                    <input type="hidden" name="date" value="{{ selected_date }}">
+                                    <input type="hidden" name="time" value="{{ selected_time }}">
                                     <input type="hidden" name="time_slot_id" value="{{ time_slot.id }}">
                                     <input type="hidden" name="appointment_type" value="consultation">
                                     <input type="hidden" name="status" value="Pending">

@@ -187,55 +187,80 @@ class DoctorProfileForm(forms.ModelForm):
         return image
   
 
+import re
+from django import forms
+from django.forms import FileInput
+from .models import Clinic
+
+
 class ClinicForm(forms.ModelForm):
+
     specifications = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
         help_text="Enter comma-separated values (e.g., Parking, Pharmacy, Wheelchair Access)."
     )
+
     awards = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
-        help_text="Enter in the format: Award Title (Year), separated by commas. Example: Best Clinic (2020), Excellence in Service (2022)"
+        help_text="Enter in the format: Award Title (Year), separated by commas."
     )
 
     class Meta:
         model = Clinic
         fields = [
-            'name', 'tagline', 'description', 'overview', 'specifications',
-            'services', 'awards', 'image', 'phone', 'email', 'fax',
-            'website', 'address', 'working_hours', 'map_lat', 'map_lng', 'map_marker','about'
+            'name','tagline','description','overview','specifications',
+            'services','awards','image','phone','email','fax',
+            'website','address','working_hours','map_lat','map_lng',
+            'map_marker','about'
         ]
+
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'tagline': forms.TextInput(attrs={'class': 'form-control'}),
-            'description': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
-            'overview': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
-            'services': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
-            'image': FileInput(attrs={'class': 'form-control'}),
-            'phone': forms.TextInput(attrs={'class': 'form-control'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control'}),
-            'fax': forms.TextInput(attrs={'class': 'form-control'}),
-            'website': forms.URLInput(attrs={'class': 'form-control'}),
-            'address': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
-            'working_hours': forms.TextInput(attrs={'class': 'form-control'}),
-            'map_lat': forms.TextInput(attrs={'class': 'form-control'}),
-            'map_lng': forms.TextInput(attrs={'class': 'form-control'}),
-            'map_marker': forms.TextInput(attrs={'class': 'form-control'}),
+            'name': forms.TextInput(attrs={'class':'form-control'}),
+            'tagline': forms.TextInput(attrs={'class':'form-control'}),
+            'description': forms.Textarea(attrs={'rows':3,'class':'form-control'}),
+            'overview': forms.Textarea(attrs={'rows':3,'class':'form-control'}),
+            'services': forms.Textarea(attrs={'rows':3,'class':'form-control'}),
+            'image': FileInput(attrs={'class':'form-control'}),
+            'phone': forms.TextInput(attrs={'class':'form-control'}),
+            'email': forms.EmailInput(attrs={'class':'form-control'}),
+            'fax': forms.TextInput(attrs={'class':'form-control'}),
+            'website': forms.URLInput(attrs={'class':'form-control'}),
+            'address': forms.Textarea(attrs={'rows':2,'class':'form-control'}),
+            'working_hours': forms.TextInput(attrs={'class':'form-control'}),
+            'map_lat': forms.TextInput(attrs={'class':'form-control'}),
+            'map_lng': forms.TextInput(attrs={'class':'form-control'}),
+            'map_marker': forms.TextInput(attrs={'class':'form-control'}),
         }
 
+    # Normalize clinic name
+    def clean_name(self):
+        name = self.cleaned_data.get("name")
+        if name:
+            name = name.strip().upper()
+        return name
+
+    # Prevent Django duplicate error
+    def validate_unique(self):
+        pass
+
     def clean_specifications(self):
-        data = self.cleaned_data.get('specifications', '')
-        return [item.strip() for item in data.split(',') if item.strip()]
+        data = self.cleaned_data.get('specifications','')
+        return [i.strip() for i in data.split(',') if i.strip()]
 
     def clean_awards(self):
-        data = self.cleaned_data.get('awards', '')
-        awards_list = []
+        data = self.cleaned_data.get('awards','')
+        awards = []
         matches = re.findall(r'(.*?)\s*\((\d{4})\)', data)
+
         for title, year in matches:
-            awards_list.append({'title': title.strip(), 'year': int(year)})
-        return awards_list
-    
+            awards.append({
+                "title": title.strip(),
+                "year": int(year)
+            })
+
+        return awards
 from .models import Branch
 
 class BranchForm(forms.ModelForm):

@@ -6,22 +6,37 @@ from django.utils.html import mark_safe
 
 class UserAdmin(BaseUserAdmin):
     model = User
-    list_display = ('email', 'first_name', 'last_name', 'is_doctor', 'is_patient', 'is_staff')
-    list_filter = ('is_doctor', 'is_patient', 'is_staff', 'is_superuser')
+    list_display = (
+        'email', 'first_name', 'last_name',
+        'is_clinic', 'is_doctor', 'is_patient', 'is_staff', 'is_superuser'
+    )
+    list_filter = (
+        'is_clinic', 'is_doctor', 'is_patient', 'is_staff', 'is_superuser'
+    )
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         ('Personal Info', {'fields': ('first_name', 'last_name')}),
-        ('Permissions', {'fields': ('is_doctor', 'is_patient', 'is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Role Flags', {'fields': ('is_clinic', 'is_doctor', 'is_patient')}),
+        ('Permissions', {
+            'fields': (
+                'is_active', 'is_staff', 'is_superuser',
+                'groups', 'user_permissions'
+            )
+        }),
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'first_name', 'last_name', 'password1', 'password2', 'is_doctor', 'is_patient', 'is_active', 'is_staff')}
-        ),
+            'fields': (
+                'email', 'first_name', 'last_name', 'password1', 'password2',
+                'is_clinic', 'is_doctor', 'is_patient', 'is_active', 'is_staff', 'is_superuser'
+            )
+        }),
     )
     search_fields = ('email', 'first_name', 'last_name')
     ordering = ('email',)
+
 
 
 class DoctorAdmin(admin.ModelAdmin):

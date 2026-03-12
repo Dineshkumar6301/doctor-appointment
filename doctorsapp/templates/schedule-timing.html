@@ -77,6 +77,20 @@
                                 <div class="collapse navbar-collapse show clearfix" id="navbarSupportedContent">
                                     <ul class="navigation clearfix">
                                         <li><a href="{% url 'home' %}">Home</a></li>
+                                         {% if request.user.is_authenticated %}
+                                        {% if request.user.role == "clinic_admin" or request.user.is_clinic %}
+                                            <!-- Clinic Menu -->
+                                            <li class="dropdown">
+                                                <a href="">Clinic</a>
+                                                <ul>
+                                                    <li><a href="{% url 'clinic_admin_dashboard' %}">Dashboard</a></li>
+                                                    <li><a href="{% url 'clinic_appointment_list' %}">Appointments</a></li>
+                                                    <li><a href="{% url 'clinic_listing' %}">Add Listing</a></li>
+                                                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                                                </ul>
+                                            </li>
+                                        {% endif %}
+                                        {% endif %}
                                          <!-- Doctor Menu -->
                                         {% if doctor %}
                                         <li class="dropdown">
@@ -289,119 +303,195 @@
                 </div>
             </div>
             <div class="right-panel">
-                <div class="content-container">
-                    <div class="outer-container">
-                        <div class="schedule-timing">
-                            <!-- Title and Search -->
-                            <div class="title-box clearfix">
-                                <div class="text pull-left">
-                                    <h3>Doctor Schedule</h3>
-                                </div>
-                                <div class="right-column pull-right">
-                                    <span>Search Event</span>
-                                    <form method="GET" action="{% url 'schedule_timing' %}" class="search-form">
-                                        <div class="form-group">
-                                            <input type="search" name="q" placeholder="Event title" required>
-                                            <button type="submit"><i class="fas fa-search"></i></button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                            <!-- Calendar Header and Add Button -->
-                            <div class="inner-box">
-                                <div class="calendar-title clearfix">
-                                    <div class="text pull-left">
-                                        <h3>Calendar</h3>
-                                    </div>
-                                </div>
-                                <div class="mt-4">
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTimeSlotModal">
-                                        Add Weekly Time Slot
-                                    </button>
-                                </div>
-                                <!-- Time Slots List -->
-                                <ul class="list-group mt-4">
-                                    {% for slot in time_slots %}
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <strong>{{ slot.start_time }} - {{ slot.end_time }}</strong>
-                                                {% if slot.days %}
-                                                    ({{ slot.days }})
-                                                {% else %}
-                                                    (No days selected)
-                                                {% endif %}
-                                                {% if slot.available %}
-                                                    <span class="badge bg-success ms-2">✅ Available</span>
-                                                {% else %}
-                                                    <span class="badge bg-danger ms-2">❌ Unavailable</span>
-                                                {% endif %}
-                                            </div>
-                                            <div>
-                                                <button class="btn btn-sm btn-info edit-slot-btn"
-                                                        data-id="{{ slot.id }}"
-                                                        data-days="{{ slot.day_of_week }}"
-                                                        data-start="{{ slot.start_time }}"
-                                                        data-end="{{ slot.end_time }}"
-                                                        data-available="{{ slot.available }}"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#addTimeSlotModal">Edit</button>
-                                                <a href="{% url 'delete_time_slot' slot.id %}" class="btn btn-sm btn-danger">Delete</a>
-                                            </div>
-                                        </li>
-                                    {% empty %}
-                                        <li class="list-group-item">No time slots available.</li>
-                                    {% endfor %}
-                                </ul>
-                                <!-- FullCalendar Display -->
-                                <div id="appointment_calendar" class="p-3 bg-white rounded shadow mt-4" style="height: 600px;"></div>
-                            </div>
-                            <!-- Time Slot Modal -->
-                            <div class="modal fade" id="addTimeSlotModal" tabindex="-1" aria-labelledby="addTimeSlotLabel" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <form method="POST" action="{% url 'add_time_slot' %}">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="slot_id" id="slot_id">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="addTimeSlotLabel">Add / Edit Weekly Time Slot</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div class="form-group mb-3">
-                                                    <label for="day_of_week">Days of the Week</label>
-                                                    <div id="day_of_week_checkboxes">
-                                                       {% for day in days %}
-                                                            <label class="d-block">
-                                                                <input type="checkbox" name="day_of_week" value="{{ day }}"> {{ day }}
-                                                            </label>
-                                                        {% endfor %}
-                                                    </div>
-                                                </div>
-                                                <div class="form-group mb-3">
-                                                    <label for="start_time">Start Time</label>
-                                                    <input type="time" name="start_time" id="start_time" class="form-control" required>
-                                                </div>
-                                                <div class="form-group mb-3">
-                                                    <label for="end_time">End Time</label>
-                                                    <input type="time" name="end_time" id="end_time" class="form-control" required>
-                                                </div>
-                                                <div class="form-group form-check mb-3">
-                                                    <input type="checkbox" name="is_available" class="form-check-input" id="is_available" checked>
-                                                    <label class="form-check-label" for="is_available">Available</label>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="submit" class="btn btn-success">Save Slot</button>
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="content-container">
+        <div class="outer-container">
+        <div class="schedule-timing">
+
+        <div class="title-box clearfix">
+        <div class="text pull-left">
+        <h3>Doctor Schedule</h3>
+        </div>
+        </div>
+
+
+        <div class="mt-4">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTimeSlotModal">
+        Add Weekly Time Slot
+        </button>
+        </div>
+
+
+        <ul class="list-group mt-4">
+
+        {% for slot in time_slots %}
+
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+
+        <div>
+        <strong>{{ slot.start_time }} - {{ slot.end_time }}</strong>
+
+        {% if slot.days %}
+        ({{ slot.days }})
+        {% endif %}
+
+        {% if slot.available %}
+        <span class="badge bg-success ms-2">Available</span>
+        {% else %}
+        <span class="badge bg-danger ms-2">Unavailable</span>
+        {% endif %}
+        </div>
+
+
+        <div>
+
+        <button
+        class="btn btn-sm btn-info edit-slot-btn"
+        data-id="{{ slot.id }}"
+        data-days="{{ slot.day_of_week }}"
+        data-start="{{ slot.start_time }}"
+        data-end="{{ slot.end_time }}"
+        data-available="{{ slot.available }}"
+        data-bs-toggle="modal"
+        data-bs-target="#addTimeSlotModal">
+
+        Edit
+
+        </button>
+
+
+        <a href="{% url 'delete_time_slot' slot.id %}"
+        class="btn btn-sm btn-danger">
+
+        Delete
+
+        </a>
+
+        </div>
+
+        </li>
+
+        {% empty %}
+
+        <li class="list-group-item">No time slots available</li>
+
+        {% endfor %}
+
+        </ul>
+
+
+        <div id="appointment_calendar"
+        class="p-3 bg-white rounded shadow mt-4"
+        style="height:600px;"></div>
+
+        </div>
+        </div>
+        </div>
+        </div>
+        <div class="modal fade" id="addTimeSlotModal">
+<div class="modal-dialog modal-lg">
+
+<form method="POST" action="{% url 'add_time_slot' %}">
+{% csrf_token %}
+
+<input type="hidden" name="slot_id" id="slot_id">
+
+<div class="modal-content">
+
+<div class="modal-header bg-primary text-white">
+<h5 class="modal-title">Add / Edit Weekly Time Slot</h5>
+<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+</div>
+
+
+<div class="modal-body">
+
+<div class="mb-3" id="day_of_week_checkboxes">
+
+<label class="fw-bold">Days</label><br>
+
+{% for day in days %}
+
+<label class="me-3">
+<input type="checkbox" name="day_of_week" value="{{ day }}">
+{{ day }}
+</label>
+
+{% endfor %}
+
+</div>
+
+
+<div class="row">
+
+<div class="col-md-6 mb-3">
+<label class="fw-bold">Start Time</label>
+<input type="time" name="start_time" id="start_time" class="form-control" required>
+</div>
+
+<div class="col-md-6 mb-3">
+<label class="fw-bold">End Time</label>
+<input type="time" name="end_time" id="end_time" class="form-control" required>
+</div>
+
+</div>
+
+
+<div class="mb-3">
+<label class="fw-bold">Slot Duration</label>
+
+<select id="slot_duration" name="slot_duration" class="form-select no-nice-select">
+<option value="15" selected>15 Minutes</option>
+<option value="20">20 Minutes</option>
+<option value="30">30 Minutes</option>
+</select>
+
+</div>
+
+
+<div class="mb-3">
+<label class="fw-bold">Generated Slots</label>
+
+<div id="generated_slots"
+class="border rounded p-3 bg-light"
+style="min-height:80px"></div>
+
+</div>
+
+
+<div class="form-check">
+
+<input type="checkbox" name="is_available"
+class="form-check-input" id="is_available" checked>
+
+<label class="form-check-label">Doctor Available</label>
+
+</div>
+
+</div>
+
+
+<div class="modal-footer">
+
+<button type="submit" class="btn btn-success">Save Schedule</button>
+
+<button type="button"
+class="btn btn-secondary"
+data-bs-dismiss="modal">
+
+Cancel
+
+</button>
+
+</div>
+
+</div>
+
+</form>
+
+</div>
+</div>
+
+               
         </section>
         <!-- Doctors Dashboard End -->
        <section class="agent-section mb-5">
@@ -553,51 +643,147 @@
     <script src="{% static 'assets/js/live-chat.js' %}"></script>
     <script src="{% static 'assets/js/script.js' %}"></script>
     <!-- Custom JavaScript -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Edit button functionality
-            const editButtons = document.querySelectorAll('.edit-slot-btn');
-            const checkboxes = document.querySelectorAll('#day_of_week_checkboxes input[type="checkbox"]');
-            const startInput = document.querySelector('input[name="start_time"]');
-            const endInput = document.querySelector('input[name="end_time"]');
-            const availableCheckbox = document.getElementById('is_available');
-            const slotIdInput = document.getElementById('slot_id');
-            editButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const daysStr = button.getAttribute('data-days') || '';
-                    const selectedDays = daysStr.split(',').map(day => day.trim()).filter(day => day);
-                    checkboxes.forEach(chk => {
-                        chk.checked = selectedDays.includes(chk.value);
-                    });
-                    startInput.value = button.getAttribute('data-start') || '';
-                    endInput.value = button.getAttribute('data-end') || '';
-                    availableCheckbox.checked = button.getAttribute('data-available') === 'true';
-                    slotIdInput.value = button.getAttribute('data-id') || '';
-                });
-            });
+   <script>
+$(document).ready(function () {
 
-            // Reset modal form when closed
-            const modalEl = document.getElementById('addTimeSlotModal');
-            modalEl.addEventListener('hidden.bs.modal', function () {
-                document.querySelector('#addTimeSlotModal form').reset();
-                slotIdInput.value = '';
-                checkboxes.forEach(chk => chk.checked = false);
-            });
+    /* ---------- Disable nice-select for duration dropdown ---------- */
 
-            // Initialize FullCalendar
-            const calendarEl = document.getElementById('appointment_calendar');
-            const calendar = new FullCalendar.Calendar(calendarEl, {
-                timeZone: 'Asia/Kolkata',
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                },
-                initialView: 'timeGridWeek',
-                events: '{% url "calendar_events" %}'
-            });
-            calendar.render();
-        });
-    </script>
+    $('.no-nice-select').each(function () {
+        if ($(this).next('.nice-select').length) {
+            $(this).next('.nice-select').remove();
+            $(this).show();
+        }
+    });
+
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+
+const startInput = document.getElementById("start_time");
+const endInput = document.getElementById("end_time");
+const durationInput = document.getElementById("slot_duration");
+
+const slotContainer = document.getElementById("generated_slots");
+
+const slotIdInput = document.getElementById("slot_id");
+const availableCheckbox = document.getElementById("is_available");
+
+const checkboxes = document.querySelectorAll("#day_of_week_checkboxes input");
+
+const editButtons = document.querySelectorAll(".edit-slot-btn");
+
+
+function generateSlots(){
+
+const startTime = startInput.value;
+const endTime = endInput.value;
+const duration = parseInt(durationInput.value);
+
+slotContainer.innerHTML="";
+
+if(!startTime || !endTime) return;
+
+let start = new Date("1970-01-01T"+startTime+":00");
+let end = new Date("1970-01-01T"+endTime+":00");
+
+let current=start;
+
+while(current<end){
+
+let next=new Date(current.getTime()+duration*60000);
+
+if(next>end) break;
+
+let startText=current.toTimeString().slice(0,5);
+let endText=next.toTimeString().slice(0,5);
+
+let badge=document.createElement("span");
+
+badge.className="badge bg-primary m-1";
+
+badge.innerText=startText+" - "+endText;
+
+slotContainer.appendChild(badge);
+
+current=next;
+
+}
+
+}
+
+startInput.addEventListener("change",generateSlots);
+endInput.addEventListener("change",generateSlots);
+durationInput.addEventListener("change",generateSlots);
+
+
+
+editButtons.forEach(button=>{
+
+button.addEventListener("click",function(){
+
+const days=(this.dataset.days || "").split(",");
+
+checkboxes.forEach(cb=>cb.checked=false);
+
+days.forEach(day=>{
+checkboxes.forEach(cb=>{
+if(cb.value.trim()==day.trim()){
+cb.checked=true;
+}
+});
+});
+
+startInput.value=this.dataset.start;
+endInput.value=this.dataset.end;
+
+availableCheckbox.checked=(this.dataset.available=="True" || this.dataset.available=="true");
+
+slotIdInput.value=this.dataset.id;
+
+setTimeout(generateSlots,100);
+
+});
+
+});
+
+
+
+const modal=document.getElementById("addTimeSlotModal");
+
+modal.addEventListener("hidden.bs.modal",function(){
+
+document.querySelector("#addTimeSlotModal form").reset();
+
+slotContainer.innerHTML="";
+slotIdInput.value="";
+
+checkboxes.forEach(cb=>cb.checked=false);
+
+});
+
+
+
+const calendarEl=document.getElementById("appointment_calendar");
+
+const calendar=new FullCalendar.Calendar(calendarEl,{
+
+timeZone:"Asia/Kolkata",
+
+headerToolbar:{
+left:"prev,next today",
+center:"title",
+right:"dayGridMonth,timeGridWeek,timeGridDay"
+},
+
+initialView:"timeGridWeek",
+
+events:"{% url 'calendar_events' %}"
+
+});
+
+calendar.render();
+
+});
+</script>
 </body>
 </html>

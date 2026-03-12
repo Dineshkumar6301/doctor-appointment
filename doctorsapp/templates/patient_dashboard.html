@@ -125,6 +125,20 @@
                                 <div class="collapse navbar-collapse show clearfix" id="navbarSupportedContent">
                                     <ul class="navigation clearfix">
                                         <li><a href="{% url 'home' %}">Home</a></li>
+                                         {% if request.user.is_authenticated %}
+                                        {% if request.user.role == "clinic_admin" or request.user.is_clinic %}
+                                            <!-- Clinic Menu -->
+                                            <li class="dropdown">
+                                                <a href="">Clinic</a>
+                                                <ul>
+                                                    <li><a href="{% url 'clinic_admin_dashboard' %}">Dashboard</a></li>
+                                                    <li><a href="{% url 'clinic_appointment_list' %}">Appointments</a></li>
+                                                    <li><a href="{% url 'clinic_listing' %}">Add Listing</a></li>
+                                                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                                                </ul>
+                                            </li>
+                                        {% endif %}
+                                        {% endif %}
                                          <!-- Doctor Menu -->
                                         {% if doctor %}
                                         <li class="dropdown">
@@ -371,6 +385,7 @@
                                                 <th>Booking Date</th>
                                                 <th>Appointment Status</th>
                                                 <th>appt_mode</th>
+                                                <th>Prescription</th>
                                                 <th>Zoom link</th>
                                             </tr>
                                         </thead>
@@ -395,7 +410,8 @@
                                                     <span class="time">{{ appt.appointment_datetime|time:"H:i" }}</span>
                                                 </td>
                                                 <td>
-                                                    <p>{{ appt.total_amount }}</p>
+                                                    <p>{{ appt.total_amount }}
+                                                        ({{appt.payment_status}})</p>
                                                 </td>
                                                 <td>
                                                     <p>{{ appt.booking_date|date:"d M, Y" }}</p>
@@ -406,7 +422,28 @@
                                                     </span>
                                                 </td>
                                                 <td>{{ appt.appointment_mode|title }}</td>
+                                                <td>
 
+                                                {% if appt.prescription %}
+                                                <div>
+                                                <strong>Prescription:</strong><br>
+                                                {{ appt.prescription }}
+                                                </div>
+                                                {% else %}
+                                                <span class="text-muted">No prescription</span>
+                                                {% endif %}
+
+                                                {% if appt.prescription_file %}
+                                                <div class="mt-2">
+                                                <a href="{{ appt.prescription_file.url }}"
+                                                class="btn btn-sm btn-primary"
+                                                target="_blank">
+                                                <i class="fas fa-file-medical"></i> View File
+                                                </a>
+                                                </div>
+                                                {% endif %}
+
+                                                </td>
                                                 <td>
                                                     {% if appt.appointment_mode == 'online' and appt.zoom_link %}
                                                         <a href="{{ appt.zoom_link }}" target="_blank" class="btn btn-sm btn-info">Join</a>

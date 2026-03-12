@@ -26,7 +26,53 @@
     <link href="{% static 'assets/css/responsive.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
+<style>
+
+.slot-section{
+margin-top:10px;
+max-height:250px;
+overflow-y:auto;
+}
+
+.slot-group{
+margin-bottom:15px;
+}
+
+.slot-title{
+font-weight:600;
+margin-bottom:8px;
+color:#333;
+}
+
+.slot-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:8px;
+}
+
+.slot-btn{
+border:1px solid #0d6efd;
+background:#fff;
+padding:8px;
+border-radius:6px;
+cursor:pointer;
+font-size:13px;
+text-align:center;
+transition:0.2s;
+}
+
+.slot-btn:hover{
+background:#e7f1ff;
+}
+
+.slot-btn.selected{
+background:#0d6efd;
+color:white;
+}
+
+</style>
 <body>
+
     <div class="boxed_wrapper" style="background-color: #ffffff;">
         <!-- Preloader -->
         <div class="preloader"></div>
@@ -78,6 +124,20 @@
                                 <div class="collapse navbar-collapse show clearfix" id="navbarSupportedContent">
                                     <ul class="navigation clearfix">
                                         <li><a href="{% url 'home' %}">Home</a></li>
+                                         {% if request.user.is_authenticated %}
+                                        {% if request.user.role == "clinic_admin" or request.user.is_clinic %}
+                                            <!-- Clinic Menu -->
+                                            <li class="dropdown">
+                                                <a href="">Clinic</a>
+                                                <ul>
+                                                    <li><a href="{% url 'clinic_admin_dashboard' %}">Dashboard</a></li>
+                                                    <li><a href="{% url 'clinic_appointment_list' %}">Appointments</a></li>
+                                                    <li><a href="{% url 'clinic_listing' %}">Add Listing</a></li>
+                                                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                                                </ul>
+                                            </li>
+                                        {% endif %}
+                                        {% endif %}
                                         {% if request.user.is_authenticated %}
                                             {% if doctor_profile %}
                                                 <!-- Doctor Menu -->
@@ -369,70 +429,119 @@
                         </div>
                     </div>
                     <!-- Sidebar Booking Form -->
-                    <div class="col-lg-4 col-md-12 col-sm-12 sidebar-side">
-                        <div class="doctors-sidebar">
-                            <div class="form-widget">
-                                <div class="form-title">
-                                    <h3>Book Appointment</h3>
-                                    {% if grouped_slots %}
-                                        {% for group in grouped_slots %}
-                                            <p>
-                                                {% for day_range in group.day_ranges %}
-                                                    {% if day_range.0 == day_range.1 %}
-                                                        {{ day_range.0 }}
-                                                    {% else %}
-                                                        {{ day_range.0 }} to {{ day_range.1 }}
-                                                    {% endif %}
-                                                    {% if not forloop.last %}, {% endif %}
-                                                {% endfor %}:
-                                                {{ group.start_time|time:"g:i A" }} - {{ group.end_time|time:"g:i A" }}
-                                                <span class="text-success">(Available)</span>
-                                            </p>
-                                        {% endfor %}
-                                    {% else %}
-                                        <p>No available time slots for booking.</p>
-                                    {% endif %}
-                                </div>
-            
-                                {% if user.is_authenticated %} 
-                                    <form method="get" action="{% url 'book_appointment' doctor.id %}">
-                                {% else %}
-                                    <form onsubmit="showLoginToast(); return false;">
-                                {% endif %}
-                                    <div class="form-inner">
-                                        <div class="appointment-time">
-                                            <div class="form-group">
-                                                <label>Select Date</label>
-                                                <input type="date" name="date" class="form-control" required>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Select Time</label>
-                                                <input type="time" name="time" class="form-control" required>
-                                            </div>
-                                        </div>
-            
-                                        <div class="choose-service">
-                                            <h4>Choose Service</h4>
-                                            {% for service in services %}
-                                                <div class="custom-check-box">
-                                                    <label class="custom-control material-checkbox">
-                                                        <input type="checkbox" name="services" value="{{ service.id }}">
-                                                        <span class="material-control-indicator"></span>
-                                                        <span class="description">{{ service.name }} <span class="price">INR{{ service.price }}</span></span>
-                                                    </label>
-                                                </div>
-                                            {% endfor %}
-                                        </div>
-            
-                                        <button type="submit" class="theme-btn-one">
-                                            Book Appointment <i class="icon-Arrow-Right"></i>
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-            
+<div class="col-lg-4 col-md-12 col-sm-12 sidebar-side">
+<div class="doctors-sidebar">
+<div class="form-widget">
+
+<div class="form-title">
+<h3>Book Appointment</h3>
+
+{% for group in grouped_slots %}
+
+<p>
+
+{% for day_range in group.day_ranges %}
+
+{% if day_range.0 == day_range.1 %}
+{{ day_range.0 }}
+{% else %}
+{{ day_range.0 }} - {{ day_range.1 }}
+{% endif %}
+
+{% if not forloop.last %}, {% endif %}
+
+{% endfor %}
+
+: {{ group.start_time|time:"g:i A" }} - {{ group.end_time|time:"g:i A" }}
+
+<span class="text-success">(Available)</span>
+
+</p>
+
+{% endfor %}
+</div>
+
+{% if user.is_authenticated %}
+<form method="get" action="{% url 'book_appointment' doctor.id %}" id="bookingForm">
+{% else %}
+<form onsubmit="showLoginToast(); return false;">
+{% endif %}
+
+<div class="form-inner">
+
+<div class="appointment-time">
+
+<!-- Select Date -->
+<div class="form-group">
+<label>Select Date</label>
+
+<input
+type="date"
+id="appointment_date"
+name="date"
+class="form-control"
+required>
+
+</div>
+
+<div class="form-group">
+<label>Select Time</label>
+
+<div id="available_slots" class="slot-section">
+
+<p class="text-muted">Select a date to view available slots</p>
+
+</div>
+
+<input type="hidden" name="time" id="selected_time">
+
+</div>
+
+<div class="choose-service">
+
+<h4>Choose Service</h4>
+
+{% for service in services %}
+
+<div class="custom-check-box">
+
+<label class="custom-control material-checkbox">
+
+<input
+type="checkbox"
+name="services"
+value="{{ service.id }}">
+
+<span class="material-control-indicator"></span>
+
+<span class="description">
+
+{{ service.name }}
+
+<span class="price">INR{{ service.price }}</span>
+
+</span>
+
+</label>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+<button type="submit" class="theme-btn-one">
+Book Appointment <i class="icon-Arrow-Right"></i>
+</button>
+
+</div>
+
+</form>
+
+</div>
+</div>
+</div>
+                   
                     {% if not user.is_authenticated %}
                         <div id="loginToast" class="alert alert-warning alert-dismissible fade" role="alert" 
                             style="border-radius: 10px; margin: 20px; display: none; background-color: #fef6d9; color: #333; font-weight: 500;">
@@ -615,5 +724,115 @@
                 }
             }
         </script>
+         <script>
+
+document.addEventListener("DOMContentLoaded", function(){
+
+const dateInput = document.getElementById("appointment_date");
+const slotContainer = document.getElementById("available_slots");
+const hiddenTime = document.getElementById("selected_time");
+
+dateInput.addEventListener("change", function(){
+
+const selectedDate = this.value;
+const doctorId = "{{ doctor.id }}";
+
+fetch(`/doctor/${doctorId}/available-slots/?date=${selectedDate}`)
+
+.then(res => res.json())
+
+.then(data => {
+
+slotContainer.innerHTML = "";
+
+if(!data.slots || data.slots.length === 0){
+slotContainer.innerHTML = "<p class='text-danger'>No slots available</p>";
+return;
+}
+
+let morning=[];
+let afternoon=[];
+let evening=[];
+
+data.slots.forEach(time => {
+
+const hour=parseInt(time.split(":")[0]);
+
+if(hour < 12) morning.push(time);
+else if(hour < 17) afternoon.push(time);
+else evening.push(time);
+
+});
+
+createGroup("Morning",morning);
+createGroup("Afternoon",afternoon);
+createGroup("Evening",evening);
+
+});
+
+});
+
+function createGroup(title,slots){
+
+if(slots.length===0) return;
+
+const group=document.createElement("div");
+group.className="slot-group";
+
+const heading=document.createElement("div");
+heading.className="slot-title";
+heading.innerText=title;
+
+const grid=document.createElement("div");
+grid.className="slot-grid";
+
+slots.forEach(time=>{
+
+const btn=document.createElement("button");
+
+btn.type="button";
+btn.className="slot-btn";
+btn.innerText=time;
+
+btn.onclick=function(){
+
+document.querySelectorAll(".slot-btn").forEach(b=>{
+b.classList.remove("selected");
+});
+
+btn.classList.add("selected");
+
+hiddenTime.value=time;
+
+};
+
+grid.appendChild(btn);
+
+});
+
+group.appendChild(heading);
+group.appendChild(grid);
+
+slotContainer.appendChild(group);
+
+}
+
+});
+
+</script>
+<script>
+
+document.getElementById("bookingForm").addEventListener("submit", function(e){
+
+const selected=document.getElementById("selected_time").value;
+
+if(!selected){
+e.preventDefault();
+alert("Please select a time slot");
+}
+
+});
+
+</script>
 </body>
 </html>

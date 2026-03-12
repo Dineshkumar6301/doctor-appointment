@@ -55,6 +55,7 @@ def is_ajax(request):
 def home(request):
     doctor = None
     patient = None
+    clinics = None
     if request.user.is_authenticated:
         try:
             doctor = Doctor.objects.get(user=request.user)
@@ -63,26 +64,26 @@ def home(request):
                 patient = Patient.objects.get(user=request.user)
             except Patient.DoesNotExist:
                 pass
-
+    if request.user.is_authenticated and request.user.is_clinic:
+        try:
+           clinics = Clinic.objects.filter(doctor__user=request.user)
+        except Clinic.DoesNotExist:
+            pass
     context = {
         'doctor': doctor,
-        'patient': patient,
-        
+        'patient': patient,  
+        'clinics':clinics
     }
-
     return render(request, 'base.html', context)
 User = get_user_model()
 def register_view(request):
     doctor = None
     patient = None
-    
-
     if request.user.is_authenticated:
         try:
             doctor = Doctor.objects.get(user=request.user)
         except Doctor.DoesNotExist:
             doctor = None
-
         if not doctor:
             try:
                 patient = Patient.objects.get(user=request.user)
@@ -92,10 +93,8 @@ def register_view(request):
     if request.method == 'GET':
         return render(request, 'register.html', {
             'doctor': doctor,
-            'patient': patient,
-         
+            'patient': patient,   
         })
-
     elif request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -152,7 +151,7 @@ def register_view(request):
                 'message': str(e)
             })
 
-@csrf_exempt 
+@csrf_exempt
 def login_view(request):
     doctor = None
     patient = None
@@ -173,7 +172,6 @@ def login_view(request):
         return render(request, 'login.html', {
             'doctor': doctor,
             'patient': patient,
-      
         })
 
     elif request.method == 'POST':
@@ -182,16 +180,22 @@ def login_view(request):
             email = data.get('email')
             password = data.get('password')
 
-            user = authenticate(request, email=email, password=password)
+            user = authenticate(request, username=data.get('email'), password=data.get('password'))
 
             if user is not None:
                 login(request, user)
-                if hasattr(user, 'doctor'):
+                if hasattr(user, 'doctor') or user.is_doctor:
                     user_type = 'doctor'
                     redirect_url = '/doctors/dashboard/'
-                elif hasattr(user, 'patient'):
+
+                elif hasattr(user, 'patient') or user.is_patient:
                     user_type = 'patient'
                     redirect_url = '/patients/dashboard/'
+
+                elif user.is_clinic:
+                    user_type = 'clinic'
+                    redirect_url = '/clinics/dashboard/'
+
                 else:
                     user_type = 'unknown'
                     redirect_url = '/'
@@ -202,6 +206,7 @@ def login_view(request):
                     'redirect': redirect_url,
                     'user_type': user_type
                 })
+
             else:
                 return JsonResponse({
                     'status': 'error',
@@ -216,8 +221,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect('home')
-                                                    
+    return redirect('home')                        
 @login_required
 def patient_dashboard_view(request):
   
@@ -226,7 +230,10 @@ def patient_dashboard_view(request):
     except Patient.DoesNotExist:
         return HttpResponse("Patient profile not found.", status=404)
 
-    appointments = Appointment.objects.filter(patient=patient).select_related('doctor').order_by('-date')
+    appointments = Appointment.objects.filter(
+    patient=patient,
+    payment_status="paid"
+).select_related('doctor').order_by('-date')
     doctors = Doctor.objects.all()
 
     user_content_type = ContentType.objects.get_for_model(Patient)
@@ -273,7 +280,10 @@ def doctor_dashboard_view(request):
     else:
         form = DoctorProfileForm(instance=doctor)
 
-    appointments = Appointment.objects.filter(doctor=doctor).select_related('patient').order_by('-appointment_datetime')[:]
+    appointments = Appointment.objects.filter(
+    doctor=doctor,
+    payment_status="paid"
+).select_related('patient').order_by('-appointment_datetime')
     patient_ids = Appointment.objects.filter(doctor=doctor).values_list('patient_id', flat=True).distinct()
     total_patients = Patient.objects.filter(id__in=patient_ids).count()
     doctor.owned_clinics.all() 
@@ -284,7 +294,7 @@ def doctor_dashboard_view(request):
 ).count()
  
 
-    appointment_count = Appointment.objects.filter(doctor=doctor).count()
+    appointment_count = Appointment.objects.filter(doctor=doctor, payment_status="paid").count()
     
     paginator = Paginator(appointments, 5)
     page_number = request.GET.get('page')
@@ -324,10 +334,18 @@ def doctor_appointment_list(request):
         form = DoctorProfileForm(instance=doctor)
 
 
-    all_appointments = Appointment.objects.filter(doctor=doctor).order_by('-appointment_datetime')
-    upcoming_appointments_qs = all_appointments.filter(appointment_datetime__gte=now()).order_by('appointment_datetime')
-    past_appointments_qs = all_appointments.filter(appointment_datetime__lt=now()).order_by('-appointment_datetime')
+    all_appointments = Appointment.objects.filter(
+    doctor=doctor,
+    payment_status="paid"
+    ).order_by('-appointment_datetime')
 
+    upcoming_appointments_qs = all_appointments.filter(
+        appointment_datetime__gte=now()
+    ).order_by('appointment_datetime')
+
+    past_appointments_qs = all_appointments.filter(
+        appointment_datetime__lt=now()
+    ).order_by('-appointment_datetime')
     upcoming_page_number = request.GET.get('upcoming_page', 1)
     upcoming_paginator = Paginator(upcoming_appointments_qs, 5)
     upcoming_appointments = upcoming_paginator.get_page(upcoming_page_number)
@@ -441,6 +459,35 @@ def add_appointment(request):
 
     return render(request, 'appointment.html')
 
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import Appointment
+
+
+@login_required
+def complete_appointment(request, appointment_id):
+
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+
+    if request.method == "POST":
+
+        prescription_text = request.POST.get("prescription")
+
+        prescription_file = request.FILES.get("prescription_file")
+
+        appointment.prescription = prescription_text
+
+        if prescription_file:
+            appointment.prescription_file = prescription_file
+
+        appointment.status = "Completed"
+
+        appointment.save()
+
+        messages.success(request, "Appointment completed and prescription saved.")
+
+    return redirect('doctor_appointment_list')
 
 @login_required
 def accept_appointment(request, appointment_id):
@@ -565,83 +612,154 @@ def delete_appointment(request, appointment_id):
     appointment.delete()
     return redirect('doctor_appointment_list')
 
+from django.forms import  inlineformset_factory, modelformset_factory
 
 @login_required
 def my_profile(request):
-    
     """Doctor profile management view"""
-    
-    ClinicFormSet = inlineformset_factory(Doctor, Clinic, form=ClinicForm, extra=1, can_delete=True)
-    EducationFormSet = inlineformset_factory(Doctor, Education, form=EducationForm, extra=1, can_delete=True)
-    ExperienceFormSet = inlineformset_factory(Doctor, Experience, form=ExperienceForm, extra=1, can_delete=True)
-    AwardFormSet = inlineformset_factory(Doctor, Award, form=AwardForm, extra=1, can_delete=True)
-    SpecialityFormSet = inlineformset_factory(Doctor, Speciality, form=SpecialityForm, extra=1, can_delete=True)
 
-    
+    ClinicFormSet = modelformset_factory(Clinic, form=ClinicForm, extra=1, can_delete=True)
+
+    EducationFormSet = inlineformset_factory(
+        Doctor, Education, form=EducationForm, extra=1, can_delete=True
+    )
+
+    ExperienceFormSet = inlineformset_factory(
+        Doctor, Experience, form=ExperienceForm, extra=1, can_delete=True
+    )
+
+    AwardFormSet = inlineformset_factory(
+        Doctor, Award, form=AwardForm, extra=1, can_delete=True
+    )
+
+    SpecialityFormSet = inlineformset_factory(
+        Doctor, Speciality, form=SpecialityForm, extra=1, can_delete=True
+    )
+
+    # Ensure doctor access
     if not hasattr(request.user, 'doctor_profile'):
         messages.error(request, "Access denied. Doctor account required.")
         return redirect('login')
+
     doctor_profile, _ = Doctor.objects.get_or_create(user=request.user)
 
     if request.method == 'POST':
-        profile_form = DoctorProfileForm(request.POST, request.FILES, instance=doctor_profile, user=request.user)
-        clinic_formset = ClinicFormSet(request.POST, instance=doctor_profile)
+
+        profile_form = DoctorProfileForm(
+            request.POST,
+            request.FILES,
+            instance=doctor_profile,
+            user=request.user
+        )
+
+        clinic_formset = ClinicFormSet(request.POST, request.FILES, queryset=Clinic.objects.none())
+
         education_formset = EducationFormSet(request.POST, instance=doctor_profile)
         experience_formset = ExperienceFormSet(request.POST, instance=doctor_profile)
         award_formset = AwardFormSet(request.POST, instance=doctor_profile)
         speciality_formset = SpecialityFormSet(request.POST, instance=doctor_profile)
 
-        if speciality_formset.is_valid():  
-            for form in speciality_formset:
-                if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
-                
-                    print(form.cleaned_data['name'])
+        if (
+            profile_form.is_valid()
+            and clinic_formset.is_valid()
+            and education_formset.is_valid()
+            and experience_formset.is_valid()
+            and award_formset.is_valid()
+            and speciality_formset.is_valid()
+        ):
 
-        speciality_formset.save()
+            try:
+                with transaction.atomic():
 
-        try:
-            with transaction.atomic():
-                if (profile_form.is_valid() and clinic_formset.is_valid() and
-                    education_formset.is_valid() and experience_formset.is_valid() and
-                    award_formset.is_valid()):
+                    doctor_profile = profile_form.save()
 
-                    profile_form.save()
-                    clinic_formset.save()
+                    education_formset.instance = doctor_profile
+                    experience_formset.instance = doctor_profile
+                    award_formset.instance = doctor_profile
+                    speciality_formset.instance = doctor_profile
+
                     education_formset.save()
                     experience_formset.save()
                     award_formset.save()
                     speciality_formset.save()
 
-                    messages.success(request, 'Profile updated successfully!')
-                    return redirect('my_profile')
-                else:
-                    messages.error(request, 'Please correct the errors below.')
+                    # -------- CLINIC LINKING --------
+                    for form in clinic_formset:
 
-        except Exception as e:
-            messages.error(request, f'An error occurred: {str(e)}')
+                        if not form.cleaned_data or form.cleaned_data.get("DELETE"):
+                            continue
+
+                        name = form.cleaned_data.get("name")
+                        city = form.cleaned_data.get("city")
+                        address = form.cleaned_data.get("address")
+
+                        if not name:
+                            continue
+
+                        clinic_name = name.strip().upper()
+
+                        clinic = Clinic.objects.filter(name__iexact=clinic_name).first()
+
+                        if clinic:
+                            # Link doctor to existing clinic
+                            doctor_profile.clinics.add(clinic)
+
+                            messages.info(
+                                request,
+                                f"Doctor linked to existing clinic '{clinic.name}'."
+                            )
+
+                        else:
+                            # Create new clinic
+                            clinic = Clinic.objects.create(
+                                name=clinic_name,
+                                city=city,
+                                address=address,
+                                doctor=doctor_profile
+                            )
+
+                            doctor_profile.clinics.add(clinic)
+
+                            messages.success(
+                                request,
+                                f"New clinic '{clinic.name}' created and linked."
+                            )
+
+                messages.success(request, "Profile updated successfully!")
+                return redirect("my_profile")
+
+            except Exception as e:
+                messages.error(request, f"Error occurred: {str(e)}")
+
+        else:
+            messages.error(request, "Please correct the errors in the form.")
 
     else:
-        profile_form = DoctorProfileForm(instance=doctor_profile, user=request.user)
-        clinic_formset = ClinicFormSet(instance=doctor_profile)
+
+        profile_form = DoctorProfileForm(
+            instance=doctor_profile,
+            user=request.user
+        )
+
+        clinic_formset = ClinicFormSet(queryset=doctor_profile.clinics.all())
+
         education_formset = EducationFormSet(instance=doctor_profile)
         experience_formset = ExperienceFormSet(instance=doctor_profile)
         award_formset = AwardFormSet(instance=doctor_profile)
         speciality_formset = SpecialityFormSet(instance=doctor_profile)
 
-
     context = {
-        'doctor': doctor_profile,
-        'profile_form': profile_form,
-        'clinic_formset': clinic_formset,
-        'education_formset': education_formset,
-        'experience_formset': experience_formset,
-        'award_formset': award_formset,
-        'speciality_formset': speciality_formset,
-        'form': profile_form,
+        "doctor": doctor_profile,
+        "profile_form": profile_form,
+        "clinic_formset": clinic_formset,
+        "education_formset": education_formset,
+        "experience_formset": experience_formset,
+        "award_formset": award_formset,
+        "speciality_formset": speciality_formset,
+        "form": profile_form,
     }
 
-    return render(request, 'my-profile.html', context)
-
+    return render(request, "my-profile.html", context)
 
 def group_time_slots(slots): 
     days_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
@@ -685,46 +803,94 @@ def group_time_slots(slots):
     return grouped
 
 @login_required
+def update_appointment_status(request, appointment_id):
+
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+
+    if request.method == "POST":
+        new_status = request.POST.get("status")
+
+        if new_status in ["Pending", "Accepted", "Cancelled"]:
+            appointment.status = new_status
+            appointment.save()
+
+    return redirect(request.META.get("HTTP_REFERER"))
+
+
+@login_required
 def schedule_timing_view(request):
-   
+
     doctor_user = request.user
+
     try:
         doctor = Doctor.objects.get(user=doctor_user)
+
     except Doctor.DoesNotExist:
         messages.error(request, "Doctor profile not found.")
-
         return redirect('doctor_profile_setup')
-    
+
+
     time_slots = TimeSlot.objects.filter(doctor=doctor)
-    DAY_ORDER = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+
+    DAY_ORDER = [
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday',
+        'Sunday'
+    ]
+
 
     def compress_days(days_list):
         ordered = [day for day in DAY_ORDER if day in days_list]
+
         if len(ordered) == 1:
             return ordered[0]
-        return f"{ordered[0]} - {ordered[-1]}"
-    grouped_slots = group_time_slots(time_slots)  
-   
+
+        if len(ordered) > 1:
+            return f"{ordered[0]} - {ordered[-1]}"
+
+        return ""
+
+
+    grouped_slots = group_time_slots(time_slots)
+
+
     time_slot_data = []
+
     for slot in time_slots:
+
         days_list = slot.get_days_list()
+
         time_slot_data.append({
             'id': slot.id,
             'days': compress_days(days_list),
-            'day_of_week': slot.day_of_week, 
+            'day_of_week': slot.day_of_week,
             'start_time': slot.start_time.strftime('%H:%M'),
             'end_time': slot.end_time.strftime('%H:%M'),
             'available': slot.is_available,
-
         })
 
-    days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+    days = [
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday',
+        'Sunday'
+    ]
+
+
     return render(request, 'schedule-timing.html', {
         'grouped_slots': grouped_slots,
         'time_slots': time_slot_data,
         'days': days,
         'doctor': doctor,
-        
     })
 
 @login_required
@@ -772,36 +938,38 @@ def calendar_events(request):
 
 @login_required
 def add_or_edit_time_slot(request):
-    try:
-        doctor = Doctor.objects.get(user=request.user)
-    except Doctor.DoesNotExist:
-        messages.error(request, "Doctor profile not found.")
-        return redirect('doctor_profile_setup')
 
-    if request.method == 'POST':
-        slot_id = request.POST.get('slot_id')
-        selected_days = request.POST.getlist('day_of_week')
-        start_time = parse_time(request.POST.get('start_time'))
-        end_time = parse_time(request.POST.get('end_time'))
-        is_available = 'is_available' in request.POST
-     
-        if not selected_days:
-            messages.error(request, "Please select at least one day.")
-            return redirect('schedule_timing')
+    doctor=get_object_or_404(Doctor,user=request.user)
 
-        if slot_id and slot_id.isdigit():
-            
-            slot = get_object_or_404(TimeSlot, pk=int(slot_id), doctor=doctor)
-            selected_days = request.POST.getlist('day_of_week')  
-            day = ', '.join(selected_days) 
-            slot.start_time = start_time
-            slot.end_time = end_time
-            slot.is_available = is_available
+    if request.method=="POST":
+
+        slot_id=request.POST.get("slot_id")
+
+        days=request.POST.getlist("day_of_week")
+
+        start_time=parse_time(request.POST.get("start_time"))
+        end_time=parse_time(request.POST.get("end_time"))
+
+        is_available="is_available" in request.POST
+
+
+        if slot_id:
+
+            slot=get_object_or_404(TimeSlot,id=slot_id,doctor=doctor)
+
+            slot.day_of_week=",".join(days)
+
+            slot.start_time=start_time
+            slot.end_time=end_time
+
+            slot.is_available=is_available
+
             slot.save()
-            messages.success(request, 'Time slot updated successfully.')
+
         else:
-            
-            for day in selected_days:
+
+            for day in days:
+
                 TimeSlot.objects.create(
                     doctor=doctor,
                     day_of_week=day,
@@ -809,19 +977,17 @@ def add_or_edit_time_slot(request):
                     end_time=end_time,
                     is_available=is_available
                 )
-            messages.success(request, 'Time slot(s) added successfully.')
 
-        return redirect('schedule_timing')
-
-    messages.error(request, "Invalid request method.")
-    return redirect('schedule_timing')
+        return redirect("schedule_timing")
 
 @login_required
-def delete_time_slot(request, slot_id):
-    slot = get_object_or_404(TimeSlot, id=slot_id, doctor__user=request.user)
+def delete_time_slot(request,slot_id):
+
+    slot=get_object_or_404(TimeSlot,id=slot_id,doctor__user=request.user)
+
     slot.delete()
-    messages.success(request, "Time slot deleted successfully.")
-    return redirect('schedule_timing')
+
+    return redirect("schedule_timing")
 
 
 @login_required
@@ -1093,8 +1259,10 @@ from django.contrib.auth.decorators import login_required
 import razorpay
 
 @login_required(login_url='login')
-def book_appointment(request, doctor_id): 
+def book_appointment(request, doctor_id):
+
     doctor = get_object_or_404(Doctor, id=doctor_id)
+
     try:
         patient = request.user.patient_profile
     except Patient.DoesNotExist:
@@ -1102,8 +1270,9 @@ def book_appointment(request, doctor_id):
         return redirect('login')
 
     if request.method == 'POST':
-        selected_date = request.GET.get('date')
-        selected_time = request.GET.get('time')
+
+        selected_date = request.POST.get('date')
+        selected_time = request.POST.get('time')
 
         if not selected_date or not selected_time:
             return HttpResponse("Missing date or time", status=400)
@@ -1118,6 +1287,8 @@ def book_appointment(request, doctor_id):
             appointment_datetime=appointment_datetime,
             date=selected_date,
             time=selected_time,
+
+            # optional fields
             is_new_patient=(request.POST.get('is_new_patient') == 'yes'),
             gender=request.POST.get('gender'),
             patient_name=request.POST.get('patient_name'),
@@ -1130,20 +1301,27 @@ def book_appointment(request, doctor_id):
             zip_code=request.POST.get('zip_code'),
             date_of_birth=request.POST.get('date_of_birth'),
             appointment_notes=request.POST.get('appointment_notes'),
-            appointment_type=request.POST.get('appointment_type'),
-            status=request.POST.get('status'),
-            fee=request.POST.get('fee'),
-            total_amount=request.POST.get('total_amount'),
+
+            # REQUIRED DEFAULTS
+            appointment_type=request.POST.get('appointment_type', 'consultation'),
+            status='Pending',
+
+            fee=request.POST.get('fee', 0),
+            total_amount=request.POST.get('total_amount', 0),
             payment_status=request.POST.get('payment_status', 'pending'),
+
             appointment_mode=request.POST.get("appointment_mode", "offline"),
         )
 
         return redirect('confirm_appointment', appointment.id)
 
-    selected_date = request.GET.get('date')
-    selected_time = request.GET.get('time')
+    # GET request
+    selected_date = request.POST.get('date') or request.GET.get('date')
+    selected_time = request.POST.get('time') or request.GET.get('time')
+
     selected_services_ids = request.GET.getlist('services')
     services = Service.objects.filter(id__in=selected_services_ids)
+
     total_amount = sum(service.price for service in services)
 
     return render(request, 'book_appointment.html', {
@@ -1156,8 +1334,6 @@ def book_appointment(request, doctor_id):
         'doctor_profile': getattr(request.user, 'doctor_profile', None),
         'patient_profile': getattr(request.user, 'patient_profile', None),
     })
-
-
 
 @login_required
 def confirm_appointment(request, appointment_id):
@@ -1435,33 +1611,51 @@ def calculate_experience_years(from_date, to_date):
     delta = relativedelta(to_date, from_date)
     return f"{delta.years} years and {delta.months} months"
 
-def group_schedule(schedule_timings):
- 
-    day_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-    day_to_index = {day: i for i, day in enumerate(day_order)}
-    index_to_day = {i: day for i, day in enumerate(day_order)}
+from collections import defaultdict
 
-    schedule_timings = sorted(schedule_timings, key=lambda x: day_to_index[x.day_of_week])
+DAY_ORDER = [
+    "Monday","Tuesday","Wednesday",
+    "Thursday","Friday","Saturday","Sunday"
+]
+
+
+def group_schedule(time_slots):
+
+    schedule = defaultdict(list)
+
+    for slot in time_slots:
+        key = (slot.start_time, slot.end_time)
+        schedule[key].append(slot.day_of_week)
 
     grouped = []
-    for key, group in groupby(schedule_timings, key=lambda x: (x.start_time, x.end_time)):
-        days = sorted([day_to_index[d.day_of_week] for d in group])
-        
-        ranges = []
-        start = end = days[0]
-        for i in days[1:]:
-            if i == end + 1:
-                end = i
+
+    for (start, end), days in schedule.items():
+
+        days = sorted(days, key=lambda d: DAY_ORDER.index(d))
+
+        day_ranges = []
+        start_day = days[0]
+        prev_index = DAY_ORDER.index(days[0])
+
+        for day in days[1:]:
+
+            current_index = DAY_ORDER.index(day)
+
+            if current_index == prev_index + 1:
+                prev_index = current_index
             else:
-                ranges.append((start, end))
-                start = end = i
-        ranges.append((start, end))
+                day_ranges.append((start_day, DAY_ORDER[prev_index]))
+                start_day = day
+                prev_index = current_index
+
+        day_ranges.append((start_day, DAY_ORDER[prev_index]))
 
         grouped.append({
-            'day_ranges': [(index_to_day[s], index_to_day[e]) for s, e in ranges],
-            'start_time': key[0],
-            'end_time': key[1],
+            "day_ranges": day_ranges,
+            "start_time": start,
+            "end_time": end
         })
+
     return grouped
 
 def doctor_detail_view(request, doctor_id):
@@ -1532,6 +1726,64 @@ def doctor_detail_view(request, doctor_id):
         'average_rating': round(average_rating, 2),
         
     })
+from datetime import datetime, timedelta
+from django.http import JsonResponse
+
+from datetime import datetime, timedelta
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+
+def get_available_slots(request, doctor_id):
+
+    doctor = get_object_or_404(Doctor, id=doctor_id)
+
+    selected_date = request.GET.get("date")
+
+    if not selected_date:
+        return JsonResponse({"slots": []})
+
+    date_obj = datetime.strptime(selected_date, "%Y-%m-%d")
+
+    weekday = date_obj.strftime("%A")
+
+    # FILTER BY DAY
+    slots = TimeSlot.objects.filter(
+        doctor=doctor,
+        day_of_week=weekday,
+        is_available=True
+    )
+
+    available_slots = []
+
+    for slot in slots:
+
+        start = datetime.combine(date_obj.date(), slot.start_time)
+        end = datetime.combine(date_obj.date(), slot.end_time)
+
+        current = start
+
+        while current < end:
+
+            next_time = current + timedelta(minutes=15)
+
+            if next_time > end:
+                break
+
+            time_str = current.strftime("%H:%M")
+
+            booked = Appointment.objects.filter(
+                doctor=doctor,
+                appointment_datetime__date=date_obj.date(),
+                appointment_datetime__time=current.time(),
+                status__in=["Pending","Accepted"]
+            ).exists()
+
+            if not booked:
+                available_slots.append(time_str)
+
+            current = next_time
+
+    return JsonResponse({"slots": available_slots})
 
 def doctor_reviews(request, doctor_id):
     doctor = get_object_or_404(Doctor, id=doctor_id)
@@ -1641,10 +1893,16 @@ def about_us(request):
         
     })
 
+import re
+from django.shortcuts import render, get_object_or_404
+from django.core.paginator import Paginator
+from .models import Clinic, Doctor, Patient, ClinicService
+
+
 def clinic(request, clinic_id):
+
     doctor = None
     patient = None
-    clinic = Clinic.objects.first()
 
     if request.user.is_authenticated:
         try:
@@ -1659,61 +1917,77 @@ def clinic(request, clinic_id):
                 patient = None
 
     clinic = get_object_or_404(Clinic, id=clinic_id)
+
+    # -------- Doctors --------
     doctors = clinic.assigned_doctors.all()
+
     if clinic.doctor and clinic.doctor not in doctors:
         doctors = list(doctors) + [clinic.doctor]
+
     paginator = Paginator(doctors, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    is_doctor = (
-    request.user.is_authenticated and
-    hasattr(request.user, 'doctor_profile') and (
-        request.user.doctor_profile in clinic.assigned_doctors.all() or
-        request.user.doctor_profile == clinic.doctor
-    )
-)
+    # -------- Edit permission --------
+    can_edit_clinic = False
+    if request.user.is_authenticated and request.user == clinic.admin:
+        can_edit_clinic = True
 
 
-    raw = clinic.specifications or ''
-    if isinstance(raw, str):
+    # -------- Specifications Processing --------
 
-        raw = raw.replace("'", "").replace('"', '')
-        specifications = [s.strip() for s in raw.split(',') if s.strip()]
+    raw_specs = clinic.specifications or []
+
+    if isinstance(raw_specs, list):
+        specifications = raw_specs
+
+    elif isinstance(raw_specs, str):
+
+        # remove numbering like 1. 2. 3.
+        raw_specs = re.sub(r'\d+\.', '', raw_specs)
+
+        specifications = [
+            s.strip()
+            for s in raw_specs.split('')
+            if s.strip()
+        ]
+
     else:
-        specifications = raw  
+        specifications = []
 
-    half = len(specifications) // 2 + len(specifications) % 2
+
+    # split into two columns
+    half = (len(specifications) + 1) // 2
     specs_left = specifications[:half]
     specs_right = specifications[half:]
 
+
+    # create numbered specs for edit modal
+    numbered_specs = [
+        f"{i+1}.{spec}" for i, spec in enumerate(specifications)
+    ]
+
+
+    # -------- Awards --------
+
     awards = []
+
     if isinstance(clinic.awards, str):
         awards = [a.strip() for a in clinic.awards.split(',') if a.strip()]
+
     elif isinstance(clinic.awards, list):
         awards = clinic.awards
 
-    services = []
-    if hasattr(clinic, 'services'):
-        if isinstance(clinic.services, str):
-            service_items = [item.strip() for item in clinic.services.split('|') if item.strip()]
-            for item in service_items:
-                parts = item.split('-')
-                name = parts[0].strip() if len(parts) > 0 else ''
-                price = parts[1].strip() if len(parts) > 1 else '0'
-                services.append({"name": name, "price": price, "description": ""})
-        elif isinstance(clinic.services, list):
-            for item in clinic.services:
-                if isinstance(item, dict):
-                    services.append({
-                        "name": item.get("name", "").strip(),
-                        "price": item.get("price", "0").strip(),
-                        "description": item.get("description", "").strip()
-                    })
-                else:
-                    services.append({"name": str(item), "price": "0", "description": ""})
+
+    # -------- Services --------
+
+    services = ClinicService.objects.filter(clinic=clinic)
+
+
+    # -------- Gallery --------
 
     gallery_images = clinic.images.all() if hasattr(clinic, 'images') else []
+
 
     return render(request, 'clinic.html', {
         "clinic": clinic,
@@ -1721,134 +1995,176 @@ def clinic(request, clinic_id):
         "doctor": doctor,
         "patient": patient,
         "page_obj": page_obj,
-        "is_doctor": is_doctor,
         "specifications": specifications,
+        "specs_left": specs_left,
+        "specs_right": specs_right,
+        "numbered_specs": numbered_specs,
         "services": services,
         "awards": awards,
         "gallery_images": gallery_images,
-        "specs_left" :specs_left,
-        "specs_right":specs_right,
-   
+        "can_edit_clinic": can_edit_clinic,
     })
 
 @login_required
-def edit_clinic(request):
-    doctor = Doctor.objects.get(user=request.user)
-    clinic, _ = Clinic.objects.get_or_create(doctor=doctor)
+def edit_clinic(request, clinic_id):
+
+    user = request.user
+
+    try:
+        clinic = Clinic.objects.get(id=clinic_id)
+    except Clinic.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'error': 'Clinic not found.'
+        }, status=404)
+
+    # Permission check
+    if clinic.admin != user and not user.is_superuser:
+        return JsonResponse({
+            'success': False,
+            'error': 'Permission denied.'
+        }, status=403)
 
     if request.method == 'POST':
+
         form = ClinicForm(request.POST, request.FILES, instance=clinic)
+
         if form.is_valid():
             clinic = form.save()
+
             data = {
                 'name': clinic.name,
                 'tagline': clinic.tagline,
                 'description': clinic.description,
                 'address': clinic.address,
                 'phone': clinic.phone,
-                'image_url': clinic.image.url if clinic.image else '',
+                'image_url': clinic.image.url if clinic.image else ''
             }
-            return JsonResponse({'success': True, 'clinic': data})
-        return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+
+            return JsonResponse({
+                'success': True,
+                'clinic': data
+            })
+
+        return JsonResponse({
+            'success': False,
+            'errors': form.errors
+        }, status=400)
+
+    return JsonResponse({
+        'success': False,
+        'error': 'Invalid request method.'
+    }, status=405)
 
 @login_required
 def add_branch(request, clinic_id):
-    try:
-        doctor = request.user.doctor_profile
-    except AttributeError:
-        return HttpResponseForbidden("You are not authorized to perform this action.")
 
     clinic = get_object_or_404(Clinic, id=clinic_id)
 
-    if doctor not in clinic.assigned_doctors.all():
-        return HttpResponseForbidden("You are not authorized to add a branch to this clinic.")
+    # Permission check
+    if request.user != clinic.admin and not request.user.is_superuser:
+        return JsonResponse(
+            {'success': False, 'error': 'Permission denied'},
+            status=403
+        )
 
     if request.method == 'POST':
+
         form = BranchForm(request.POST)
+
         if form.is_valid():
             branch = form.save(commit=False)
             branch.clinic = clinic
             branch.save()
-            return redirect('clinic', clinic_id=clinic.id)
+
     return redirect('clinic', clinic_id=clinic.id)
 
 @login_required
 def edit_branch(request, branch_id):
+
     branch = get_object_or_404(Branch, id=branch_id)
+    clinic = branch.clinic
 
-    try:
-        doctor = request.user.doctor_profile
-    except AttributeError:
-        return HttpResponseForbidden("You are not authorized to perform this action.")
-
-    if doctor not in branch.clinic.assigned_doctors.all():
-        return HttpResponseForbidden("You are not authorized to edit this branch.")
+    if request.user != clinic.admin and not request.user.is_superuser:
+        return JsonResponse(
+            {'success': False, 'error': 'Permission denied'},
+            status=403
+        )
 
     if request.method == 'POST':
+
         form = BranchForm(request.POST, instance=branch)
+
         if form.is_valid():
             form.save()
 
-    return redirect('clinic', clinic_id=branch.clinic.id)
-
+    return redirect('clinic', clinic_id=clinic.id)
 
 @login_required
 def delete_branch(request, branch_id):
+
     branch = get_object_or_404(Branch, id=branch_id)
+    clinic = branch.clinic
 
-    try:
-        doctor = request.user.doctor_profile
-    except AttributeError:
-        return HttpResponseForbidden("You are not authorized to perform this action.")
+    if request.user != clinic.admin and not request.user.is_superuser:
+        return JsonResponse(
+            {'success': False, 'error': 'Permission denied'},
+            status=403
+        )
 
-    if doctor not in branch.clinic.assigned_doctors.all():
-        return HttpResponseForbidden("You are not authorized to delete this branch.")
-
-    clinic_id = branch.clinic.id
+    clinic_id = clinic.id
     branch.delete()
+
     return redirect('clinic', clinic_id=clinic_id)
-
-
 @login_required
 def edit_clinic_overview(request, clinic_id):
+
     clinic = get_object_or_404(Clinic, id=clinic_id)
+    user = request.user
 
-    try:
-        doctor = request.user.doctor_profile
-    except AttributeError:
-        return HttpResponseForbidden("You are not authorized to perform this action.")
+    # Permission check
+    allowed = False
 
-    if doctor not in clinic.assigned_doctors.all():
-        return HttpResponseForbidden("You are not allowed to edit this clinic.")
+    if hasattr(user, 'doctor_profile'):
+        doctor = user.doctor_profile
+
+        if clinic.doctor == doctor or doctor in clinic.assigned_doctors.all():
+            allowed = True
+
+    if clinic.admin == user or user.is_superuser:
+        allowed = True
+
+    if not allowed:
+        return JsonResponse(
+            {'success': False, 'error': 'Clinic not found or permission denied.'},
+            status=403
+        )
 
     if request.method == "POST":
+
         clinic.about = request.POST.get("about", "").strip()
 
         raw_specs = request.POST.get("specifications", "")
-        if raw_specs.startswith("[") and raw_specs.endswith("]"):
-            try:
-                import ast
-                parsed = ast.literal_eval(raw_specs)
-                if isinstance(parsed, list):
-                    clinic.specifications = parsed
-                else:
-                    clinic.specifications = []
-            except:
-                clinic.specifications = []
-        else:
-            import re
-            clinic.specifications = [s.strip() for s in re.split(r'\d+\.', raw_specs) if s.strip()]
+        import re
+        clinic.specifications = [s.strip() for s in re.split(r'\d+\.', raw_specs) if s.strip()]
 
         raw_awards = request.POST.get("awards", "")
         clinic.awards = [a.strip() for a in raw_awards.split(',') if a.strip()]
 
         raw_services = request.POST.get("services", "")
         services = []
+
         for item in raw_services.split('|'):
             parts = item.split('-')
             name = parts[0].strip() if len(parts) > 0 else ''
             price = parts[1].strip() if len(parts) > 1 else '0'
-            services.append({"name": name, "price": price, "description": ""})
+
+            services.append({
+                "name": name,
+                "price": price,
+                "description": ""
+            })
+
         clinic.services = services
 
         if request.FILES.getlist('gallery_images'):
@@ -1856,40 +2172,42 @@ def edit_clinic_overview(request, clinic_id):
                 clinic.images.create(image=img)
 
         clinic.save()
+
         return redirect('clinic', clinic_id=clinic.id)
 
     return redirect('clinic', clinic_id=clinic.id)
 
-
 @login_required
 def delete_gallery_image(request, image_id):
     image = get_object_or_404(GalleryImage, id=image_id)
-    clinic = image.clinic
-
-    try:
-        doctor = request.user.doctor_profile
-    except AttributeError:
-        return HttpResponseForbidden("You are not authorized to perform this action.")
-
-    if doctor not in clinic.assigned_doctors.all():
-        return HttpResponseForbidden("You are not allowed to delete this image.")
-
+    user = request.user
+    user_clinic = None
+    if hasattr(user, 'doctor_profile'):
+        doctor = user.doctor_profile
+        user_clinic = Clinic.objects.filter(doctor=doctor).first()
+        if not user_clinic:
+            user_clinic = Clinic.objects.filter(assigned_doctors=doctor).first()
+    if not user_clinic and (user.groups.filter(name='clinic_admin').exists() or user.is_superuser):
+        user_clinic = Clinic.objects.filter(admin=user).first()
+    if not user_clinic or user_clinic != image.clinic:
+        return JsonResponse({'success': False, 'error': 'Permission denied or clinic mismatch.'}, status=403)
     image.delete()
-    return redirect('clinic', clinic_id=clinic.id)
-
+    return redirect('clinic', clinic_id=user_clinic.id)
 
 @login_required
 def update_clinic_contact(request, clinic_id):
+
     clinic = get_object_or_404(Clinic, id=clinic_id)
 
-    try:
-        doctor = request.user.doctor_profile
-    except AttributeError:
-        return HttpResponseForbidden("You are not authorized to perform this action.")
-    if doctor not in clinic.assigned_doctors.all():
-        return HttpResponseForbidden("You are not allowed to update this clinic.")
+    # Allow only clinic admin or superuser
+    if request.user != clinic.admin and not request.user.is_superuser:
+        return JsonResponse(
+            {"success": False, "error": "Permission denied"},
+            status=403
+        )
 
-    if request.method == 'POST':
+    if request.method == "POST":
+
         clinic.working_hours = request.POST.get('working_hours', '')
         clinic.address = request.POST.get('address', '')
         clinic.phone = request.POST.get('phone', '')
@@ -1900,12 +2218,16 @@ def update_clinic_contact(request, clinic_id):
         clinic.instagram = request.POST.get('instagram', '')
         clinic.twitter = request.POST.get('twitter', '')
         clinic.google_plus = request.POST.get('google_plus', '')
+
         clinic.save()
+
         return redirect('clinic', clinic_id=clinic.id)
 
     return redirect('clinic', clinic_id=clinic.id)
 
+  
 def Clinic_list(request):
+
     doctor = None
     patient = None
 
@@ -1916,7 +2238,8 @@ def Clinic_list(request):
             try:
                 patient = Patient.objects.get(user=request.user)
             except Patient.DoesNotExist:
-                pass  
+                pass
+
     category_id = request.GET.get('category_id')
     query = request.GET.get('q', '').strip()
 
@@ -1935,7 +2258,7 @@ def Clinic_list(request):
         'clinics': clinics,
         'doctor': doctor,
         'patient': patient,
-        'query': query,  
+        'query': query,
     }
 
     return render(request, 'clinic_list.html', context)
@@ -2106,3 +2429,182 @@ def send_message(request):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=400)
 
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render
+from django.utils import timezone
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.utils import timezone
+
+@login_required
+def clinic_dashboard(request):
+
+    user = request.user
+
+    # Only clinic admins allowed
+    if not user.is_clinic:
+        return redirect("home")
+
+    clinics = Clinic.objects.filter(admin=user)
+
+    clinic_id = request.GET.get('clinic_id')
+    clinic = clinics.filter(id=clinic_id).first() if clinic_id else clinics.first()
+
+    if not clinic:
+        return render(request, "clinic/dashboard.html", {
+            "error": "No clinic found.",
+            "clinics": clinics
+        })
+
+    # -------- DOCTORS --------
+    doctor_list = list(clinic.assigned_doctors.all())
+
+    # include main doctor if exists
+    if clinic.doctor and clinic.doctor not in doctor_list:
+        doctor_list.append(clinic.doctor)
+
+    total_doctors = len(doctor_list)
+
+    # -------- APPOINTMENTS --------
+    appointments = Appointment.objects.filter(
+        doctor__in=doctor_list,
+        payment_status="paid"
+    ).distinct()
+
+    total_appointments = appointments.count()
+
+    upcoming_appointments = appointments.filter(
+        appointment_datetime__gte=timezone.now()
+    ).count()
+
+    approved = appointments.filter(status__iexact="accepted").count()
+    pending = appointments.filter(status__iexact="pending").count()
+
+    # -------- PATIENTS --------
+    total_patients = Patient.objects.filter(
+        appointments__in=appointments
+    ).distinct().count()
+
+    # -------- REVIEWS --------
+    reviews_count = SubmitReview.objects.filter(
+        doctor__in=doctor_list
+    ).count()
+
+    context = {
+        "clinic": clinic,
+        "clinics": clinics,
+        "doctor_list": doctor_list,
+        "total_doctors": total_doctors,
+        "total_patients": total_patients,
+        "upcoming_appointments": upcoming_appointments,
+        "total_appointments": total_appointments,
+        "reviews_count": reviews_count,
+        "Approved": approved,
+        "pending": pending,
+        "is_clinic_owner": True,
+    }
+
+    return render(request, "clinic/dashboard.html", context)
+
+
+@login_required
+def clinic_appointment_list(request):
+    user = request.user
+
+    # Get all clinics this user manages
+    clinics = Clinic.objects.filter(admin=user)
+
+    if not clinics.exists():
+        messages.error(request, "You are not assigned to any clinic.")
+        return redirect('home')
+
+    # Get clinic from GET param or fallback to first clinic
+    clinic_id = request.GET.get('clinic_id')
+    clinic = clinics.filter(id=clinic_id).first() if clinic_id else clinics.first()
+
+    if not clinic:
+        messages.error(request, "Invalid clinic selection.")
+        return redirect('home')
+
+    # Get all doctors in this clinic
+    doctors_in_clinic = Doctor.objects.filter(clinics=clinic).distinct()
+
+    # Get current time (timezone-aware, UTC)
+    now = timezone.now()
+
+    # Get all appointments for those doctors in the selected clinic
+    all_appointments = Appointment.objects.filter(
+        doctor__in=doctors_in_clinic,payment_status="paid"
+    ).distinct()
+
+    # Split into past and upcoming
+    past_appointments = []
+    upcoming_appointments = []
+
+    for appt in all_appointments:
+        if timezone.is_naive(appt.appointment_datetime):
+            # If the datetime is naive, make it aware (fallback safety)
+            appt.appointment_datetime = timezone.make_aware(appt.appointment_datetime)
+
+        if appt.appointment_datetime < now:
+            past_appointments.append(appt)
+        else:
+            upcoming_appointments.append(appt)
+
+    # Sort both lists
+    upcoming_appointments.sort(key=lambda x: x.appointment_datetime)
+    past_appointments.sort(key=lambda x: x.appointment_datetime, reverse=True)
+
+    # Paginate both
+    paginator_upcoming = Paginator(upcoming_appointments, 10)
+    paginator_past = Paginator(past_appointments, 10)
+
+    upcoming_page = request.GET.get('upcoming_page')
+    past_page = request.GET.get('past_page')
+
+    upcoming_page_obj = paginator_upcoming.get_page(upcoming_page)
+    past_page_obj = paginator_past.get_page(past_page)
+
+    return render(request, 'clinic/clinic_appointments.html', {
+        'clinic': clinic,
+        'clinics': clinics,
+        'upcoming_page_obj': upcoming_page_obj,
+        'past_page_obj': past_page_obj,
+        'doctor': getattr(user, 'doctor_profile', None),
+    })
+
+from .models import Clinic, ClinicListing, ClinicService
+@login_required
+def clinic_listing(request):
+    user = request.user
+    clinics = Clinic.objects.filter(admin=user)
+    clinic_id = request.GET.get('clinic_id')
+    clinic = clinics.filter(id=clinic_id).first() if clinic_id else clinics.first()
+
+    if not clinic:
+        return redirect('some_error_page')
+
+    if request.method == 'POST':
+        ClinicListing.objects.filter(clinic=clinic).delete()
+        ClinicService.objects.filter(clinic=clinic).delete()
+
+        treatments = request.POST.getlist('treatment[]')
+        prices = request.POST.getlist('price[]')
+
+        for treatment, price in zip(treatments, prices):
+            if treatment and price:
+                ClinicListing.objects.create(clinic=clinic, treatment=treatment, price=price)
+                ClinicService.objects.create(clinic=clinic, name=treatment, price=price)
+
+        return redirect(f"{request.path}?clinic_id={clinic.id}")
+
+    pricing = ClinicListing.objects.filter(clinic=clinic)
+    print("Pricing in template:", pricing)
+
+    return render(request, 'clinic/clinic_listing.html', {
+        'pricing': pricing,
+        'clinic': clinic,
+        'clinics': clinics,
+    })

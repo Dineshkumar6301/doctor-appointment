@@ -49,7 +49,7 @@ urlpatterns = [
     path('contact/',views.contact_us,name='contact'),
     path('about/',views.about_us,name='about' ),
     path('clinic/<int:clinic_id>/', views.clinic, name='clinic'),
-    path('edit-clinic/', views.edit_clinic, name='edit_clinic'),
+    path("edit-clinic/<int:clinic_id>/", views.edit_clinic, name="edit_clinic"),
     path('clinic/<int:clinic_id>/add-branch/', views.add_branch, name='add_branch'),
     path('branch/<int:branch_id>/edit/', views.edit_branch, name='edit_branch'),
     path('branch/<int:branch_id>/delete/', views.delete_branch, name='delete_branch'),
@@ -59,6 +59,20 @@ urlpatterns = [
     path('clinic/<int:clinic_id>/update-contact/', views.update_clinic_contact, name='update_clinic_contact'),
     path('search/', views.search_results, name='search_results'),
     path('payment-success/', views.payment_success, name='payment_success'),
+    path("doctor/<int:doctor_id>/available-slots/",views.get_available_slots,name="get_available_slots"),
+    path(
+    "appointment/update-status/<int:appointment_id>/",
+    views.update_appointment_status,
+    name="update_appointment_status"
+),
+path(
+    "complete-appointment/<int:appointment_id>/",
+    views.complete_appointment,
+    name="complete_appointment"
+),
+    path('clinics/dashboard/', views.clinic_dashboard, name='clinic_admin_dashboard'),
+    path('clinics/appointments/', views.clinic_appointment_list, name='clinic_appointment_list'),
+    path('clinics/listings/', views.clinic_listing, name='clinic_listing'),
 
     
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

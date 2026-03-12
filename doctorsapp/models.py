@@ -18,48 +18,72 @@ GENDER_CHOICES = [
     ]
 
 class CustomUserManager(BaseUserManager):
+
     def create_user(self, email, password=None, **extra_fields):
         if not email:
             raise ValueError(_('The Email must be set'))
+
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
-        user.save()
+        user.save(using=self._db)
+
         return user
-    def create_superuser(self, email, password, **extra_fields):
+
+    def create_superuser(self, email, password=None, **extra_fields):
+
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_active', True)
 
-        if not extra_fields.get('is_staff'):
-            raise ValueError(_('Superuser must have is_staff=True.'))
-        if not extra_fields.get('is_superuser'):
-            raise ValueError(_('Superuser must have is_superuser=True.'))
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError(_('Superuser must have is_staff=True'))
+
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError(_('Superuser must have is_superuser=True'))
 
         return self.create_user(email, password, **extra_fields)
 
 
 class User(AbstractUser):
+
     username = None
-    email = models.EmailField(_('email address'), unique=True, null=True, blank=True)
-    profile_image = CloudinaryField('image', folder='profile_images', blank=True, null=True)
+    email = models.EmailField(_('email address'), unique=True)
+
+    profile_image = CloudinaryField(
+        'profile_image',
+        folder='Hospital_images',
+        blank=True,
+        null=True
+    )
+
     mobile_number = models.CharField(max_length=15, blank=True, null=True)
+
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
+
+    # Roles
     is_doctor = models.BooleanField(default=False)
     is_patient = models.BooleanField(default=False)
+    is_clinic = models.BooleanField(default=False)
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
 
     objects = CustomUserManager()
 
     def __str__(self):
-        return self.email or f"User {self.id}"
-    
+        return self.email
+
     def save(self, *args, **kwargs):
-        if self.is_doctor:
-            self.is_staff = True  
+
+        # Only superuser should access admin
+        if self.is_superuser:
+            self.is_staff = True
+
         super().save(*args, **kwargs)
+
+
 
 class Doctor(models.Model):
     GENDER_CHOICES = [
@@ -86,7 +110,12 @@ class Doctor(models.Model):
     state = models.CharField(max_length=100, null=True ,blank=True)
     zip_code = models.CharField(max_length=20, blank=True)
     country = models.CharField(max_length=100, blank=True)
-    profile_image = CloudinaryField('image', folder='doctor_profiles', blank=True, null=True)
+    profile_image = CloudinaryField(
+        'profile_image',
+        folder='Hospital_images',
+        blank=True,
+        null=True
+    )
     facebook_url = models.URLField(blank=True,null =True)
     twitter_url = models.URLField(blank=True,null=True)
     google_plus_url = models.URLField(blank=True,null=True)
@@ -127,8 +156,30 @@ class Doctor(models.Model):
 
 
 class Clinic(models.Model): 
-    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='owned_clinics')
-    name = models.CharField(max_length=100, blank=True, null=True)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='managed_clinics'
+    )
+    admin = models.ForeignKey(
+    User,
+    on_delete=models.CASCADE,
+    null=True, 
+    blank=True,
+    limit_choices_to={'is_clinic': True},
+    related_name='admin_clinics'
+)
+    doctor = models.ForeignKey(
+    Doctor,
+    on_delete=models.SET_NULL,
+    null=True,
+    blank=True,
+    related_name='owned_clinics'
+)
+
+    name = models.CharField(max_length=100, blank=True, null=True,unique=True)
     address = models.TextField(max_length=100, blank=True, null=True)
     phone = models.CharField(max_length=20, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
@@ -137,8 +188,12 @@ class Clinic(models.Model):
     city = models.CharField(max_length=100, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     tagline = models.CharField(max_length=255, blank=True, null=True)
-    
-    image = CloudinaryField('image', folder='clinic_images', blank=True, null=True)
+    image = CloudinaryField(
+        'profile_image',
+        folder='Hospital_images',
+        blank=True,
+        null=True
+    )
     gallery_images = models.JSONField(default=list, blank=True, null=True)
     overview = models.TextField(blank=True, null=True)
     specifications = models.JSONField(default=list, blank=True,null =True)
@@ -148,14 +203,26 @@ class Clinic(models.Model):
     working_hours = models.CharField(max_length=255, blank=True, null=True)
     map_lat = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
     map_lng = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
-    map_marker = CloudinaryField('image', folder='map_markers/', blank=True, null=True)
+    map_marker =CloudinaryField(
+        'profile_image',
+        folder='Hospital_images',
+        blank=True,
+        null=True
+    )
     facebook = models.URLField(blank=True, null=True)
     instagram = models.URLField(blank=True, null=True)
     twitter = models.URLField(blank=True, null=True)
     google_plus = models.URLField(blank=True, null=True)
+    
+    class Meta:
+        unique_together = ('name', 'city', 'admin')
 
     def __str__(self):
         return self.name or f"Clinic #{self.pk}"
+        
+    def save(self, *args, **kwargs):
+        self.name = self.name.strip().upper()
+        super().save(*args, **kwargs)
     
 class Branch(models.Model):
     clinic = models.ForeignKey(Clinic, related_name='branches', on_delete=models.CASCADE)
@@ -166,8 +233,12 @@ class Branch(models.Model):
 
 class GalleryImage(models.Model):
     clinic = models.ForeignKey(Clinic, on_delete=models.CASCADE, related_name='images')  
-    
-    image = CloudinaryField('image', folder='clinic_gallery', blank=True, null=True)
+    image =CloudinaryField(
+        'profile_image',
+        folder='Hospital_images',
+        blank=True,
+        null=True
+    )
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -249,7 +320,12 @@ class Patient(models.Model):
     address = models.CharField(max_length=255, null=True, blank=True)
     mobile_number = models.CharField(max_length=15, blank=True, null=True)
     doctor_note = models.TextField(blank=True)
-    profile_image = CloudinaryField('image', folder='profile_pics', blank=True, null=True)
+    profile_image = CloudinaryField(
+        'profile_image',
+        folder='Hospital_images',
+        blank=True,
+        null=True
+    )
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Offline')
     favourites = models.ManyToManyField('Doctor', through='FavouriteDoctor', related_name='favoured_by')
     created_at = models.DateTimeField(default=timezone.now)
@@ -349,6 +425,7 @@ class Appointment(models.Model):
         ('Pending', 'Pending'),
         ('Accepted', 'Accepted'),
         ('Cancelled', 'Cancelled'),
+        ('Completed', 'Completed'),
     ]
 
     PAYMENT_STATUS_CHOICES = [
@@ -356,13 +433,6 @@ class Appointment(models.Model):
         ('paid', 'Paid'),
         ('failed', 'Failed'),
     ]
-
-    APPOINTMENT_TYPE_CHOICES = [
-        ('consultation', 'Consultation'),
-        ('follow_up', 'Follow-up'),
-        ('emergency', 'Emergency'),
-    ]
-
     APPOINTMENT_MODE_CHOICES = [
         ('online', 'Online'),
         ('offline', 'Offline'),
@@ -417,11 +487,7 @@ class Appointment(models.Model):
     appointment_notes = models.TextField(blank=True, null=True)
     review_text = models.TextField(blank=True, null=True)
 
-    appointment_type = models.CharField(
-        max_length=50,
-        choices=APPOINTMENT_TYPE_CHOICES,
-        default='consultation'
-    )
+    appointment_type = models.CharField(max_length=50,default='consultation',blank=True,null=True)
 
     appointment_mode = models.CharField(
         max_length=10,
@@ -432,12 +498,12 @@ class Appointment(models.Model):
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
-        default='Pending'
+        default='Pending',blank=True,null=True
     )
 
-    fee = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, blank=True,null=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00,blank=True,null=True)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00,blank=True, null=True)
 
     payment_status = models.CharField(
         max_length=20,
@@ -450,6 +516,8 @@ class Appointment(models.Model):
     razorpay_signature = models.CharField(max_length=255, null=True, blank=True)
     zoom_link = models.URLField(null=True, blank=True)
     video_link = models.URLField(null=True, blank=True)
+    prescription = models.TextField(blank=True, null=True)
+    prescription_file = models.FileField(upload_to="prescriptions/", blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -592,3 +660,14 @@ class Message(models.Model):
 
     class Meta:
         ordering = ['-timestamp']
+
+
+class ClinicListing(models.Model):
+    clinic = models.ForeignKey(Clinic, on_delete=models.CASCADE)
+    treatment = models.CharField(max_length=255)
+    price = models.DecimalField(max_digits=8, decimal_places=2)
+
+class ClinicService(models.Model):
+    clinic = models.ForeignKey(Clinic, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    price = models.DecimalField(max_digits=8, decimal_places=2)
