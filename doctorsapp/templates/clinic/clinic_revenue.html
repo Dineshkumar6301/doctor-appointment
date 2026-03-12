@@ -1,3 +1,4 @@
+
 {% load static %}
 {% load custom_tags %}
 
@@ -48,7 +49,179 @@
     font-weight: 900;
     float: right;
 }
+.dashboard-title{
+font-size:26px;
+letter-spacing:0.5px;
+}
 
+/* FILTER */
+.filter-select{
+border-radius:8px;
+min-width:160px;
+}
+
+
+/* PRO CARD */
+
+.pro-card{
+display:flex;
+align-items:center;
+gap:20px;
+padding:25px;
+border-radius:18px;
+color:white;
+box-shadow:0 12px 25px rgba(0,0,0,0.08);
+transition:all .35s ease;
+position:relative;
+overflow:hidden;
+}
+
+
+/* HOVER EFFECT */
+
+.pro-card:hover{
+transform:translateY(-8px);
+box-shadow:0 25px 40px rgba(0,0,0,0.15);
+}
+
+
+/* ICON */
+
+.icon-circle{
+width:60px;
+height:60px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:22px;
+background:rgba(255,255,255,0.25);
+animation:pulseIcon 2s infinite;
+}
+
+@keyframes pulseIcon{
+0%{transform:scale(1)}
+50%{transform:scale(1.1)}
+100%{transform:scale(1)}
+}
+
+
+/* TEXT */
+
+.card-info p{
+margin:0;
+font-size:14px;
+opacity:0.9;
+}
+
+.card-info h3{
+margin:0;
+font-weight:700;
+font-size:26px;
+}
+
+
+
+/* GRADIENT COLORS */
+
+.revenue-card{
+background:linear-gradient(135deg,#00c853,#64dd17);
+}
+
+.appointment-card{
+background:linear-gradient(135deg,#2196f3,#42a5f5);
+}
+
+.doctor-card{
+background:linear-gradient(135deg,#7e57c2,#9575cd);
+}
+
+.patient-card{
+background:linear-gradient(135deg,#ff7043,#ff8a65);
+}
+
+
+/* PROGRESS BAR */
+
+.progress{
+height:6px;
+border-radius:10px;
+background:rgba(255,255,255,0.3);
+}
+.analytics-card{
+background:white;
+border-radius:16px;
+box-shadow:0 15px 35px rgba(0,0,0,0.08);
+overflow:hidden;
+transition:0.3s;
+}
+
+.analytics-card:hover{
+transform:translateY(-5px);
+box-shadow:0 25px 45px rgba(0,0,0,0.12);
+}
+
+.chart-body{
+padding:30px;
+height:350px;
+}
+
+.gradient-header{
+background:linear-gradient(135deg,#2196f3,#42a5f5);
+color:white;
+padding:16px 20px;
+font-weight:600;
+}
+
+.gradient-header2{
+background:linear-gradient(135deg,#00c853,#69f0ae);
+color:white;
+padding:16px 20px;
+}
+
+.gradient-header3{
+background:linear-gradient(135deg,#7e57c2,#b388ff);
+color:white;
+padding:16px 20px;
+}
+
+.table thead{
+background:#f5f7fb;
+font-weight:600;
+}
+
+.table-row{
+transition:0.2s;
+}
+
+.table-row:hover{
+background:#f7fbff;
+transform:scale(1.01);
+}
+
+.avatar-circle{
+width:35px;
+height:35px;
+border-radius:50%;
+background:#2196f3;
+color:white;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:bold;
+margin-right:10px;
+}
+
+.paid-badge{
+background:#28a745;
+padding:6px 10px;
+border-radius:6px;
+font-size:12px;
+}
+
+.table-card{
+margin-top:10px;
+}
 </style>
 </head>
 <body>
@@ -339,61 +512,341 @@
                     </div>
                 </div>
             </div>
-        
-                
             <div class="right-panel">
-                <div class="content-container">
-                    <div class="outer-container">
-                        <div class="add-listing">
-                            <form method="post" enctype="multipart/form-data" class="doctor-form">
-                                {% csrf_token %}
-                                {% if form.non_field_errors %}
-                                <div class="alert alert-danger">
-                                    {{ form.non_field_errors }}
-                                </div>
-                                {% endif %}
-                                <!-- Pricing -->
-                                <div class="single-box">
-                                    <div class="title-box">
-                                        <h3>Pricing</h3>    
-                                        <button type="button" class="theme-btn-one" onclick="addTreatmentRow()">Add More <i class="icon-image"></i></button>
-                                    </div>       
-                                    <div class="inner-box">
-                                        <div class="row clearfix" id="pricing-container">
-                                            {% for item in pricing %}
-                                            <div class="col-12 form-group treatment-row">  
-                                                <div class="row">
-                                                    <div class="col-lg-6 col-md-6">
-                                                        <label>Treatment</label>
-                                                        <input type="text" name="treatment[]" value="{{ item.treatment }}" class="form-control" required>
-                                                    </div>
-                                                    <div class="col-lg-5 col-md-5">
-                                                        <label>Price</label>
-                                                        <input type="number" name="price[]" value="{{ item.price }}" class="form-control" required>
-                                                    </div>
-                                                    <div class="col-lg-1 col-md-1 d-flex align-items-end">
-                                                        <button type="button" class="btn btn-danger mt-4 remove-treatment">Delete</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                </div>    
-                                <!-- Buttons -->
-                                <div class="btn-box">
-                                    <button type="submit" class="theme-btn-one">Save Changes<i class="icon-Arrow-Right"></i></button>
-                                    <a href="{% url 'doctor_dashboard' %}" class="cancel-btn">Cancel</a>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- agent-section -->
-        <!-- Agent Section -->
-        <section class="agent-section mb-5">
+<div class="content-container bg-white">
+<div class="container-fluid mb-5">
+
+<!-- HEADER -->
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+
+<h2 class="fw-bold text-dark mb-2 dashboard-title">
+<i class="fas fa-chart-line text-sucess"></i>
+{{ clinic.name }} Analytics Dashboard
+</h2>
+
+<form method="get">
+<select name="filter" class="form-select shadow-sm filter-select" onchange="this.form.submit()">
+<option value="">All Time</option>
+<option value="today">Today</option>
+<option value="week">This Week</option>
+<option value="month">This Month</option>
+<option value="year">This Year</option>
+</select>
+</form>
+
+</div>
+
+
+
+<!-- ANALYTICS CARDS -->
+<div class="row g-4 mb-4">
+
+<div class="col-lg-3 col-md-6">
+<div class="pro-card revenue-card">
+<div class="icon-circle">
+<i class="fas fa-rupee-sign"></i>
+</div>
+
+<div class="card-info">
+<p>Total Revenue</p>
+<h3>₹ {{ total_revenue }}</h3>
+<div class="progress mt-2">
+<div class="progress-bar bg-success" style="width:80%"></div>
+</div>
+</div>
+
+</div>
+</div>
+
+
+
+<div class="col-lg-3 col-md-6">
+<div class="pro-card appointment-card">
+
+<div class="icon-circle">
+<i class="fas fa-calendar-check"></i>
+</div>
+
+<div class="card-info">
+<p>Total Appointments</p>
+<h3>{{ total_appointments }}</h3>
+
+<div class="progress mt-2">
+<div class="progress-bar bg-primary" style="width:65%"></div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+
+<div class="col-lg-3 col-md-6">
+<div class="pro-card doctor-card">
+
+<div class="icon-circle">
+<i class="fas fa-user-md"></i>
+</div>
+
+<div class="card-info">
+<p>Doctors</p>
+<h3>{{ total_doctors }}</h3>
+
+<div class="progress mt-2">
+<div class="progress-bar bg-info" style="width:50%"></div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+
+<div class="col-lg-3 col-md-6">
+<div class="pro-card patient-card">
+
+<div class="icon-circle">
+<i class="fas fa-user-injured"></i>
+</div>
+
+<div class="card-info">
+<p>Patients</p>
+<h3>{{ total_patients }}</h3>
+
+<div class="progress mt-2">
+<div class="progress-bar bg-warning" style="width:75%"></div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+
+
+
+<!-- CHART SECTION -->
+<div class="row g-4 mb-5">
+
+<!-- MONTHLY REVENUE -->
+<div class="col-lg-8">
+
+<div class="analytics-card chart-card">
+
+<div class="card-header gradient-header">
+<div class="d-flex justify-content-between align-items-center">
+
+<h5 class="mb-0">
+<i class="fas fa-chart-line me-2"></i>
+Monthly Revenue
+</h5>
+
+<span class="badge bg-light text-dark">
+Analytics
+</span>
+
+</div>
+</div>
+
+<div class="card-body chart-body">
+<canvas id="monthlyRevenueChart"></canvas>
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- DOCTOR REVENUE -->
+<div class="col-lg-4">
+
+<div class="analytics-card chart-card">
+
+<div class="card-header gradient-header2">
+
+<div class="d-flex justify-content-between align-items-center">
+
+<h5 class="mb-0">
+<i class="fas fa-user-md me-2"></i>
+Doctor Revenue
+</h5>
+
+<span class="badge bg-light text-dark">
+Performance
+</span>
+
+</div>
+
+</div>
+
+<div class="card-body chart-body">
+<canvas id="doctorRevenueChart"></canvas>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- REVENUE TABLE -->
+<div class="analytics-card table-card">
+
+<div class="card-header gradient-header3">
+
+<div class="d-flex justify-content-between align-items-center">
+
+<h5 class="mb-0">
+<i class="fas fa-file-invoice-dollar me-2"></i>
+Revenue Details
+</h5>
+
+<button class="btn btn-light btn-sm">
+<i class="fas fa-download"></i> Export
+</button>
+
+</div>
+
+</div>
+
+
+
+<div class="table-responsive">
+
+<table class="table table-hover align-middle mb-0">
+
+<thead>
+<tr>
+<th>Patient</th>
+<th>Doctor</th>
+<th>Date</th>
+<th>Amount</th>
+<th>Status</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for appt in appointments %}
+
+<tr class="table-row">
+
+<td>
+<div class="d-flex align-items-center">
+
+<div class="avatar-circle">
+{{ appt.patient_name|first }}
+</div>
+
+{{ appt.patient_name }}
+
+</div>
+</td>
+
+<td>
+Dr. {{ appt.doctor.user.get_full_name }}
+</td>
+
+<td>
+{{ appt.appointment_datetime|date:"M d Y H:i" }}
+</td>
+
+<td class="fw-bold text-success">
+₹ {{ appt.total_amount }}
+</td>
+
+<td>
+<span class="badge paid-badge">
+<i class="fas fa-check-circle"></i> Paid
+</span>
+</td>
+
+</tr>
+
+{% empty %}
+
+<tr>
+<td colspan="5" class="text-center text-muted py-4">
+No revenue records found
+</td>
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+const monthlyChart = new Chart(
+document.getElementById('monthlyRevenueChart'),
+{
+type:'line',
+data:{
+labels: {{ months|safe }},
+datasets:[{
+label:'Revenue',
+data: {{ monthly_revenue|safe }},
+borderColor:'#2196f3',
+backgroundColor:'rgba(33,150,243,0.15)',
+fill:true,
+tension:0.4,
+pointRadius:4
+}]
+},
+options:{
+plugins:{legend:{display:true}},
+responsive:true,
+maintainAspectRatio:false
+}
+})
+
+
+
+const doctorChart = new Chart(
+document.getElementById('doctorRevenueChart'),
+{
+type:'doughnut',
+data:{
+labels: {{ doctor_names|safe }},
+datasets:[{
+data: {{ doctor_revenue|safe }},
+backgroundColor:[
+'#2196f3',
+'#00c853',
+'#ff7043',
+'#7e57c2',
+'#ffca28'
+]
+}]
+},
+options:{
+responsive:true,
+maintainAspectRatio:false
+}
+})
+
+</script>
+</section>
+<!-- agent-section -->
+      <section class="agent-section mb-5">
             <div class="auto-container">
                 <div class="inner-container bg-color-2 p-4 rounded shadow">
                     <div class="row g-4 align-items-center">
@@ -501,9 +954,6 @@
                                 </div>
                             </div>
                                 
-                            <div class="social-links">
-                                <div class="d-flex justify-content-center justify-content-md-start mt-3">
-                                    <a href="" style="margin-right:15px;"><i class="fab fa-twitter"></i></a>
                         </div>
                     </div>
 
@@ -525,39 +975,3 @@
             <span class="fa fa-arrow-up"></span>
         </button>
     </div>            
-    <!-- JS to add new pricing rows -->
-    <script>
-        function addTreatmentRow() {
-            const container = document.getElementById('pricing-container');
-            const newRow = document.createElement('div');
-            newRow.className = 'col-12 form-group treatment-row';
-            newRow.innerHTML = `
-                <div class="row">
-                    <div class="col-lg-6 col-md-6">
-                        <label>Treatment</label>
-                        <input type="text" name="treatment[]" class="form-control" required>
-                    </div>
-                    <div class="col-lg-5 col-md-5">
-                        <label>Price</label>
-                        <input type="number" name="price[]" class="form-control" required>
-                    </div>
-                    <div class="col-lg-1 col-md-1 d-flex align-items-end">
-                        <button type="button" class="btn btn-danger remove-treatment">Delete</button>
-                    </div>
-                </div>
-            `;
-            container.appendChild(newRow);
-        }
-        // Event delegation to handle remove button clicks
-        document.addEventListener('click', function (e) {
-            if (e.target && e.target.classList.contains('remove-treatment')) {
-                const row = e.target.closest('.treatment-row');
-                if (row) row.remove();
-            }
-        });
-    </script>
-</body>
-</html>
-
-        
-       

@@ -207,6 +207,7 @@
                                                     <li><a href="{% url 'clinic_admin_dashboard' %}">Dashboard</a></li>
                                                     <li><a href="{% url 'clinic_appointment_list' %}">Appointments</a></li>
                                                     <li><a href="{% url 'clinic_listing' %}">Add Listing</a></li>
+                                                    <li><a href="{% url 'clinic_revenue' clinic.id %}">Revenue Dashboard</a></li>
                                                                                                   
                                                     <li><a href="{% url 'logout' %}">Logout</a></li>
                                                 </ul>
@@ -395,6 +396,7 @@
                             <li><a href="{% url 'clinic_admin_dashboard' %}"><i class="fas fa-columns"></i> Dashboard</a></li>
                             <li><a href = "{% url 'clinic_appointment_list' %}"><i class="fas fa-calendar-check"></i> Appointments</a></li>
                             <li><a href="{% url 'clinic_listing' %}"><i class="fas fa-plus-circle"></i> Add Listing</a></li>
+                            <li><a href="{% url 'clinic_revenue' clinic.id %}"><i class="fas fa-chart-line"></i> Revenue Dashboard</a></li>
                             <li>
                                 <a href="{% url 'logout' %}">
                                     <i class="fas fa-sign-out-alt me-2"></i> Logout

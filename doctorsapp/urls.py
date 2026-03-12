@@ -64,12 +64,17 @@ urlpatterns = [
     "appointment/update-status/<int:appointment_id>/",
     views.update_appointment_status,
     name="update_appointment_status"
-),
-path(
-    "complete-appointment/<int:appointment_id>/",
-    views.complete_appointment,
-    name="complete_appointment"
-),
+    ),
+    path(
+        "complete-appointment/<int:appointment_id>/",
+        views.complete_appointment,
+        name="complete_appointment"
+    ),
+    path(
+        "clinic/<int:clinic_id>/revenue/",
+        views.clinic_revenue_dashboard,
+        name="clinic_revenue"
+    ),
     path('clinics/dashboard/', views.clinic_dashboard, name='clinic_admin_dashboard'),
     path('clinics/appointments/', views.clinic_appointment_list, name='clinic_appointment_list'),
     path('clinics/listings/', views.clinic_listing, name='clinic_listing'),

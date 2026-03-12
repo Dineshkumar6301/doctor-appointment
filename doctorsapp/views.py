@@ -2608,3 +2608,70 @@ def clinic_listing(request):
         'clinic': clinic,
         'clinics': clinics,
     })
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, get_object_or_404
+from django.db.models import Sum
+from doctorsapp.models import Clinic, Appointment
+
+from django.db.models import Sum, Count
+from django.db.models.functions import TruncMonth
+from datetime import datetime
+@login_required
+def clinic_revenue_dashboard(request, clinic_id):
+    clinic = Clinic.objects.get(id=clinic_id)
+
+    appointments = Appointment.objects.filter(
+        doctor__clinics=clinic,
+        payment_status="paid"
+    )
+
+    total_revenue = appointments.aggregate(
+        Sum("total_amount")
+    )["total_amount__sum"] or 0
+
+    total_appointments = appointments.count()
+
+    total_doctors = clinic.assigned_doctors.count()
+
+    total_patients = appointments.values("patient").distinct().count()
+
+
+    monthly_data = (
+        appointments
+        .annotate(month=TruncMonth("appointment_datetime"))
+        .values("month")
+        .annotate(total=Sum("total_amount"))
+        .order_by("month")
+    )
+
+    months = [m["month"].strftime("%b") for m in monthly_data]
+    monthly_revenue = [float(m["total"]) for m in monthly_data]
+
+
+    doctor_data = (
+        appointments
+        .values("doctor__user__first_name")
+        .annotate(total=Sum("total_amount"))
+    )
+
+    doctor_names = [d["doctor__user__first_name"] for d in doctor_data]
+    doctor_revenue = [float(d["total"]) for d in doctor_data]
+
+
+    context = {
+        "clinic": clinic,
+        "appointments": appointments,
+        "total_revenue": total_revenue,
+        "total_appointments": total_appointments,
+        "total_doctors": total_doctors,
+        "total_patients": total_patients,
+        "months": months,
+        "monthly_revenue": monthly_revenue,
+        "doctor_names": doctor_names,
+        "doctor_revenue": doctor_revenue,
+    }
+
+
+
+    return render(request, "clinic/clinic_revenue.html", context)
