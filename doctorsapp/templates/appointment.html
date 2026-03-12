@@ -638,6 +638,19 @@ data-file="{{ appt.prescription_file.url }}">
 
 {% endif %}
 
+ <button class="btn btn-warning edit-btn" 
+                                            data-id="{{ appt.id }}"
+                                            data-name="{{ appt.patient.get_full_name }}"
+                                            data-email="{{ appt.patient.user.email|default_if_none:'' }}"
+                                            data-phone="{{ appt.patient.mobile_number|default_if_none:'' }}"
+                                            data-location="{{ appt.patient.location|default_if_none:'' }}"
+                                            data-purpose="{{ appt.purpose|default_if_none:'' }}"
+                                            data-datetime="{{ appt.appointment_datetime|date:'Y-m-d\\TH:i' }}"
+                                            data-appointmentmode="{{ appt.appointment_mode }}"
+                                            data-zoomlink ="{{ appt.video_link }}"
+                                            aria-label="Edit Appointment">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </button>
 
 <li>
 <a href="{% url 'delete_appointment' appt.id %}"
@@ -803,7 +816,73 @@ Download File
 </div>
 </div>
 
+<div id="appointmentModal" class="modal">
+<div class="modal-content">
 
+<span class="close-modal">&times;</span>
+
+<h3 id="modalTitle">Add Appointment</h3>
+
+<form id="appointmentForm" method="POST">
+
+{% csrf_token %}
+
+<div class="form-group">
+<label>Patient Name</label>
+<input type="text" id="patient_name" name="patient_name" required>
+</div>
+
+<div class="form-group">
+<label>Email</label>
+<input type="email" id="email" name="email" required>
+</div>
+
+<div class="form-group">
+<label>Phone</label>
+<input type="text" id="phone" name="phone" required>
+</div>
+
+<div class="form-group">
+<label>Location</label>
+<input type="text" id="location" name="location">
+</div>
+
+<div class="form-group">
+<label>Purpose</label>
+<input type="text" id="purpose" name="purpose" required>
+</div>
+
+<div class="form-group">
+<label>Appointment Date & Time</label>
+<input type="datetime-local" id="appointment_datetime" name="appointment_datetime" required>
+</div>
+
+<div class="form-group">
+<label>Appointment Mode</label><br>
+
+<input type="radio" id="appointment_mode_online" name="appointment_mode" value="online">
+<label for="appointment_mode_online">Online</label>
+
+<input type="radio" id="appointment_mode_offline" name="appointment_mode" value="offline" checked>
+<label for="appointment_mode_offline">Offline</label>
+
+</div>
+
+<div class="form-group" id="zoom_link_group" style="display:none;">
+<label>Zoom Link</label>
+<input type="url" id="zoom_link" name="zoom_link">
+</div>
+
+<br>
+
+<button type="submit" class="btn btn-success">Save Appointment</button>
+
+<button type="button" id="cancelBtn" class="btn btn-secondary">Cancel</button>
+
+</form>
+
+</div>
+</div>
 <script>
 
 document.querySelectorAll(".add-prescription-btn").forEach(btn=>{
@@ -977,103 +1056,143 @@ document.getElementById("viewPrescriptionModal").style.display="none"
         </button>
     </div>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const modal = document.getElementById('appointmentModal');
-            const addBtn = document.getElementById('addAppointmentBtn');
-            const closeModal = document.querySelector('.close-modal');
-            const cancelBtn = document.getElementById('cancelBtn');
-            const form = document.getElementById('appointmentForm');
-            const modalTitle = document.querySelector('#modalTitle');
-            const onlineRadio = document.getElementById('appointment_mode_online');
-            const offlineRadio = document.getElementById('appointment_mode_offline');
-            const zoomGroup = document.getElementById('zoom_link_group');
-            const zoomInput = document.getElementById('zoom_link');
+document.addEventListener('DOMContentLoaded', function () {
 
-            function toggleZoomField() {
-                if (onlineRadio.checked) {
-                    zoomGroup.style.display = 'block';
-                    zoomInput.setAttribute('required', 'required');
-                } else {
-                    zoomGroup.style.display = 'none';
-                    zoomInput.removeAttribute('required');
-                }
+    const modal = document.getElementById('appointmentModal');
+    const addBtn = document.getElementById('addAppointmentBtn');
+    const closeModal = document.querySelector('.close-modal');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const form = document.getElementById('appointmentForm');
+    const modalTitle = document.getElementById('modalTitle');
+
+    const onlineRadio = document.getElementById('appointment_mode_online');
+    const offlineRadio = document.getElementById('appointment_mode_offline');
+
+    const zoomGroup = document.getElementById('zoom_link_group');
+    const zoomInput = document.getElementById('zoom_link');
+
+    /* ---------------------------
+       Show / Hide Zoom Link Field
+    ----------------------------*/
+    function toggleZoomField() {
+        if (onlineRadio && onlineRadio.checked) {
+            zoomGroup.style.display = 'block';
+            zoomInput.setAttribute('required', 'required');
+        } else {
+            zoomGroup.style.display = 'none';
+            zoomInput.removeAttribute('required');
+            zoomInput.value = '';
+        }
+    }
+
+    if (onlineRadio && offlineRadio) {
+        onlineRadio.addEventListener('change', toggleZoomField);
+        offlineRadio.addEventListener('change', toggleZoomField);
+        toggleZoomField();
+    }
+
+    /* ---------------------------
+       Open Modal (Add Appointment)
+    ----------------------------*/
+    if (addBtn) {
+        addBtn.addEventListener('click', function () {
+
+            form.action = "{% url 'add_appointment' %}";
+            form.reset();
+
+            modalTitle.innerText = "Add New Appointment";
+
+            if (offlineRadio) {
+                offlineRadio.checked = true;
             }
 
-            // Attach listeners to radio buttons
-            if (onlineRadio && offlineRadio) {
-                onlineRadio.addEventListener('change', toggleZoomField);
-                offlineRadio.addEventListener('change', toggleZoomField);
-                toggleZoomField(); // Initial check
-            }
-
-            // Open modal for adding appointment
-            addBtn.addEventListener('click', function () {
-                form.action = "{% url 'add_appointment' %}";
-                form.reset();
-                modalTitle.innerText = "Add New Appointment";
-                modal.style.display = 'block';
-                toggleZoomField(); // Reset visibility
-            });
-
-            // Close modal buttons
-            [closeModal, cancelBtn].forEach(btn =>
-                btn.addEventListener('click', () => modal.style.display = 'none')
-            );
-
-            // Open modal for editing appointment
-            document.querySelectorAll('.edit-btn').forEach(button => {
-                button.addEventListener('click', function () {
-                    form.action = `/appointment/edit/${this.dataset.id}/`;
-                    modalTitle.innerText = "Edit Appointment";
-                    modal.style.display = 'block';
-
-                    // Prefill form fields
-                    document.getElementById('patient_name').value = this.dataset.name;
-                    document.getElementById('email').value = this.dataset.email;
-                    document.getElementById('phone').value = this.dataset.phone;
-                    document.getElementById('location').value = this.dataset.location;
-                    document.getElementById('purpose').value = this.dataset.purpose;
-                    document.getElementById('appointment_datetime').value = this.dataset.datetime;
-                    document.getElementById('zoom_link').value = this.dataset.zoomlink || '';
-
-                    // Set radio button for appointment mode
-                    if (this.dataset.appointmentmode === 'online') {
-                        document.getElementById('appointment_mode_online').checked = true;
-                    } else if (this.dataset.appointmentmode === 'offline') {
-                        document.getElementById('appointment_mode_offline').checked = true;
-                    }
-
-                    toggleZoomField(); // Update Zoom field visibility based on mode
-                });
-            });
-
-            // Close modal when clicking outside
-            window.addEventListener('click', function (event) {
-                if (event.target === modal) {
-                    modal.style.display = 'none';
-                }
-            });
-
-            // Form validation
-            form.addEventListener('submit', function (e) {
-                const inputs = form.querySelectorAll('input[required]');
-                let isValid = true;
-
-                inputs.forEach(input => {
-                    if (!input.value.trim()) {
-                        isValid = false;
-                        input.style.borderColor = '#f44336';
-                    } else {
-                        input.style.borderColor = '#e0e0e0';
-                    }
-                });
-                if (!isValid) {
-                    e.preventDefault();
-                    alert('Please fill out all required fields.');
-                }
-            });
+            toggleZoomField();
+            modal.style.display = 'block';
         });
-    </script>
+    }
+
+    /* ---------------------------
+       Close Modal Buttons
+    ----------------------------*/
+    [closeModal, cancelBtn].forEach(btn => {
+        if (btn) {
+            btn.addEventListener('click', function () {
+                modal.style.display = 'none';
+            });
+        }
+    });
+
+    /* ---------------------------
+       Edit Appointment Modal
+    ----------------------------*/
+    document.querySelectorAll('.edit-btn').forEach(button => {
+
+        button.addEventListener('click', function () {
+
+            form.action = `/appointment/edit/${this.dataset.id}/`;
+            modalTitle.innerText = "Edit Appointment";
+            modal.style.display = 'block';
+
+            document.getElementById('patient_name').value = this.dataset.name || '';
+            document.getElementById('email').value = this.dataset.email || '';
+            document.getElementById('phone').value = this.dataset.phone || '';
+            document.getElementById('location').value = this.dataset.location || '';
+            document.getElementById('purpose').value = this.dataset.purpose || '';
+            document.getElementById('appointment_datetime').value = this.dataset.datetime || '';
+            document.getElementById('zoom_link').value = this.dataset.zoomlink || '';
+
+            if (this.dataset.appointmentmode === 'online') {
+                onlineRadio.checked = true;
+            } else {
+                offlineRadio.checked = true;
+            }
+
+            toggleZoomField();
+        });
+
+    });
+
+    /* ---------------------------
+       Close Modal Outside Click
+    ----------------------------*/
+    window.addEventListener('click', function (event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+
+    /* ---------------------------
+       Form Validation
+    ----------------------------*/
+    if (form) {
+
+        form.addEventListener('submit', function (e) {
+
+            const inputs = form.querySelectorAll('[required]');
+            let isValid = true;
+
+            inputs.forEach(input => {
+
+                if (!input.value.trim()) {
+                    input.style.borderColor = '#f44336';
+                    isValid = false;
+                } else {
+                    input.style.borderColor = '#e0e0e0';
+                }
+
+            });
+
+            if (!isValid) {
+                e.preventDefault();
+                alert('Please fill out all required fields.');
+            }
+
+        });
+
+    }
+
+});
+</script>
     <!-- JavaScript -->
     <script src="{% static 'assets/js/jquery.js' %}"></script>
     <script src="{% static 'assets/js/popper.min.js' %}"></script>
