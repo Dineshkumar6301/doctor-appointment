@@ -223,7 +223,6 @@ def logout_view(request):
     logout(request)
     return redirect('home')                       
 
- 
 @login_required
 def patient_dashboard_view(request):
   
