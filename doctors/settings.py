@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'cloudinary',
     'cloudinary_storage',
+    "jazzmin",
 ]
 import cloudinary
 
@@ -63,6 +64,7 @@ CLOUDINARY_STORAGE = {
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 AUTH_USER_MODEL = 'doctorsapp.User'
+
 
 # ==============================
 # MIDDLEWARE
@@ -97,6 +99,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'doctorsapp.context_processors.clinic_global',
             ],
         },
     },

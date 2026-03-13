@@ -1,0 +1,21 @@
+{% extends "admin/index.html" %}
+
+{% block content %}
+
+<h1>Clinic Super Admin Dashboard</h1>
+
+<div style="margin-bottom:20px;">
+    <a href="/admin/analytics/" style="
+        background:#1976d2;
+        color:white;
+        padding:10px 20px;
+        border-radius:6px;
+        text-decoration:none;
+        font-weight:bold;">
+        📊 Analytics Dashboard
+    </a>
+</div>
+
+{{ block.super }}
+
+{% endblock %}

@@ -1,0 +1,454 @@
+{% load static %}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+/* GLOBAL */
+
+body{
+background:#f4f7fb;
+font-family: 'Inter', sans-serif;
+overflow-x:hidden;
+}
+
+
+/* SIDEBAR */
+
+.sidebar{
+position:fixed;
+width:260px;
+height:100vh;
+background:linear-gradient(180deg,#0f172a,#020617);
+color:white;
+padding:25px;
+}
+
+.sidebar h4{
+font-weight:700;
+margin-bottom:40px;
+}
+
+.sidebar a{
+display:block;
+padding:12px 18px;
+border-radius:8px;
+color:#cbd5e1;
+text-decoration:none;
+margin-bottom:6px;
+transition:0.3s;
+}
+
+.sidebar a:hover{
+background:#1e293b;
+color:white;
+}
+
+
+/* MAIN */
+
+.main{
+margin-left:260px;
+padding:35px;
+}
+
+
+/* TOPBAR */
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:30px;
+}
+
+.search-box{
+border-radius:10px;
+border:1px solid #e5e7eb;
+padding:8px 14px;
+width:300px;
+}
+
+.notification{
+font-size:20px;
+cursor:pointer;
+}
+
+
+/* KPI CARDS */
+
+.kpi-card{
+background:white;
+border-radius:16px;
+padding:25px;
+box-shadow:0 10px 25px rgba(0,0,0,0.05);
+transition:.3s;
+position:relative;
+overflow:hidden;
+}
+
+.kpi-card:hover{
+transform:translateY(-6px);
+box-shadow:0 18px 35px rgba(0,0,0,0.1);
+}
+
+.kpi-title{
+color:#64748b;
+font-size:14px;
+}
+
+.kpi-value{
+font-size:32px;
+font-weight:700;
+}
+
+.kpi-icon{
+position:absolute;
+right:20px;
+top:20px;
+font-size:26px;
+opacity:0.2;
+}
+
+
+/* CHART */
+
+.chart-card{
+background:white;
+border-radius:16px;
+padding:25px;
+box-shadow:0 10px 25px rgba(0,0,0,0.05);
+}
+
+
+/* TABLE */
+
+.table-card{
+background:white;
+border-radius:16px;
+padding:25px;
+box-shadow:0 10px 25px rgba(0,0,0,0.05);
+}
+
+.table thead{
+background:#f1f5f9;
+}
+
+
+/* ACTIVITY */
+
+.activity-card{
+background:white;
+border-radius:16px;
+padding:25px;
+box-shadow:0 10px 25px rgba(0,0,0,0.05);
+}
+
+.activity-item{
+display:flex;
+gap:10px;
+padding:10px 0;
+border-bottom:1px solid #eee;
+}
+
+.activity-icon{
+width:35px;
+height:35px;
+background:#3b82f6;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+color:white;
+}
+
+
+/* LEADERBOARD */
+
+.leaderboard{
+background:white;
+border-radius:16px;
+padding:25px;
+box-shadow:0 10px 25px rgba(0,0,0,0.05);
+}
+
+.leaderboard-item{
+display:flex;
+justify-content:space-between;
+padding:10px 0;
+border-bottom:1px solid #eee;
+}
+
+
+/* DARK MODE */
+
+.dark{
+background:#020617;
+color:white;
+}
+
+.dark .kpi-card,
+.dark .chart-card,
+.dark .table-card,
+.dark .activity-card,
+.dark .leaderboard{
+background:#0f172a;
+color:white;
+}
+
+</style>
+
+
+
+<div class="sidebar">
+
+<h4>🏥 Clinic Admin</h4>
+<a href="/admin/"><i class="fa fa-home"></i> Home</a>
+<a href="/admin/analytics/"><i class="fa fa-chart-line"></i> Dashboard</a>
+
+</div>
+
+
+
+<div class="main">
+
+<!-- TOPBAR -->
+
+<div class="topbar">
+
+<h2>Analytics Dashboard</h2>
+
+<div>
+
+<input class="search-box" placeholder="Search...">
+
+<i class="fa fa-bell notification"></i>
+
+<button onclick="toggleDark()" class="btn btn-sm btn-dark">Dark</button>
+
+</div>
+
+</div>
+
+
+
+<!-- KPI CARDS -->
+
+<div class="row g-4 mb-4">
+
+<div class="col-md-3">
+
+<div class="kpi-card">
+
+<div class="kpi-title">Revenue</div>
+<div class="kpi-value">₹ {{ total_revenue }}</div>
+
+<i class="fa fa-rupee-sign kpi-icon"></i>
+
+</div>
+
+</div>
+
+
+<div class="col-md-3">
+
+<div class="kpi-card">
+
+<div class="kpi-title">Appointments</div>
+<div class="kpi-value">{{ total_appointments }}</div>
+
+<i class="fa fa-calendar-check kpi-icon"></i>
+
+</div>
+
+</div>
+
+
+<div class="col-md-3">
+
+<div class="kpi-card">
+
+<div class="kpi-title">Doctors</div>
+<div class="kpi-value">{{ total_doctors }}</div>
+
+<i class="fa fa-user-md kpi-icon"></i>
+
+</div>
+
+</div>
+
+
+<div class="col-md-3">
+
+<div class="kpi-card">
+
+<div class="kpi-title">Patients</div>
+<div class="kpi-value">{{ total_patients }}</div>
+
+<i class="fa fa-user kpi-icon"></i>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- CHARTS -->
+
+<div class="row g-4 mb-4">
+
+<div class="col-lg-8">
+
+<div class="chart-card">
+
+<h5>Monthly Revenue</h5>
+
+<canvas id="revenueChart"></canvas>
+
+</div>
+
+</div>
+
+
+<div class="col-lg-4">
+
+<div class="chart-card">
+
+<h5>Doctor Revenue</h5>
+
+<canvas id="doctorChart"></canvas>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- TABLE + SIDEBAR DATA -->
+
+<div class="row g-4">
+
+<div class="col-lg-8">
+
+<div class="table-card">
+
+<h5>Recent Appointments</h5>
+
+<table class="table">
+
+<thead>
+
+<tr>
+<th>Patient</th>
+<th>Doctor</th>
+<th>Date</th>
+<th>Amount</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for a in appointments %}
+
+<tr>
+
+<td>{{ a.patient_name }}</td>
+<td>Dr. {{ a.doctor.user.first_name }}</td>
+<td>{{ a.appointment_datetime }}</td>
+<td>₹ {{ a.total_amount }}</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+
+<div class="col-lg-4">
+
+<div class="activity-card">
+
+<h5>Activity Feed</h5>
+
+{% for p in recent_patients %}
+
+<div class="activity-item">
+
+<div class="activity-icon">
+<i class="fa fa-user"></i>
+</div>
+
+<div>
+New patient: <b>{{ p.user.first_name }}</b>
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+const revenueChart=new Chart(
+document.getElementById("revenueChart"),
+{
+type:"line",
+data:{
+labels: {{ months|safe }},
+datasets:[{
+label:"Revenue",
+data: {{ monthly_revenue|safe }},
+borderColor:"#2563eb",
+backgroundColor:"rgba(37,99,235,0.2)",
+fill:true
+}]
+}
+})
+
+const doctorChart=new Chart(
+document.getElementById("doctorChart"),
+{
+type:"doughnut",
+data:{
+labels: {{ doctor_names|safe }},
+datasets:[{
+data: {{ doctor_revenue|safe }},
+backgroundColor:["#2563eb","#16a34a","#f59e0b","#9333ea","#ef4444"]
+}]
+}
+})
+
+
+function toggleDark(){
+document.body.classList.toggle("dark")
+}
+
+</script>
