@@ -2676,3 +2676,55 @@ def clinic_revenue_dashboard(request, clinic_id):
 
 
     return render(request, "clinic/clinic_revenue.html", context)
+
+
+from django.db.models import Sum
+from django.db.models.functions import TruncMonth
+from django.shortcuts import render, get_object_or_404
+from .models import Doctor, Appointment
+
+
+def doctor_revenue_dashboard(request, doctor_id):
+
+    doctor = get_object_or_404(Doctor, id=doctor_id)
+
+    # Only this doctor's appointments
+    appointments = Appointment.objects.filter(
+        doctor=doctor,
+        payment_status="paid"
+    )
+
+    # Total Revenue
+    total_revenue = appointments.aggregate(
+        total=Sum("total_amount")
+    )["total"] or 0
+
+    # Total Appointments
+    total_appointments = appointments.count()
+
+    # Total Patients
+    total_patients = appointments.values("patient").distinct().count()
+
+    # Monthly Revenue
+    monthly_data = (
+        appointments
+        .annotate(month=TruncMonth("appointment_datetime"))
+        .values("month")
+        .annotate(total=Sum("total_amount"))
+        .order_by("month")
+    )
+
+    months = [m["month"].strftime("%b") for m in monthly_data]
+    monthly_revenue = [float(m["total"]) for m in monthly_data]
+
+    context = {
+        "doctor": doctor,
+        "appointments": appointments[:10],
+        "total_revenue": total_revenue,
+        "total_appointments": total_appointments,
+        "total_patients": total_patients,
+        "months": months,
+        "monthly_revenue": monthly_revenue,
+    }
+
+    return render(request, "doctorrevenue_dashboard.html", context)

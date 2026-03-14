@@ -99,6 +99,7 @@
                                                         <li><a href="{% url 'my_patients' %}">My Patients</a></li>
                                                         <li><a href="{% url 'add_listing' %}">Add Listing</a></li>
                                                         <li><a href="{% url 'schedule_timing' %}">Schedule Timing</a></li>
+                                                        <li><a href="{% url 'doctorrevenue_dashboard' doctor.id %}">Revenue Dashboard</a></li>
                                                         <!--
                                                         <li>
                                                             {% if doctor and doctor.id %}
@@ -289,6 +290,7 @@
                             <li><a href="{% url 'my_patients' %}" class="current"><i class="fas fa-wheelchair"></i> My Patients</a></li>
                             <li><a href="{% url 'add_listing' %}"><i class="fas fa-plus-circle"></i> Add Listing</a></li>
                             <li><a href="{% url 'schedule_timing' %}"><i class="fas fa-clock"></i> Schedule Timing</a></li>
+                             <li><a href="{% url 'doctorrevenue_dashboard' doctor.id %}"><i class="fas fa-chart-line"></i> Revenue Dashboard</a>
                             <li><a href="{% url 'my_profile' %}"><i class="fas fa-user"></i> My Profile</a></li>
                             <li><a href="{% url 'change_password' %}"><i class="fas fa-unlock-alt"></i> Change Password</a></li>
                             <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>

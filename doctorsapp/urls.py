@@ -75,6 +75,11 @@ urlpatterns = [
         views.clinic_revenue_dashboard,
         name="clinic_revenue"
     ),
+    path(
+        "doctorrevenue-dashboard/<int:doctor_id>/",
+        views.doctor_revenue_dashboard,
+        name="doctorrevenue_dashboard"
+    ),
     path('clinics/dashboard/', views.clinic_dashboard, name='clinic_admin_dashboard'),
     path('clinics/appointments/', views.clinic_appointment_list, name='clinic_appointment_list'),
     path('clinics/listings/', views.clinic_listing, name='clinic_listing'),
