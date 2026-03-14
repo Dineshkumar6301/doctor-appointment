@@ -186,15 +186,15 @@ def login_view(request):
                 login(request, user)
                 if hasattr(user, 'doctor') or user.is_doctor:
                     user_type = 'doctor'
-                    redirect_url = '/doctors/dashboard/'
+                    redirect_url = '/'
 
                 elif hasattr(user, 'patient') or user.is_patient:
                     user_type = 'patient'
-                    redirect_url = '/patients/dashboard/'
+                    redirect_url = '/'
 
                 elif user.is_clinic:
                     user_type = 'clinic'
-                    redirect_url = '/clinics/dashboard/'
+                    redirect_url = '/'
 
                 else:
                     user_type = 'unknown'
