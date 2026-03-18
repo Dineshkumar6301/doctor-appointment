@@ -637,7 +637,6 @@ def my_profile(request):
         Doctor, Speciality, form=SpecialityForm, extra=1, can_delete=True
     )
 
-    # Ensure doctor access
     if not hasattr(request.user, 'doctor_profile'):
         messages.error(request, "Access denied. Doctor account required.")
         return redirect('login')
@@ -684,7 +683,7 @@ def my_profile(request):
                     award_formset.save()
                     speciality_formset.save()
 
-                    # -------- CLINIC LINKING --------
+    
                     for form in clinic_formset:
 
                         if not form.cleaned_data or form.cleaned_data.get("DELETE"):
@@ -702,7 +701,7 @@ def my_profile(request):
                         clinic = Clinic.objects.filter(name__iexact=clinic_name).first()
 
                         if clinic:
-                            # Link doctor to existing clinic
+                
                             doctor_profile.clinics.add(clinic)
 
                             messages.info(
@@ -711,7 +710,7 @@ def my_profile(request):
                             )
 
                         else:
-                            # Create new clinic
+                
                             clinic = Clinic.objects.create(
                                 name=clinic_name,
                                 city=city,
@@ -1289,7 +1288,7 @@ def book_appointment(request, doctor_id):
             date=selected_date,
             time=selected_time,
 
-            # optional fields
+        
             is_new_patient=(request.POST.get('is_new_patient') == 'yes'),
             gender=request.POST.get('gender'),
             patient_name=request.POST.get('patient_name'),
@@ -1303,7 +1302,7 @@ def book_appointment(request, doctor_id):
             date_of_birth=request.POST.get('date_of_birth'),
             appointment_notes=request.POST.get('appointment_notes'),
 
-            # REQUIRED DEFAULTS
+    
             appointment_type=request.POST.get('appointment_type', 'consultation'),
             status='Pending',
 
@@ -1316,7 +1315,6 @@ def book_appointment(request, doctor_id):
 
         return redirect('confirm_appointment', appointment.id)
 
-    # GET request
     selected_date = request.POST.get('date') or request.GET.get('date')
     selected_time = request.POST.get('time') or request.GET.get('time')
 
@@ -1747,7 +1745,7 @@ def get_available_slots(request, doctor_id):
 
     weekday = date_obj.strftime("%A")
 
-    # FILTER BY DAY
+    
     slots = TimeSlot.objects.filter(
         doctor=doctor,
         day_of_week=weekday,
@@ -1918,8 +1916,6 @@ def clinic(request, clinic_id):
                 patient = None
 
     clinic = get_object_or_404(Clinic, id=clinic_id)
-
-    # -------- Doctors --------
     doctors = clinic.assigned_doctors.all()
 
     if clinic.doctor and clinic.doctor not in doctors:
@@ -1928,14 +1924,11 @@ def clinic(request, clinic_id):
     paginator = Paginator(doctors, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-
-    # -------- Edit permission --------
     can_edit_clinic = False
     if request.user.is_authenticated and request.user == clinic.admin:
         can_edit_clinic = True
 
 
-    # -------- Specifications Processing --------
 
     raw_specs = clinic.specifications or []
 
@@ -1943,8 +1936,6 @@ def clinic(request, clinic_id):
         specifications = raw_specs
 
     elif isinstance(raw_specs, str):
-
-        # remove numbering like 1. 2. 3.
         raw_specs = re.sub(r'\d+\.', '', raw_specs)
 
         specifications = [
@@ -1957,19 +1948,15 @@ def clinic(request, clinic_id):
         specifications = []
 
 
-    # split into two columns
     half = (len(specifications) + 1) // 2
     specs_left = specifications[:half]
     specs_right = specifications[half:]
 
-
-    # create numbered specs for edit modal
     numbered_specs = [
         f"{i+1}.{spec}" for i, spec in enumerate(specifications)
     ]
 
 
-    # -------- Awards --------
 
     awards = []
 
@@ -1980,12 +1967,8 @@ def clinic(request, clinic_id):
         awards = clinic.awards
 
 
-    # -------- Services --------
 
     services = ClinicService.objects.filter(clinic=clinic)
-
-
-    # -------- Gallery --------
 
     gallery_images = clinic.images.all() if hasattr(clinic, 'images') else []
 
@@ -2019,7 +2002,6 @@ def edit_clinic(request, clinic_id):
             'error': 'Clinic not found.'
         }, status=404)
 
-    # Permission check
     if clinic.admin != user and not user.is_superuser:
         return JsonResponse({
             'success': False,
@@ -2062,7 +2044,6 @@ def add_branch(request, clinic_id):
 
     clinic = get_object_or_404(Clinic, id=clinic_id)
 
-    # Permission check
     if request.user != clinic.admin and not request.user.is_superuser:
         return JsonResponse(
             {'success': False, 'error': 'Permission denied'},
@@ -2123,7 +2104,6 @@ def edit_clinic_overview(request, clinic_id):
     clinic = get_object_or_404(Clinic, id=clinic_id)
     user = request.user
 
-    # Permission check
     allowed = False
 
     if hasattr(user, 'doctor_profile'):
@@ -2200,7 +2180,6 @@ def update_clinic_contact(request, clinic_id):
 
     clinic = get_object_or_404(Clinic, id=clinic_id)
 
-    # Allow only clinic admin or superuser
     if request.user != clinic.admin and not request.user.is_superuser:
         return JsonResponse(
             {"success": False, "error": "Permission denied"},
@@ -2443,8 +2422,6 @@ from django.utils import timezone
 def clinic_dashboard(request):
 
     user = request.user
-
-    # Only clinic admins allowed
     if not user.is_clinic:
         return redirect("home")
 
@@ -2459,16 +2436,12 @@ def clinic_dashboard(request):
             "clinics": clinics
         })
 
-    # -------- DOCTORS --------
     doctor_list = list(clinic.assigned_doctors.all())
 
-    # include main doctor if exists
     if clinic.doctor and clinic.doctor not in doctor_list:
         doctor_list.append(clinic.doctor)
 
     total_doctors = len(doctor_list)
-
-    # -------- APPOINTMENTS --------
     appointments = Appointment.objects.filter(
         doctor__in=doctor_list,
         payment_status="paid"
@@ -2483,12 +2456,12 @@ def clinic_dashboard(request):
     approved = appointments.filter(status__iexact="accepted").count()
     pending = appointments.filter(status__iexact="pending").count()
 
-    # -------- PATIENTS --------
+
     total_patients = Patient.objects.filter(
         appointments__in=appointments
     ).distinct().count()
 
-    # -------- REVIEWS --------
+    
     reviews_count = SubmitReview.objects.filter(
         doctor__in=doctor_list
     ).count()
@@ -2513,15 +2486,12 @@ def clinic_dashboard(request):
 @login_required
 def clinic_appointment_list(request):
     user = request.user
-
-    # Get all clinics this user manages
     clinics = Clinic.objects.filter(admin=user)
 
     if not clinics.exists():
         messages.error(request, "You are not assigned to any clinic.")
         return redirect('home')
 
-    # Get clinic from GET param or fallback to first clinic
     clinic_id = request.GET.get('clinic_id')
     clinic = clinics.filter(id=clinic_id).first() if clinic_id else clinics.first()
 
@@ -2529,24 +2499,20 @@ def clinic_appointment_list(request):
         messages.error(request, "Invalid clinic selection.")
         return redirect('home')
 
-    # Get all doctors in this clinic
+
     doctors_in_clinic = Doctor.objects.filter(clinics=clinic).distinct()
 
-    # Get current time (timezone-aware, UTC)
     now = timezone.now()
 
-    # Get all appointments for those doctors in the selected clinic
     all_appointments = Appointment.objects.filter(
         doctor__in=doctors_in_clinic,payment_status="paid"
     ).distinct()
 
-    # Split into past and upcoming
     past_appointments = []
     upcoming_appointments = []
 
     for appt in all_appointments:
         if timezone.is_naive(appt.appointment_datetime):
-            # If the datetime is naive, make it aware (fallback safety)
             appt.appointment_datetime = timezone.make_aware(appt.appointment_datetime)
 
         if appt.appointment_datetime < now:
@@ -2554,11 +2520,10 @@ def clinic_appointment_list(request):
         else:
             upcoming_appointments.append(appt)
 
-    # Sort both lists
     upcoming_appointments.sort(key=lambda x: x.appointment_datetime)
     past_appointments.sort(key=lambda x: x.appointment_datetime, reverse=True)
 
-    # Paginate both
+
     paginator_upcoming = Paginator(upcoming_appointments, 10)
     paginator_past = Paginator(past_appointments, 10)
 
@@ -2687,25 +2652,17 @@ from .models import Doctor, Appointment
 def doctor_revenue_dashboard(request, doctor_id):
 
     doctor = get_object_or_404(Doctor, id=doctor_id)
-
-    # Only this doctor's appointments
     appointments = Appointment.objects.filter(
         doctor=doctor,
         payment_status="paid"
     )
-
-    # Total Revenue
     total_revenue = appointments.aggregate(
         total=Sum("total_amount")
     )["total"] or 0
-
-    # Total Appointments
     total_appointments = appointments.count()
-
-    # Total Patients
     total_patients = appointments.values("patient").distinct().count()
 
-    # Monthly Revenue
+
     monthly_data = (
         appointments
         .annotate(month=TruncMonth("appointment_datetime"))
