@@ -101,7 +101,7 @@
                                                         <li><a href="{% url 'doctor_dashboard' %}">Doctors Dashboard</a></li>
                                                         <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
                                                         <li>
-                                                            <a href="{% url 'doctor_detail' request.user.doctor_profile.id %}">Doctor Details</a>
+                                                            <a href="{% url 'doctor_detail' request.user.doctor_profile.slug %}">Doctor Details</a>
                                                         </li>
                                                     </ul>
                                                 </li>
@@ -132,12 +132,12 @@
                                                             <li><h4>Page List 02</h4></li>
                                                             <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
                                                             {% if doctor %}
-                                                                <li><a href="{% url 'doctor_detail' doctor.id %}">Doctor Details</a></li>
+                                                                <li><a href="{% url 'doctor_detail' doctor.slug %}">Doctor Details</a></li>
                                                             {% endif %}
                                                             <li><a href="{% url 'Clinic_list' %}">Clinic List</a></li>
                                                             <li>
                                                                 {% if clinic.id %}
-                                                                <a href="{% url 'clinic' clinic.id %}">Clinic Details</a>
+                                                                <a href="{% url 'clinic' clinic.id clinic.slug %}">Clinic Details</a>
                                                                 {% else %}
                                                                     <span>{{ clinic.name }}</span>
                                                                 {% endif %}
@@ -147,7 +147,7 @@
                                                 </div>
                                             </div>
                                         </li>
-                                        <li class="dropdown"><a href="">News</a>
+                                        <li class="dropdown"><a href="">News</a>    
                                             <ul>
                                                 <li><a href="">Blog Grid 01</a></li>
                                                 <li><a href="">Blog Details</a></li>
@@ -279,11 +279,11 @@
                                         </figure>      
                                         <div class="content-box">
                                             <div class="like-box">
-                                                <a href="{% url 'clinic' clinic.id %}"><i class="far fa-heart"></i></a>
+                                                <a href="{% url 'clinic' clinic.id clinic.slug %}"><i class="far fa-heart"></i></a>
                                             </div>
                                             <ul class="name-box clearfix">
                                                 <li class="name">
-                                                    <h3><a href="{% url 'clinic' clinic.id %}">{{ clinic.name }}</a></h3>
+                                                    <h3><a href="{% url 'clinic' clinic.id clinic.slug %}">{{ clinic.name }}</a></h3>
                                                 </li>
                                                 <li><i class="icon-Trust-1"></i></li>
                                                 <li><i class="icon-Trust-2"></i></li>
@@ -301,17 +301,17 @@
                                                             <li><i class="icon-Star text-muted"></i></li> 
                                                         {% endif %}
                                                     {% endfor %}
-                                                    <li><a href="{% url 'clinic' clinic.id %}">({{ clinic.review_count|default:"0" }})</a></li>
+                                                    <li><a href="{% url 'clinic' clinic.id clinic.slug %}">({{ clinic.review_count|default:"0" }})</a></li>
                                                 </ul>
                                                 <div class="link">
-                                                    <a href="{% url 'clinic' clinic.id %}">{{ clinic.availability|default:"Available" }}</a>
+                                                    <a href="{% url 'clinic' clinic.id clinic.slug %}">{{ clinic.availability|default:"Available" }}</a>
                                                 </div>
                                             </div> 
                                             <div class="location-box">
                                                 <p><i class="fas fa-map-marker-alt"></i>{{ clinic.address }}</p>
                                             </div>
                                             <div class="btn-box">
-                                                <a href="{% url 'clinic' clinic.id %}">Vist Now</a>
+                                                <a href="{% url 'clinic' clinic.id clinic.slug %}">Vist Now</a>
                                             </div>
                                         </div>
                                     </div>

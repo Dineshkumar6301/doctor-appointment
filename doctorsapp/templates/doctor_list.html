@@ -3,9 +3,30 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>Docpro -Doctor list</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+    {% if selected_specialization and city %}
+    {{ selected_specialization|title }} in {{ city|title }} | Top Doctors | Docpro
+    {% elif query %}
+    Search Results for "{{ query }}" | Doctors | Docpro
+    {% else %}
+    Find Doctors Near You | Book Appointments Online | Docpro
+    {% endif %}
+    </title>
+
+    <meta name="description" content="
+    {% if selected_specialization and city %}
+    Find the best {{ selected_specialization }} doctors in {{ city }}. Book appointments instantly with top-rated specialists.
+    {% elif query %}
+    Search results for {{ query }}. Find experienced doctors near you and book appointments easily.
+    {% else %}
+    Search and book appointments with top doctors across India. Cardiologists, dentists, dermatologists and more.
+    {% endif %}
+    ">
+
+    <meta name="robots" content="index, follow">
     <!-- Favicon -->
     <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
     <!-- Google Fonts -->
@@ -99,7 +120,7 @@
                                                         <li><a href="{% url 'doctor_dashboard' %}">Doctors Dashboard</a></li>
                                                         <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
                                                         <li>
-                                                            <a href="{% url 'doctor_detail' request.user.doctor_profile.id %}">Doctor Details</a>
+                                                            <a href="{% url 'doctor_detail' doctor.slug %}">Doctor Details</a>
                                                         </li>
                                                     </ul>
                                                 </li>
@@ -130,12 +151,12 @@
                                                             <li><h4>Page List 02</h4></li>
                                                             <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
                                                             {% if doctor %}
-                                                                <li><a href="{% url 'doctor_detail' doctor.id %}">Doctor Details</a></li>
+                                                                <li><a href="{% url 'doctor_detail' doctor.slug %}">Doctor Details</a></li>
                                                             {% endif %}
                                                             <li><a href="{% url 'Clinic_list' %}">Clinic List</a></li>
                                                             <li>
                                                                 {% if clinic.id %}
-                                                                <a href="{% url 'clinic' clinic.id %}">Clinic Details</a>
+                                                                <a href="{% url 'clinic' clinic.id clinic.slug %}">Clinic Details</a>
                                                                 {% else %}
                                                                     <span>{{ clinic.name }}</span>
                                                                 {% endif %}
@@ -244,10 +265,10 @@
                                     {% endif %}
                                 </figure>
                                 <div class="content-box">
-                                    <div class="like-box"><a href="{% url 'doctor_detail' doctor.id %}"><i class="far fa-heart"></i></a></div>
+                                    <div class="like-box"><a href="{% url 'doctor_detail' doctor.slug %}"><i class="far fa-heart"></i></a></div>
                                     <ul class="name-box clearfix">
                                         <li class="name">
-                                            <h3><a href="{% url 'doctor_detail' doctor.id %}">Dr. {{ doctor.get_full_name }}</a></h3>
+                                            <h3><a href="{% url 'doctor_detail' doctor.slug %}">Dr. {{ doctor.get_full_name }}</a></h3>
                                         </li>
                                         {% if doctor.is_verified %}<li><i class="icon-Trust-1"></i></li>{% endif %}
                                         <li><i class="icon-Trust-2"></i></li>
@@ -259,10 +280,10 @@
                                     <div class="rating-box clearfix">
                                         <ul class="rating clearfix">
                                             {% for _ in "12345"|slice:":doctor.average_rating|floatformat:0" %}<li><i class="icon-Star"></i></li>{% endfor %}
-                                            <li><a href="{% url 'doctor_detail' doctor.id %}">({{ doctor.total_reviews }})</a></li>
+                                            <li><a href="{% url 'doctor_detail' doctor.slug %}">({{ doctor.total_reviews }})</a></li>
                                         </ul>
                                         <div class="link {% if not doctor.is_available %}not-available{% endif %}">
-                                            <a href="{% url 'doctor_detail' doctor.id %}">{{ doctor.availability_status }}</a>
+                                            <a href="{% url 'doctor_detail' doctor.slug %}">{{ doctor.availability_status }}</a>
                                         </div>
                                     </div>
                                     <div class="location-box">
@@ -272,7 +293,7 @@
                                         <div class ="fas fa-phone"></i>  {{doctor.mobile_number}}</p>
                                     </div>
                                     <div class="btn-box">
-                                        <a href="{% url 'doctor_detail' doctor.id %}">Book Now</a>
+                                        <a href="{% url 'doctor_detail' doctor.slug %}">Book Now</a>
                                     </div>
                                 </div>
                             </div>

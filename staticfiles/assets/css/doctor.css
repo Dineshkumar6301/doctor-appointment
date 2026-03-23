@@ -1,0 +1,221 @@
+/* =========================
+   SECTION
+========================= */
+.doctor-section {
+    padding: 80px 0;
+    background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+}
+
+.auto-container {
+    max-width: 1200px;
+    margin: auto;
+    position: relative;
+}
+
+/* =========================
+   SCROLL
+========================= */
+.doctor-scroll {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding: 20px 40px;
+    scroll-behavior: smooth;
+}
+
+.doctor-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+/* =========================
+   CARD
+========================= */
+.doctor-card {
+    min-width: 300px;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+
+    transition: all 0.3s ease;
+}
+
+.doctor-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+}
+
+/* =========================
+   IMAGE
+========================= */
+.doc-img {
+    height: 220px;
+    overflow: hidden;
+    background: #f3f4f6;
+}
+
+.doc-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    transition: 0.3s ease;
+}
+
+.doctor-card:hover .doc-img img {
+    transform: scale(1.04);
+}
+
+/* =========================
+   BADGES
+========================= */
+.verified-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: #22c55e;
+    color: #fff;
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+.availability {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+/* =========================
+   CONTENT
+========================= */
+.doc-content {
+    padding: 16px;
+}
+
+/* HEADER */
+.top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.top h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #111827;
+}
+
+/* RATING */
+.rating {
+    font-size: 12px;
+    font-weight: 500;
+    background: #fef3c7;
+    color: #92400e;
+    padding: 3px 8px;
+    border-radius: 6px;
+}
+
+/* SPECIALIZATION */
+.special {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 10px;
+}
+
+/* EXPERIENCE */
+.total-exp {
+    font-size: 13px;
+    font-weight: 500;
+    color: #4f46e5;
+    margin-bottom: 10px;
+}
+
+/* EXPERIENCE ITEMS */
+.experience {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.exp-item {
+    background: #f9fafb;
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+.exp-item strong {
+    display: block;
+    font-size: 12px;
+    color: #111827;
+}
+
+.exp-item span {
+    font-size: 11px;
+    color: #6b7280;
+}
+
+.exp-item small {
+    font-size: 10px;
+    color: #9ca3af;
+}
+
+/* LOCATION */
+.location {
+    font-size: 13px;
+    color: #374151;
+    margin-bottom: 12px;
+}
+
+/* BUTTON */
+.btn-primary {
+    display: block;
+    text-align: center;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+
+    background: #4f46e5;
+    color: #fff;
+    text-decoration: none;
+
+    transition: 0.3s;
+}
+
+.btn-primary:hover {
+    background: #4338ca;
+}
+
+/* =========================
+   SCROLL BUTTONS
+========================= */
+.scroll-btn {
+    position: absolute;
+    top: 45%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: white;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    cursor: pointer;
+}
+
+.scroll-btn.left {
+    left: -10px;
+}
+
+.scroll-btn.right {
+    right: -10px;
+}

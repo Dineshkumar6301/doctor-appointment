@@ -5,8 +5,15 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>Docpro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Book Doctor Appointments Online | Top Doctors in India | Docpro</title>
+
+    <meta name="description" content="Find and book appointments with experienced doctors across India. Cardiologists, dentists, dermatologists in Hyderabad, Vijayawada and more.">
+
+    <meta name="keywords" content="doctor appointment, cardiologist, dentist, book doctor online, hospitals in India">
+
+    <meta name="robots" content="index, follow">
     <!-- Favicon -->
     <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
     <!-- Google Fonts -->
@@ -24,7 +31,10 @@
     <link href="{% static 'assets/css/color.css' %}" rel="stylesheet">
     <link href="{% static 'assets/css/nice-select.css' %}" rel="stylesheet">
     <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/doctor.css' %}" rel="stylesheet">
     <link href="{% static 'assets/css/responsive.css' %}" rel="stylesheet">
+
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
       <!-- Scripts -->
@@ -73,6 +83,7 @@
     overflow: hidden !important;
   }
 }
+
 </style>
 </head>
 <body>
@@ -182,12 +193,12 @@
                                                             <li><h4>Page List 02</h4></li>
                                                             <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
                                                             {% if doctor %}
-                                                                <li><a href="{% url 'doctor_detail' doctor.id %}">Doctor Details</a></li>
+                                                                <li><a href="{% url 'doctor_detail' doctor.slug %}">Doctor Details</a></li>
                                                             {% endif %}
                                                             <li><a href="{% url 'Clinic_list' %}">Clinic List</a></li>
                                                             <li>
                                                                 {% if clinic.id %}
-                                                                <a href="{% url 'clinic' clinic.id %}">Clinic Details</a>
+                                                                <a href="{% url 'clinic' clinic.id clinic.slug %}">Clinic Details</a>
                                                                 {% else %}
                                                                     <span>{{ clinic.name }}</span>
                                                                 {% endif %}
@@ -328,7 +339,7 @@
         </section>
 
         <!-- about-style-two -->
-         <section class="about-style-two">
+        <section class="about-style-two">
             <div class="auto-container">
                 <div class="row align-items-center clearfix">
                     <div class="col-lg-6 col-md-12 col-sm-12 image-column">
@@ -339,23 +350,23 @@
                                 <div class="pattern-3" style="background-image: url(/static/assets/images/shape/shape-34.png);"></div>
                                 <div class="pattern-4" style="background-image: url(/static/assets/images/shape/shape-35.png);"></div>
                             </div>
-                        <div class="image_block_2">
-                            <div class="image-box">
-                                <div class="pattern">
+                            <div class="image_block_2">
+                                <div class="image-box">
+                                    <div class="pattern">
                                 </div>
-                                    <div class="image-block-wrapper">
-                                        <figure class="image image-1">
-                                            <img src="/static/assets/images/resource/about-1.jpeg" alt="Image 1">
-                                        </figure>
-                                        <figure class="image image-2">
-                                            <img src="/static/assets/images/resource/about-2.jpg" alt="Image 2">
-                                        </figure>
-                                    </div>
+                                <div class="image-block-wrapper">
+                                    <figure class="image image-1">
+                                        <img src="/static/assets/images/resource/about-1.jpeg" alt="Image 1">
+                                    </figure>
+                                    <figure class="image image-2">
+                                        <img src="/static/assets/images/resource/about-2.jpg" alt="Image 2">
+                                    </figure>
                                 </div>
                             </div>
                         </div>
+                    </div>
                         
-                        <div class="col-lg-6 col-md-12 col-sm-12 content-column">
+                    <div class="col-lg-6 col-md-12 col-sm-12 content-column">
                         <div class="content_block_1">
                             <div class="content-box">
                                 <div class="sec-title">
@@ -364,23 +375,24 @@
                                 </div>
                                 <div class="text">
                                     <div>
-                                    <p style="margin-bottom: 20px;">
+                                        <p style="margin-bottom: 20px;">
                                         At Docpro, our mission is simple yet profound: to make quality healthcare accessible, affordable, and convenient for everyone. By connecting patients with certified doctors and clinics through intuitive, secure tech, we empower you to take control of your health—right from your phone or computer.
-                                    </p>
+                                        </p>
                                                                 
-                                    <p>We envision a healthier world where every individual, regardless of location or background, has access to excellent medical care. Through innovative technology and unwavering dedication, Docpro is building the bridge to that future.</p>
-                                </div>
+                                        <p>We envision a healthier world where every individual, regardless of location or background, has access to excellent medical care. Through innovative technology and unwavering dedication, Docpro is building the bridge to that future.</p>
+                                    </div>
                                 <div class="btn-box"><a href="{% url 'about' %}" class="theme-btn-one">About Us<i class="icon-Arrow-Right"></i></a></div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
                     
-            <!-- about-style-two end -->
-            <!-- process-style-two -->
-            <section class="process-style-two bg-color-3 centred">
+        <!-- about-style-two end -->
+        <!-- process-style-two -->
+        <section class="process-style-two bg-color-3 centred">
             <div class="pattern-layer">
                 <div class="pattern-1" style="background-image: url(/static/assets/images/shape/shape-39.png);"></div>
                 <div class="pattern-2" style="background-image: url(/static/assets/images/shape/shape-40.png);"></div>
@@ -425,55 +437,141 @@
         </section>
         <!-- process-style-two end -->
         <!-- banner-section end -->
-        <section class="features-section">
-        <div class="auto-container">
-            <div class="sec-title centred">
-            <h2>Key Features</h2>
-            </div>
-            <div class="row clearfix">
-            <div class="col-lg-3 col-md-6 col-sm-12 feature-block">
-                <div class="feature-box">
-                <img src="/static/assets/images/icons/book.png" alt="Booking Icon">
-                <h4>Quick Appointment Booking</h4>
-                <p>Filter by specialty, view doctor profiles with credentials and ratings, and pick a time that fits your schedule.</p>
+        <section class="features-section" style="background-color: #ffffff;">
+            <div class="auto-container">
+                <div class="sec-title centred">
+                    <h2>Key Features</h2>
+                </div>
+                <div class="row clearfix">
+                <div class="col-lg-3 col-md-6 col-sm-12 feature-block">
+                    <div class="feature-box">
+                        <img src="/static/assets/images/icons/book.png" alt="Booking Icon">
+                        <h4>Quick Appointment Booking</h4>
+                        <p>Filter by specialty, view doctor profiles with credentials and ratings, and pick a time that fits your schedule.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12 feature-block">
+                    <div class="feature-box">
+                    <img src="/static/assets/images/icons/video.png" alt="Video Icon">
+                    <h4>Secure Video Consultations</h4>
+                    <p>Enjoy HD video visits from home — complete care without stepping out.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12 feature-block">
+                    <div class="feature-box">
+                        <img src="/static/assets/images/icons/prescription.png" alt="Prescription Icon">
+                        <h4>Prescription & Records</h4>
+                        <p>Get e‑prescriptions, and access visit summaries/medical history anytime.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12 feature-block">
+                    <div class="feature-box">
+                        <img src="/static/assets/images/icons/family -1.png" alt="Family Icon">
+                        <h4>Family Profiles</h4>
+                        <p>Manage appointments for your whole family — children, elders, you.</p>
+                    </div>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 feature-block">
-                <div class="feature-box">
-                <img src="/static/assets/images/icons/video.png" alt="Video Icon">
-                <h4>Secure Video Consultations</h4>
-                <p>Enjoy HD video visits from home — complete care without stepping out.</p>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 feature-block">
-                <div class="feature-box">
-                <img src="/static/assets/images/icons/prescription.png" alt="Prescription Icon">
-                <h4>Prescription & Records</h4>
-                <p>Get e‑prescriptions, and access visit summaries/medical history anytime.</p>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 feature-block">
-                <div class="feature-box">
-                <img src="static\assets\images\icons\family -1.png" alt="Family Icon">
-                <h4>Family Profiles</h4>
-                <p>Manage appointments for your whole family — children, elders, you.</p>
-                </div>
-            </div>
-            </div>
-        </div>
+        
         </section>
+        <section class="doctor-section">
+    <div class="auto-container">
+
+        <div class="sec-title centred">
+            <h2>Our Top Doctors</h2>
+        </div>
+
+        <div class="doctor-wrapper">
+
+            <!-- LEFT BUTTON -->
+            <button class="scroll-btn left" onclick="scrollDoctors(-1)">‹</button>
+
+            <div class="doctor-scroll" id="doctorScroll">
+
+    {% for item in doctor_data %}
+    {% with doctor=item.doctor experiences=item.experiences total=item.total_experience %}
+
+    <div class="doctor-card">
+
+        <!-- IMAGE -->
+        <div class="doc-img">
+            {% if doctor.profile_image %}
+                <img src="{{ doctor.profile_image.url }}">
+            {% else %}
+                <img src="/static/assets/images/default-doctor.png">
+            {% endif %}
+
+            {% if doctor.is_verified %}
+            <span class="verified-badge">✔</span>
+            {% endif %}
+
+        </div>
+
+        <!-- CONTENT -->
+        <div class="doc-content">
+
+            <div class="top">
+                <h4>{{ doctor.user.get_full_name }}</h4>
+                <span class="rating">⭐ {{ doctor.average_rating }}</span>
+            </div>
+
+            <p class="special">{{ doctor.specialization }}</p>
+
+            <!-- TOTAL EXPERIENCE -->
+            <div class="total-exp">
+                {{ total }} experience
+            </div>
+
+            <!-- EXPERIENCE LIST -->
+            <div class="experience">
+                {% for exp in experiences|slice:":2" %}
+                <div class="exp-item">
+                    <strong>{{ exp.designation }}</strong>
+                    <span>{{ exp.hospital_name }}</span>
+                    <small>{{ exp.duration }}</small>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- LOCATION -->
+            <div class="location">
+                📍 {{ doctor.city }}, {{ doctor.state }}
+            </div>
+
+            <!-- ACTION -->
+            <a href="{% url 'doctor_detail' doctor.slug %}" class="btn-primary">
+                View Profile →
+            </a>
+
+        </div>
+    </div>
+
+    {% endwith %}
+    {% endfor %}
+
+</div>
+
+            </div>
+
+            <!-- RIGHT BUTTON (FIXED POSITION) -->
+            <button class="scroll-btn right" onclick="scrollDoctors(1)">›</button>
+
+        </div>
+
+    </div>
+</section>
 
         <section class="why-choose-section">
-        <div class="auto-container">
-            <div class="sec-title centred">
-            <h2>Why Choose Doctpro?</h2>
-            </div>
-            <div class="row clearfix">
-            <div class="col-md-3 col-sm-6">
-                <div class="icon-feature">
-                <img src="/static/assets/images/icons/certified.png" alt="">
-                <p>Certified & Experienced Doctors</p>
+            <div class="auto-container">
+                <div class="sec-title centred">
+                    <h2>Why Choose Doctpro?</h2>
                 </div>
+                <div class="row clearfix">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="icon-feature">
+                            <img src="/static/assets/images/icons/certified.png" alt="Certified Icon">
+                                <p>Certified & Experienced Doctors</p>
+        </div>
             </div>
             <div class="col-md-3 col-sm-6">
                 <div class="icon-feature">
@@ -496,7 +594,7 @@
             </div>
         </div>
         </section>
-        <section class="elementor-section animated-slow elementor-invisible" data-animation="fadeInUp" style="background-color: white;">
+        <section class="elementor-section animated-slow elementor-invisible" data-animation="fadeInUp" style="background-color:#f9f9f9;">
             <div class="faq-container">
                 <div class="pattern-layer">
                     <div class="pattern" style="background-image: url(/static/assets/images/shape/shape-26.png);"></div>
@@ -825,6 +923,38 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-    (function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93aeed4e8fe32e87',t:'MTc0NjQzNDM2Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+    (function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93aeed4e8fe32e87',t:'MTc0NjQzNDM2Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();
+</script>
+<script>
+let scrollContainer = document.getElementById("doctorScroll");
+let scrollAmount = 0;
+
+function autoScroll() {
+    if (!scrollContainer) return;
+
+    scrollAmount += 320; // card width
+
+    if (scrollAmount >= scrollContainer.scrollWidth - scrollContainer.clientWidth) {
+        scrollAmount = 0; // reset to start
+    }
+
+    scrollContainer.scrollTo({
+        left: scrollAmount,
+        behavior: "smooth"
+    });
+}
+
+// auto scroll every 3 seconds
+setInterval(autoScroll, 3000);
+
+// button scroll
+function scrollDoctors(direction) {
+    scrollContainer.scrollBy({
+        left: direction * 320,
+        behavior: "smooth"
+    });
+}
+</script>
+
 </body>
 </html> 

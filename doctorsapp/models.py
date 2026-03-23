@@ -9,6 +9,7 @@ from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
 from datetime import date, datetime
 
+from django.utils.text import slugify
 from cloudinary.models import CloudinaryField
 
 GENDER_CHOICES = [
@@ -130,6 +131,24 @@ class Doctor(models.Model):
     review_count = models.IntegerField(default=0)
     location = models.CharField(max_length=255,blank = True,null =True)
 
+    slug = models.SlugField(max_length=255, blank=True, unique=True)
+
+    from django.utils.text import slugify
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.user.get_full_name())
+            slug = base_slug
+            count = 1
+
+            while Doctor.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{count}"
+                count += 1
+
+            self.slug = slug
+
+        super().save(*args, **kwargs)
+
     @property
     def availability_status(self):
         return "24/7 Available" if self.is_available else "Not Available"
@@ -213,6 +232,24 @@ class Clinic(models.Model):
     instagram = models.URLField(blank=True, null=True)
     twitter = models.URLField(blank=True, null=True)
     google_plus = models.URLField(blank=True, null=True)
+    slug = models.SlugField(unique=True, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if self.name:
+            self.name = self.name.strip().upper()
+
+            if not self.slug:
+                base_slug = slugify(self.name)
+                slug = base_slug
+                counter = 1
+
+                while Clinic.objects.filter(slug=slug).exists():
+                    slug = f"{base_slug}-{counter}"
+                    counter += 1
+
+                self.slug = slug
+
+        super().save(*args, **kwargs)
     
     class Meta:
         unique_together = ('name', 'city', 'admin')

@@ -69,10 +69,41 @@ def home(request):
            clinics = Clinic.objects.filter(doctor__user=request.user)
         except Clinic.DoesNotExist:
             pass
+
+    doctors = Doctor.objects.filter(
+    is_available=True
+    ).order_by(
+        '-is_featured',
+        '-average_rating',
+        '-review_count'
+    )[:10]
+
+    doctor_data = []
+
+    for doc in doctors:
+        experiences = doc.experience_set.all()
+
+        exp_list = []
+        for exp in experiences:
+            duration = calculate_experience_years(exp.from_date, exp.to_date)
+            exp_list.append({
+                'hospital_name': exp.hospital_name,
+                'designation': exp.designation,
+                'from_date': exp.from_date,
+                'to_date': exp.to_date,
+                'duration': duration
+            })
+
+        doctor_data.append({
+            'doctor': doc,
+            'experiences': exp_list
+        })
     context = {
         'doctor': doctor,
         'patient': patient,  
-        'clinics':clinics
+        'clinics':clinics,
+        'doctors': doctors ,
+        'doctor_data' : doctor_data
     }
     return render(request, 'base.html', context)
 User = get_user_model()
@@ -142,7 +173,7 @@ def register_view(request):
                 return JsonResponse({
                     'status': 'success',
                     'message': 'Registration successful',
-                    'redirect': '/login/'
+                    'redirect': '/signin/'
                 })
 
         except Exception as e:
@@ -157,16 +188,8 @@ def login_view(request):
     patient = None
 
     if request.user.is_authenticated:
-        try:
-            doctor = Doctor.objects.get(user=request.user)
-        except Doctor.DoesNotExist:
-            doctor = None
-
-        if not doctor:
-            try:
-                patient = Patient.objects.get(user=request.user)
-            except Patient.DoesNotExist:
-                patient = None
+        doctor = getattr(request.user, 'doctor_profile', None)
+        patient = getattr(request.user, 'patient_profile', None)
 
     if request.method == 'GET':
         return render(request, 'login.html', {
@@ -180,45 +203,40 @@ def login_view(request):
             email = data.get('email')
             password = data.get('password')
 
-            user = authenticate(request, username=data.get('email'), password=data.get('password'))
+            user = authenticate(request, username=email, password=password)
 
-            if user is not None:
+            if user:
                 login(request, user)
-                if hasattr(user, 'doctor') or user.is_doctor:
+
+                if hasattr(user, 'doctor_profile'):
                     user_type = 'doctor'
-                    redirect_url = '/'
 
-                elif hasattr(user, 'patient') or user.is_patient:
+                elif hasattr(user, 'patient_profile'):
                     user_type = 'patient'
-                    redirect_url = '/'
 
-                elif user.is_clinic:
+                elif getattr(user, 'is_clinic', False):
                     user_type = 'clinic'
-                    redirect_url = '/'
 
                 else:
                     user_type = 'unknown'
-                    redirect_url = '/'
 
                 return JsonResponse({
                     'status': 'success',
                     'message': 'Login successful',
-                    'redirect': redirect_url,
+                    'redirect': '/',
                     'user_type': user_type
                 })
 
-            else:
-                return JsonResponse({
-                    'status': 'error',
-                    'message': 'Invalid email or password'
-                })
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Invalid email or password'
+            })
 
         except Exception as e:
             return JsonResponse({
                 'status': 'error',
                 'message': str(e)
             })
-
 def logout_view(request):
     logout(request)
     return redirect('home')                       
@@ -274,6 +292,8 @@ def doctor_dashboard_view(request):
     except Doctor.DoesNotExist:
         return HttpResponse("Doctor profile not found.", status=404)
 
+    clinic = doctor.owned_clinics.all()  # ✅ FIX
+
     if request.method == 'POST':
         form = DoctorProfileForm(request.POST, request.FILES, instance=doctor)
         if form.is_valid():
@@ -281,34 +301,39 @@ def doctor_dashboard_view(request):
     else:
         form = DoctorProfileForm(instance=doctor)
 
-    appointments = Appointment.objects.filter(
-    doctor=doctor,
-    payment_status="paid"
-).select_related('patient').order_by('-appointment_datetime')
-    patient_ids = Appointment.objects.filter(doctor=doctor).values_list('patient_id', flat=True).distinct()
+    appointments_qs = Appointment.objects.filter(
+        doctor=doctor,
+        payment_status="paid"
+    ).select_related('patient')
+
+    appointments = appointments_qs.order_by('-appointment_datetime')
+
+    patient_ids = Appointment.objects.filter(doctor=doctor)\
+        .values_list('patient_id', flat=True).distinct()
+
     total_patients = Patient.objects.filter(id__in=patient_ids).count()
-    doctor.owned_clinics.all() 
 
     total_staffs = User.objects.filter(
-    is_staff=True,
-    is_doctor=False
-).count()
- 
+        is_staff=True,
+        is_doctor=False
+    ).count()
 
-    appointment_count = Appointment.objects.filter(doctor=doctor, payment_status="paid").count()
-    
+    appointment_count = appointments_qs.count()
+
     paginator = Paginator(appointments, 5)
     page_number = request.GET.get('page')
     appointments = paginator.get_page(page_number)
+
     context = {
         'doctor': doctor,
         'form': form,
         'appointments': appointments,
         'Total_patient': total_patients,
         'total_staffs': total_staffs,
-        'appointment_count': appointment_count,   
-        'clinic':clinic
+        'appointment_count': appointment_count,
+        'clinic': clinic
     }
+
     return render(request, 'doctor_dashboard.html', context)
 
 def appointment_detail_view(request, appointment_id):
@@ -1259,9 +1284,11 @@ from django.contrib.auth.decorators import login_required
 import razorpay
 
 @login_required(login_url='login')
-def book_appointment(request, doctor_id):
+def book_appointment(request, id, slug=None):
+    doctor = get_object_or_404(Doctor, id=id)
 
-    doctor = get_object_or_404(Doctor, id=doctor_id)
+    if slug and slug != doctor.slug:
+        return redirect('book_appointment', id=doctor.id, slug=doctor.slug)
 
     try:
         patient = request.user.patient_profile
@@ -1514,27 +1541,34 @@ def manage_time_slots(request):
 def password_reset_request(request):
     if request.method == 'POST':
         email = request.POST.get('email')
+
         try:
             user = User.objects.get(email=email)
+
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             token = default_token_generator.make_token(user)
+
             reset_url = request.build_absolute_uri(
                 reverse('password_reset_confirm', args=[uid, token])
             )
+
             message = render_to_string('password_reset_email.html', {
                 'user': user,
                 'reset_url': reset_url
             })
+
             send_mail(
                 'Reset Your Password',
                 message,
-                'no-reply@yourdomain.com',
+                'no-reply@docpro.com',
                 [email],
                 fail_silently=False
             )
-            messages.success(request, 'Password reset link has been sent to your email.')
+
         except User.DoesNotExist:
-            messages.error(request, 'No user found with that email.')
+            pass  # 🔥 Do nothing (security)
+
+        messages.success(request, 'If an account exists, a reset link has been sent.')
         return redirect('login')
     return redirect('login')
 
@@ -1570,13 +1604,26 @@ def password_reset_confirm(request, uidb64, token):
     return render(request, 'password_reset_confirm.html', {
         'validlink': False
     })
-
-def doctor_list_view(request): 
+def doctor_list_view(request, slug=None): 
     query = request.GET.get('q', '')
     specialization = request.GET.get('specialization', '')
 
     doctors = Doctor.objects.filter(user__is_active=True)               
 
+    # 🔥 NEW (slug support)
+    if slug:
+        parts = slug.split('-')
+        city = parts[-1]
+        specialization_from_slug = " ".join(parts[:-1])
+
+        doctors = doctors.filter(
+            specialization__icontains=specialization_from_slug,
+            city__icontains=city
+        )
+
+        specialization = specialization_from_slug
+
+    # EXISTING (unchanged)
     if query:
         doctors = doctors.filter(
             Q(user__first_name__icontains=query) |
@@ -1600,8 +1647,9 @@ def doctor_list_view(request):
         'specializations': specializations,
         'selected_specialization': specialization,
         'doctor': doctor,
-        'patient': patient,  
+        'patient': patient,
     }
+
     return render(request, 'doctor_list.html', context)
 
 def calculate_experience_years(from_date, to_date):
@@ -1657,8 +1705,15 @@ def group_schedule(time_slots):
 
     return grouped
 
-def doctor_detail_view(request, doctor_id):
-    doctor = get_object_or_404(Doctor, id=doctor_id)
+from django.shortcuts import get_object_or_404, redirect
+from django.db.models import Avg
+
+def doctor_detail_view(request, slug):
+    doctor = get_object_or_404(Doctor, slug=slug)
+    # ✅ SEO FIX: Redirect if slug is wrong
+    if doctor.slug != slug:
+        return redirect('doctor_detail', slug=doctor.slug)
+
     services = Service.objects.filter(doctor=doctor)
     experiences = doctor.experience_set.all()
     reviews = SubmitReview.objects.filter(doctor=doctor).order_by('-created_at')
@@ -1667,8 +1722,10 @@ def doctor_detail_view(request, doctor_id):
         doctor=doctor,
         is_available=True
     ).order_by('day_of_week', 'start_time')
+
     grouped_slots = group_schedule(time_slots)
 
+    # EXPERIENCE DATA
     experience_data = []
     for exp in experiences:
         duration = calculate_experience_years(exp.from_date, exp.to_date)
@@ -1693,22 +1750,26 @@ def doctor_detail_view(request, doctor_id):
         except:
             doctor_profile = None
 
+    # APPOINTMENT BOOKING
     if request.method == 'POST':
         form = AppointmentForm(request.POST)
         if form.is_valid():
             if not patient:
                 messages.error(request, "You must be logged in as a patient to book an appointment.")
-                return redirect('login') 
+                return redirect('login')
+
             appointment = form.save(commit=False)
             appointment.doctor = doctor
             appointment.patient = patient
             appointment.save()
             form.save_m2m()
+
             messages.success(request, "Appointment booked successfully!")
-            return redirect('appointment_success')  
+            return redirect('appointment_success')
     else:
         form = AppointmentForm()
 
+    # REVIEWS
     total_reviews = reviews.count()
     average_rating = reviews.aggregate(avg_rating=Avg('rating'))['avg_rating'] or 0
 
@@ -1720,17 +1781,11 @@ def doctor_detail_view(request, doctor_id):
         'grouped_slots': grouped_slots,
         'patient': patient,
         'doctor_profile': doctor_profile,
-        'reviews': reviews ,
+        'reviews': reviews,
         'total_reviews': total_reviews,
         'average_rating': round(average_rating, 2),
-        
     })
-from datetime import datetime, timedelta
-from django.http import JsonResponse
 
-from datetime import datetime, timedelta
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
 
 def get_available_slots(request, doctor_id):
 
@@ -1898,7 +1953,12 @@ from django.core.paginator import Paginator
 from .models import Clinic, Doctor, Patient, ClinicService
 
 
-def clinic(request, clinic_id):
+def clinic(request, id, slug=None):
+    clinic = get_object_or_404(Clinic, id=id)
+
+    # SEO redirect (same)
+    if slug and slug != clinic.slug:
+        return redirect('clinic', id=clinic.id, slug=clinic.slug)
 
     doctor = None
     patient = None
@@ -1915,7 +1975,7 @@ def clinic(request, clinic_id):
             except Patient.DoesNotExist:
                 patient = None
 
-    clinic = get_object_or_404(Clinic, id=clinic_id)
+    # ✅ FIX: use existing clinic (no logic change)
     doctors = clinic.assigned_doctors.all()
 
     if clinic.doctor and clinic.doctor not in doctors:
@@ -1924,11 +1984,10 @@ def clinic(request, clinic_id):
     paginator = Paginator(doctors, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+
     can_edit_clinic = False
     if request.user.is_authenticated and request.user == clinic.admin:
         can_edit_clinic = True
-
-
 
     raw_specs = clinic.specifications or []
 
@@ -1938,15 +1997,15 @@ def clinic(request, clinic_id):
     elif isinstance(raw_specs, str):
         raw_specs = re.sub(r'\d+\.', '', raw_specs)
 
+        # ✅ FIX ONLY (same intent)
         specifications = [
             s.strip()
-            for s in raw_specs.split('')
+            for s in raw_specs.split(',')   # ← ONLY FIX
             if s.strip()
         ]
 
     else:
         specifications = []
-
 
     half = (len(specifications) + 1) // 2
     specs_left = specifications[:half]
@@ -1956,8 +2015,6 @@ def clinic(request, clinic_id):
         f"{i+1}.{spec}" for i, spec in enumerate(specifications)
     ]
 
-
-
     awards = []
 
     if isinstance(clinic.awards, str):
@@ -1966,12 +2023,9 @@ def clinic(request, clinic_id):
     elif isinstance(clinic.awards, list):
         awards = clinic.awards
 
-
-
     services = ClinicService.objects.filter(clinic=clinic)
 
     gallery_images = clinic.images.all() if hasattr(clinic, 'images') else []
-
 
     return render(request, 'clinic.html', {
         "clinic": clinic,
@@ -1988,7 +2042,6 @@ def clinic(request, clinic_id):
         "gallery_images": gallery_images,
         "can_edit_clinic": can_edit_clinic,
     })
-
 @login_required
 def edit_clinic(request, clinic_id):
 
@@ -2583,26 +2636,35 @@ from doctorsapp.models import Clinic, Appointment
 from django.db.models import Sum, Count
 from django.db.models.functions import TruncMonth
 from datetime import datetime
+from django.shortcuts import get_object_or_404, render
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+from django.db.models import Sum
+from django.db.models.functions import TruncMonth
+
+
 @login_required
 def clinic_revenue_dashboard(request, clinic_id):
-    clinic = Clinic.objects.get(id=clinic_id)
+    clinic = get_object_or_404(Clinic, id=clinic_id)
+
+    # 🔐 Security check
+    if request.user != clinic.admin:
+        raise PermissionDenied
 
     appointments = Appointment.objects.filter(
         doctor__clinics=clinic,
         payment_status="paid"
-    )
+    ).select_related('doctor', 'patient')
 
     total_revenue = appointments.aggregate(
-        Sum("total_amount")
-    )["total_amount__sum"] or 0
+        total=Sum("total_amount")
+    )["total"] or 0
 
     total_appointments = appointments.count()
-
     total_doctors = clinic.assigned_doctors.count()
-
     total_patients = appointments.values("patient").distinct().count()
 
-
+    # 📊 Monthly Revenue
     monthly_data = (
         appointments
         .annotate(month=TruncMonth("appointment_datetime"))
@@ -2611,21 +2673,24 @@ def clinic_revenue_dashboard(request, clinic_id):
         .order_by("month")
     )
 
-    months = [m["month"].strftime("%b") for m in monthly_data]
+    months = [m["month"].strftime("%b %Y") for m in monthly_data]
     monthly_revenue = [float(m["total"]) for m in monthly_data]
 
-
+    # 👨‍⚕️ Doctor Revenue
     doctor_data = (
         appointments
-        .values("doctor__user__first_name")
+        .values("doctor__user__first_name", "doctor__user__last_name")
         .annotate(total=Sum("total_amount"))
     )
 
-    doctor_names = [d["doctor__user__first_name"] for d in doctor_data]
+    doctor_names = [
+        f"{d['doctor__user__first_name']} {d['doctor__user__last_name']}"
+        for d in doctor_data
+    ]
+
     doctor_revenue = [float(d["total"]) for d in doctor_data]
 
-
-    context = {
+    return render(request, "clinic/clinic_revenue.html", {
         "clinic": clinic,
         "appointments": appointments,
         "total_revenue": total_revenue,
@@ -2636,12 +2701,7 @@ def clinic_revenue_dashboard(request, clinic_id):
         "monthly_revenue": monthly_revenue,
         "doctor_names": doctor_names,
         "doctor_revenue": doctor_revenue,
-    }
-
-
-
-    return render(request, "clinic/clinic_revenue.html", context)
-
+    })
 
 from django.db.models import Sum
 from django.db.models.functions import TruncMonth

@@ -3,9 +3,14 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>Docpro - Login</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | Docpro</title>
+
+    <meta name="description" content="Login to your Docpro account to book doctor appointments, manage schedules, and access healthcare services.">
+
+    <meta name="robots" content="noindex, nofollow">
     <!-- Fav Icon -->
     <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
     <!-- Google Fonts -->
@@ -119,7 +124,7 @@
                                                 <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
                                                 <li>
                                                     {% if doctor.id %}
-                                                        <a href="{% url 'doctor_detail' doctor.id %}">Doctor Details</a>
+                                                        <a href="{% url 'doctor_detail' doctor.slug %}">Doctor Details</a>
                                                     {% else %}
                                                     <span>No details available</span>
                                                     {% endif %}    
@@ -171,12 +176,12 @@
                                                             <li><h4>Page List 02</h4></li>
                                                             <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
                                                             {% if doctor %}
-                                                                <li><a href="{% url 'doctor_detail' doctor.id %}">Doctor Details</a></li>
+                                                                <li><a href="{% url 'doctor_detail' doctor.slug %}">Doctor Details</a></li>
                                                             {% endif %}
                                                             <li><a href="{% url 'Clinic_list' %}">Clinic List</a></li>
                                                             <li>
                                                                 {% if clinic.id %}
-                                                                <a href="{% url 'clinic' clinic.id %}">Clinic Details</a>
+                                                                <a href="{% url 'clinic' clinic.id clinic.slug %}">Clinic Details</a>
                                                                 {% else %}
                                                                     <span>{{ clinic.name }}</span>
                                                                 {% endif %}
