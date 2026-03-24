@@ -563,91 +563,86 @@
         
         </section>
         <section class="doctor-section">
-    <div class="auto-container">
+            <div class="auto-container">
 
-        <div class="sec-title centred">
-            <h2>Our Top Doctors</h2>
-        </div>
-
-        <div class="doctor-wrapper">
-
-            <!-- LEFT BUTTON -->
-            <button class="scroll-btn left" onclick="scrollDoctors(-1)">‹</button>
-
-            <div class="doctor-scroll" id="doctorScroll">
-
-    {% for item in doctor_data %}
-    {% with doctor=item.doctor experiences=item.experiences total=item.total_experience %}
-
-    <div class="doctor-card">
-
-        <!-- IMAGE -->
-        <div class="doc-img">
-            {% if doctor.profile_image %}
-                <img src="{{ doctor.profile_image.url }}">
-            {% else %}
-                <img src="/static/assets/images/default-doctor.png">
-            {% endif %}
-
-            {% if doctor.is_verified %}
-            <span class="verified-badge">✔</span>
-            {% endif %}
-
-        </div>
-
-        <!-- CONTENT -->
-        <div class="doc-content">
-
-            <div class="top">
-                <h4>{{ doctor.user.get_full_name }}</h4>
-                <span class="rating">⭐ {{ doctor.average_rating }}</span>
-            </div>
-
-            <p class="special">{{ doctor.specialization }}</p>
-
-            <!-- TOTAL EXPERIENCE -->
-            <div class="total-exp">
-                {{ total }} experience
-            </div>
-
-            <!-- EXPERIENCE LIST -->
-            <div class="experience">
-                {% for exp in experiences|slice:":2" %}
-                <div class="exp-item">
-                    <strong>{{ exp.designation }}</strong>
-                    <span>{{ exp.hospital_name }}</span>
-                    <small>{{ exp.duration }}</small>
+                <div class="sec-title centred">
+                    <h2>Our Top Doctors</h2>
                 </div>
-                {% endfor %}
-            </div>
+                <div class="doctor-wrapper">
+                    <!-- LEFT BUTTON -->
+                    <button class="scroll-btn left" onclick="scrollDoctors(-1)">‹</button>
+                    <div class="doctor-scroll" id="doctorScroll">
 
-            <!-- LOCATION -->
-            <div class="location">
-                📍 {{ doctor.city }}, {{ doctor.state }}
-            </div>
+                        {% for item in doctor_data %}
+                        {% with doctor=item.doctor experiences=item.experiences total=item.total_experience %}
 
-            <!-- ACTION -->
-            <a href="{% url 'doctor_detail' doctor.slug %}" class="btn-primary">
-                View Profile →
-            </a>
+                        <div class="doctor-card">
+                            <!-- IMAGE -->
+                            <div class="doc-img">
+                                {% if doctor.profile_image %}
+                                    <img src="{{ doctor.profile_image.url }}">
+                                {% else %}
+                                    <img src="/static/assets/images/default-doctor.png">
+                                {% endif %}
+
+                                {% if doctor.is_verified %}
+                                <span class="verified-badge">✔</span>
+                                {% endif %}
+
+                            </div>
+
+                            <!-- CONTENT -->
+                            <div class="doc-content">
+
+                                <div class="top">
+                                    <h4>{{ doctor.user.get_full_name }}</h4>
+                                    <span class="rating">⭐ {{ doctor.average_rating }}</span>
+                                </div>
+
+                                <p class="special">{{ doctor.specialization }}</p>
+
+                                <!-- TOTAL EXPERIENCE -->
+                                <div class="total-exp">
+                                    {{ total }} experience
+                                </div>
+
+                                <!-- EXPERIENCE LIST -->
+                                <div class="experience">
+                                    {% for exp in experiences|slice:":2" %}
+                                    <div class="exp-item">
+                                        <strong>{{ exp.designation }}</strong>
+                                        <span>{{ exp.hospital_name }}</span>
+                                        <small>{{ exp.duration }}</small>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+
+                                <!-- LOCATION -->
+                                <div class="location">
+                                    📍 {{ doctor.city }}, {{ doctor.state }}
+                                </div>
+
+                                <!-- ACTION -->
+                                <a href="{% url 'doctor_detail' doctor.slug %}" class="btn-primary">
+                                    View Profile →
+                                </a>
+
+                            </div>
+                        </div>
+
+                        {% endwith %}
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+                <!-- RIGHT BUTTON (FIXED POSITION) -->
+                 <button class="scroll-btn right" onclick="scrollDoctors(1)">›</button>
+
+            </div>
 
         </div>
-    </div>
-
-    {% endwith %}
-    {% endfor %}
-
-</div>
-
-            </div>
-
-            <!-- RIGHT BUTTON (FIXED POSITION) -->
-            <button class="scroll-btn right" onclick="scrollDoctors(1)">›</button>
-
-        </div>
-
-    </div>
-</section>
+        </section>
 
         <section class="why-choose-section">
             <div class="auto-container">
@@ -659,28 +654,28 @@
                         <div class="icon-feature">
                             <img src="/static/assets/images/icons/certified.png" alt="Certified Icon">
                                 <p>Certified & Experienced Doctors</p>
-        </div>
-            </div>
-            <div class="col-md-3 col-sm-6">
-                <div class="icon-feature">
-                <img src="/static/assets/images/icons/encrypted.png" alt="">
-                <p>Safe, Encrypted Platform</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="icon-feature">
+                        <img src="/static/assets/images/icons/encrypted.png" alt="">
+                        <p>Safe, Encrypted Platform</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="icon-feature">
+                        <img src="/static/assets/images/icons/24-7.png" alt="">
+                        <p>24/7 Access from Anywhere</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="icon-feature">
+                        <img src="/static/assets/images/icons/rupee.png" alt="">
+                        <p>Affordable Fees, No Hidden Charges</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-3 col-sm-6">
-                <div class="icon-feature">
-                <img src="/static/assets/images/icons/24-7.png" alt="">
-                <p>24/7 Access from Anywhere</p>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6">
-                <div class="icon-feature">
-                <img src="/static/assets/images/icons/rupee.png" alt="">
-                <p>Affordable Fees, No Hidden Charges</p>
-                </div>
-            </div>
-            </div>
-        </div>
         </section>
         <section class="elementor-section animated-slow elementor-invisible" data-animation="fadeInUp" style="background-color:#f9f9f9;">
             <div class="faq-container">
