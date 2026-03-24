@@ -34,28 +34,43 @@
         <div class="preloader"></div>
         <!-- Main Header -->
         <header class="main-header style-two">
+            <!-- Header Top -->
+           
             <div class="header-top">
                 <div class="auto-container">
                     <div class="top-inner clearfix">
+
                         <div class="top-left pull-left">
                             <ul class="info clearfix">
-                                <li><i class="fas fa-map-marker-alt"></i> Discover St, New York, NY 10012, USA</li>
-                                <li><i class="fas fa-phone"></i><a href="tel:2512353256">+251-235-3256</a></li>
-                            </ul>
-                        </div>
-                        <div class="top-right pull-right">
-                            <ul class="info clearfix">
-                                <li><a href="{% url 'login' %}">Sign in</a></li>
-                                <li><a href="">Career</a></li>
-                                <li><a href="{% url 'contact' %}">Contact</a></li>
-                                <li class="language">
-                                    <a href="{% url 'home' %}">Language</a>
-                                    <ul class="language-dropdown">
-                                        <li><a href="">English</a></li>  
-                                    </ul>
+                                <li><i class="fas fa-map-marker-alt"></i>Discover St, New York, NY 10012, USA</li>
+                                <li><i class="fas fa-phone"></i>
+                                    <a href="tel:+2512353256">+251-235-3256</a>
                                 </li>
                             </ul>
                         </div>
+
+                        <div class="top-right pull-right">
+                            <ul class="info clearfix">
+
+                                {% if user.is_authenticated %}
+                                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                                {% else %}
+                                    <li><a href="{% url 'login' %}">Sign in</a></li>
+                                {% endif %}
+
+                                <li><a href="#">Career</a></li>
+                                <li><a href="{% url 'contact' %}">Contact</a></li>
+
+                                <li class="language">
+                                    <a href="#">Language</a>
+                                    <ul class="language-dropdown">
+                                        <li><a href="#">English</a></li>
+                                    </ul>
+                                </li>
+
+                            </ul>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -86,14 +101,17 @@
                                                     <li><a href="{% url 'clinic_admin_dashboard' %}">Dashboard</a></li>
                                                     <li><a href="{% url 'clinic_appointment_list' %}">Appointments</a></li>
                                                     <li><a href="{% url 'clinic_listing' %}">Add Listing</a></li>
+
+                                                    {% if clinic and clinic.id %}
                                                     <li><a href="{% url 'clinic_revenue' clinic.id %}">Revenue Dashboard</a></li>
+                                                    {% endif %}
                                                     <li><a href="{% url 'logout' %}">Logout</a></li>
                                                 </ul>
                                             </li>
                                         {% endif %}
                                         {% endif %}
-                                         <!-- Doctor Menu -->
-                                        {% if doctor %}
+                                        <!-- Doctor Menu -->
+                                        {% if doctor  %}
                                         <li class="dropdown">
                                             <a href="{% url 'doctor_dashboard' %}">Doctors</a>
                                             <ul>
@@ -103,18 +121,12 @@
                                                         <li><a href="{% url 'doctor_appointment_list' %}">Appointments</a></li>
                                                         <li><a href="{% url 'my_patients' %}">My Patients</a></li>
                                                         <li><a href="{% url 'add_listing' %}">Add Listing</a></li>
-                                                        <li><a href="{% url 'schedule_timing' %}">Schedule Timing</a></li>
+                                                            <li><a href="{% url 'schedule_timing' %}">Schedule Timing</a></li>
+                                                        {% if doctor and doctor.id %}
                                                         <li><a href="{% url 'doctorrevenue_dashboard' doctor.id %}">Revenue Dashboard</a></li>
-                                                        <!--
-                                                        <li>
-                                                            {% if doctor and doctor.id %}
-                                                                <a href="{% url 'doctor_reviews' doctor.id %}"><i class="fas fa-star"></i> Reviews</a>
-                                                            {% else %}
-                                                                <a href="#"><i class="fas fa-star"></i> Reviews</a>
-                                                            {% endif %}
-                                                        </li>
-                                                        <li><a href="{% url 'messages' %}">Messages</a></li>
-                                                        -->
+                                                        {% endif %}
+                                                     
+                                                    
                                                         <li><a href="{% url 'my_profile' %}">My Profile</a></li>
                                                         <li><a href="{% url 'change_password' %}">Change Password</a></li>
                                                         <li><a href="{% url 'logout' %}">Logout</a></li>
@@ -123,49 +135,50 @@
                                                 <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
                                                 <li>
                                                     {% if doctor.id %}
-                                                    <a href="{% url 'doctor_detail' doctor.slug %}">Doctor Details</a>
+                                                        <a href="{% url 'doctor_detail' doctor.id %}">Doctor Details</a>
                                                     {% else %}
-                                                    <span>No details available</span>
+                                                        <span>No details available</span>
                                                     {% endif %}    
-                                                </li>   
+                                                </li>                               
                                             </ul>
                                         </li>
-                                        {% endif %}                                        
+                                        {% endif %}
                                         <!-- Patient Menu -->
-                                        {% if patient %} 
+                                        {% if patient %}
+                                        <li class = "dropdown"><a href ="">Doctors</a>
+                                            <ul>
+                                                <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
+                                                {% if doctor %}
+                                                <li>
+                                                    <a href="{% url 'doctor_detail' doctor.id %}">Doctor Details</a>
+                                                </li>
+                                                {% endif %} 
+                                            </ul>
+                                        </li>
                                         <li class="dropdown"><a href="{% url 'home' %}">Patients</a>
                                             <ul>
                                                 <li class="dropdown">
                                                     <a href="{% url 'patient_dashboard' %}">Patient Dashboard</a>
                                                     <ul>
                                                         <li><a href="{% url 'patient_dashboard' %}">Dashboard</a></li>
-                                                        <!--
-                                                        <li><a href="{% url 'favourite_doctors' %}">Favourite Doctors</a></li>
-                                                        <li><a href="#">Schedule Timing</a></li>
-                                                      
-                                                        <li>
-                                                            {% if doctor %}
-                                                                <a href="{% url 'book_appointment' doctor.id %}">Book Appointment</a>
-                                                            {% endif %}
-                                                        </li>
-                                                        <li><a href="{% url 'message_dashboard' %}">Messages</a></li>
-                                                         -->
+                                                
                                                         <li><a href="{% url 'profile' %}">My Profile</a></li>
                                                         <li><a href="{% url 'change_password2' %}">Change Password</a></li>
                                                         <li><a href="{% url 'logout'%}">Logout</a></li>
                                                     </ul>
                                                 </li>
-                                                <li><a href="">Submit Review</a></li>
+                                                <li><a href="{% url 'submit_review' %}">Submit Review</a></li>
                                                 <li><a href="{% url 'register' %}">Register Page</a></li>
                                             </ul>
                                         </li>
-                                        {% endif %} 
+                                        {% endif %}
+                                        
                                         <li class="dropdown"><a href="">Pages</a>
                                             <div class="megamenu">
                                                 <div class="row clearfix">
                                                     <div class="col-lg-6 column">
                                                         <ul>
-                                                            <li><h4>Page List 01</h4></li>                                                        
+                                                            <li><h4>Page List 01</h4></li>
                                                             <li><a href="{% url 'about' %}">About Us</a></li>
                                                             <li><a href="{% url 'contact' %}">Contact Us</a></li>
                                                         </ul>
@@ -179,25 +192,25 @@
                                                             {% endif %}
                                                             <li><a href="{% url 'Clinic_list' %}">Clinic List</a></li>
                                                             <li>
-                                                                {% if clinic.id %}
+                                                                {% if clinic and clinic.id %}
                                                                 <a href="{% url 'clinic' clinic.id clinic.slug %}">Clinic Details</a>
                                                                 {% else %}
                                                                     <span>{{ clinic.name }}</span>
                                                                 {% endif %}
                                                             </li>
                                                         </ul>
-                                                    </div>
+                                                    </div> 
                                                 </div>
                                             </div>
                                         </li>
                                         <li class="dropdown"><a href="">News</a>
                                             <ul>
-                                                <li><a href="">Blog Grid 01</a></li>  
-                                                <li><a href="">Blog Details</a></li>
+                                                <li><a href="#">Blog Grid 01</a></li>
+                                                <li><a href="#">Blog Details</a></li>
                                             </ul>
                                         </li>
                                         {% if user.is_authenticated %}
-                                        <li><a href ="{% url 'logout' %}">Log Out</a></li>
+                                        <li><a href="{% url 'logout' %}">Log Out</a></li>
                                         {% endif %}
                                     </ul>
                                 </div>
@@ -207,6 +220,8 @@
                     </div>
                 </div>
             </div>
+
+           
             <!-- Sticky Header -->
             <div class="sticky-header">
                 <div class="auto-container">
@@ -300,16 +315,7 @@
                             <li><a href="{% url 'change_password' %}"><i class="fas fa-unlock-alt"></i> Change Password</a></li>
                             <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                         </ul>
-                        <!--
-                        <li>
-                            {% if doctor and doctor.id %}
-                                <a href="{% url 'doctor_reviews' doctor.id %}"><i class="fas fa-star"></i> Reviews</a>
-                            {% else %}
-                                <a href="#"><i class="fas fa-star"></i> Reviews</a>
-                            {% endif %}
-                        </li>
-                        <li><a href="{% url 'messages' %}"><i class="fas fa-comments"></i> Messages{% if unread_messages > 0 %} <span>{{ unread_messages }}</span>{% endif %}</a></li>
-                        -->
+                       
                     </div>
                 </div>
             </div>
@@ -353,6 +359,7 @@
                                     </div>
                                 </div>    
                                 <!-- Buttons -->
+
                                 <div class="btn-box">
                                     <button type="submit" class="theme-btn-one">Save Changes<i class="icon-Arrow-Right"></i></button>
                                     <a href="{% url 'doctor_dashboard' %}" class="cancel-btn">Cancel</a>
