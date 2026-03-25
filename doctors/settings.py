@@ -46,7 +46,9 @@ INSTALLED_APPS = [
     'cloudinary',
     'cloudinary_storage',
     "jazzmin",
+    'django.contrib.humanize',
 ]
+
 import cloudinary
 
 cloudinary.config(

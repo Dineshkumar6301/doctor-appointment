@@ -1,5 +1,6 @@
 {% load static %}
 {% load custom_tags %}
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -59,7 +60,65 @@
     font-weight: 900;
     float: right;
         }
-  
+  .services-section {
+  padding: 60px 20px;
+  background: #f9fbfb;
+  text-align: center;
+}
+
+.section-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.section-subtitle {
+  color: #6b7280;
+  margin-bottom: 40px;
+}
+
+.services-grid {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.service-card {
+  background: #fff;
+  padding: 30px;
+  width: 280px;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+  transition: 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-8px);
+}
+
+.icon {
+  font-size: 32px;
+  color: #2aa198;
+  margin-bottom: 15px;
+}
+
+.service-card h3 {
+  margin-bottom: 10px;
+}
+
+.service-card p {
+  font-size: 14px;
+  color: #555;
+}
+
+.explore-link {
+  display: inline-block;
+  margin-top: 15px;
+  color: #2aa198;
+  font-weight: 500;
+  text-decoration: none;
+}
 
 @media (max-width: 767px) {
   .banner-section.style-two .bg-layer {
@@ -398,7 +457,125 @@
             <div class="bg-layer" style="background-image: url(/static/assets/images/banner/profile_image_doctors.png);"></div>
     
         </section>
+        <section style="padding:60px 0; background:#f8fbfb;">
 
+            <div class="container text-center">
+
+                <div class="row justify-content-center">
+
+                    <!-- Patients -->
+                    <div class="col-md-4 mb-4">
+                        <div>
+                            <div style="
+                                width:70px;
+                                height:70px;
+                                background:#dff5f3;
+                                border-radius:15px;
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                                margin:0 auto 15px;
+                            ">
+                                <i class="fas fa-users" style="color:#39cabb; font-size:24px;"></i>
+                            </div>
+
+                            <h2 style="font-weight:700;">
+                                {{ patients_count|intcomma }}+
+                            </h2>
+                            <p style="color:#666;">Happy Patients</p>
+                        </div>
+                    </div>
+
+                    <!-- Doctors -->
+                    <div class="col-md-4 mb-4">
+                        <div>
+                            <div style="
+                                width:70px;
+                                height:70px;
+                                background:#dff5f3;
+                                border-radius:15px;
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                                margin:0 auto 15px;
+                            ">
+                                <i class="fas fa-heart" style="color:#39cabb; font-size:24px;"></i>
+                            </div>
+
+                            <h2 style="font-weight:700;">
+                                {{ doctors_count|intcomma }}+
+                            </h2>
+                            <p style="color:#666;">Verified Doctors</p>
+                        </div>
+                    </div>
+
+                    <!-- Clinics -->
+                    <div class="col-md-4 mb-4">
+                        <div>
+                            <div style="
+                                width:70px;
+                                height:70px;
+                                background:#dff5f3;
+                                border-radius:15px;
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                                margin:0 auto 15px;
+                            ">
+                                <i class="fas fa-shield-alt" style="color:#39cabb; font-size:24px;"></i>
+                            </div>
+
+                            <h2 style="font-weight:700;">
+                                {{ clinics_count|intcomma }}+
+                            </h2>
+                            <p style="color:#666;">Hospitals & Clinics</p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="services-section" style="background-color:#e6f9f7;">
+        <div class="container">
+            <h2 class="section-title">Complete Healthcare Solutions</h2>
+            <p class="section-subtitle">
+            Everything you need for your healthcare journey, all in one place
+            </p>
+
+            <div class="services-grid">
+
+            <!-- Find Doctors -->
+            <div class="service-card">
+                <div class="icon">
+                <i class="fas fa-user-md"></i>
+                </div>
+                <h3>Find Doctors</h3>
+                <p>
+                Search from verified doctors.
+                Get their contact details instantly.
+                </p>
+                <a href="{% url 'doctor_list' %}" class="explore-link">Explore →</a>
+            </div>
+
+            <!-- Clinics -->
+            <div class="service-card">
+                <div class="icon">
+                <i class="fas fa-clinic-medical"></i>
+                </div>
+                <h3>Clinics</h3>
+                <p>
+                Find trusted clinics near you with verified details and
+                instant connection to healthcare providers.
+                </p>
+                <a href="{% url 'Clinic_list' %}" class="explore-link">Explore →</a>
+            </div>
+
+            </div>
+        </div>
+        </section>
         <!-- about-style-two -->
         <section class="about-style-two">
             <div class="auto-container">
@@ -497,7 +674,6 @@
             </div>
         </section>
         <!-- process-style-two end -->
-        <!-- banner-section end -->
         <section class="features-section" style="background-color: #ffffff;">
             <div class="auto-container">
                 <div class="sec-title centred">
@@ -535,39 +711,46 @@
             </div>
         
         </section>
-        <section class="process-style-two bg-color-3 centred" 
-         style="padding: 50px 0; position: relative; overflow: hidden;">
+        <section class="process-style-two" 
+                style="background-color:#e6f9f7; padding:20px 0; margin:0;">
 
-            <div class="pattern-layer" 
-                style="position:absolute; top:0; left:0; width:100%; height:100%; max-height:300px; z-index:0;">
+            <div class="auto-container">
 
-                <div class="pattern-1" style="background-image: url(/static/assets/images/shape/shape-39.png); position:absolute; top:0; left:0; width:120px; height:120px; background-size:contain; background-repeat:no-repeat;"></div>
-
-                <div class="pattern-2" style="background-image: url(/static/assets/images/shape/shape-40.png); position:absolute; top:0; right:0; width:120px; height:120px; background-size:contain; background-repeat:no-repeat;"></div>
-
-                <div class="pattern-3" style="background-image: url(/static/assets/images/shape/shape-41.png); position:absolute; bottom:0; left:0; width:120px; height:120px; background-size:contain; background-repeat:no-repeat;"></div>
-
-                <div class="pattern-4" style="background-image: url(/static/assets/images/shape/shape-42.png); position:absolute; bottom:0; right:0; width:120px; height:120px; background-size:contain; background-repeat:no-repeat;"></div>
-
-            </div>
-
-            <div class="auto-container" style="position:relative; z-index:2;">
-
-                <div class="sec-title centred" style="margin-bottom:20px;">
-                    <h2>Our Top Doctors</h2>
+                <!-- TITLE -->
+                <div class="sec-title centred" style="margin-bottom:10px;">
+                    <h2 style="margin-bottom:0;">Our Top Doctors</h2>
                 </div>
 
-                <div class="doctor-wrapper" style="margin-top:10px;">
+                <!-- WRAPPER -->
+                <div class="doctor-wrapper" style="margin-top:0; position:relative;">
                     
                     <!-- LEFT BUTTON -->
-                    <button class="scroll-btn left" onclick="scrollDoctors(-1)">‹</button>
-
-                    <div class="doctor-scroll" id="doctorScroll">
+                    <button class="scroll-btn left" onclick="scrollDoctors(-1)" 
+                            style="
+                            position:absolute;
+                            top:50%;
+                            left:-40px;
+                            transform:translateY(-50%);
+                            z-index:10;
+                            background:#39cabb;
+                            color:#fff;
+                            border:none;
+                            width:35px;
+                            height:35px;
+                            border-radius:50%;
+                            box-shadow:0 4px 10px rgba(0,0,0,0.1);
+                            ">
+                        ‹
+                    </button>
+                
+                    <!-- SCROLL AREA -->
+                    <div class="doctor-scroll" id="doctorScroll" style="padding:5px 0;">
 
                         {% for item in doctor_data %}
                         {% with doctor=item.doctor experiences=item.experiences total=item.total_experience %}
 
-                        <div class="doctor-card">
+                        <div class="doctor-card" style="margin-bottom:10px;">
+                            
                             <!-- IMAGE -->
                             <div class="doc-img">
                                 {% if doctor.profile_image %}
@@ -579,25 +762,27 @@
                                 {% if doctor.is_verified %}
                                 <span class="verified-badge">✔</span>
                                 {% endif %}
-
                             </div>
 
                             <!-- CONTENT -->
                             <div class="doc-content">
 
                                 <div class="top">
-                                    <h4>{{ doctor.user.get_full_name }}</h4>
+                                    <h4 style="margin-bottom:2px;">
+                                        {{ doctor.user.get_full_name }}
+                                    </h4>
                                     <span class="rating">⭐ {{ doctor.average_rating }}</span>
                                 </div>
 
-                                <p class="special">{{ doctor.specialization }}</p>
+                                <p class="special" style="margin-bottom:5px;">
+                                    {{ doctor.specialization }}
+                                </p>
 
-                                <!-- TOTAL EXPERIENCE -->
-                                <div class="total-exp">
+                                <!-- EXPERIENCE -->
+                                <div class="total-exp" style="margin-bottom:5px;">
                                     {{ total }} experience
                                 </div>
 
-                                <!-- EXPERIENCE LIST -->
                                 <div class="experience">
                                     {% for exp in experiences|slice:":2" %}
                                     <div class="exp-item">
@@ -609,12 +794,14 @@
                                 </div>
 
                                 <!-- LOCATION -->
-                                <div class="location">
+                                <div class="location" style="margin:5px 0;">
                                     📍 {{ doctor.city }}, {{ doctor.state }}
                                 </div>
 
-                                <!-- ACTION -->
-                                <a href="{% url 'doctor_detail' doctor.slug %}" class="btn-primary">
+                                <!-- BUTTON -->
+                                <a href="{% url 'doctor_detail' doctor.slug %}" 
+                                class="btn-primary"
+                                style="padding:6px 12px; font-size:13px;">
                                     View Profile →
                                 </a>
 
@@ -627,12 +814,28 @@
                     </div>
 
                 </div>
-                <!-- RIGHT BUTTON (FIXED POSITION) -->
-                 <button class="scroll-btn right" onclick="scrollDoctors(1)">›</button>
+                <button class="scroll-btn right" onclick="scrollDoctors(1)" 
+                            style="
+                            position:absolute;
+                            top:56%;
+                            right:-40px;
+                            transform:translateY(-50%);
+                            z-index:10;
+                            background:#39cabb;
+                            color:#fff;
+                            border:none;
+                            width:35px;
+                            height:35px;
+                            border-radius:50%;
+                            box-shadow:0 4px 10px rgba(0,0,0,0.1);
+                            ">
+                        ‹
+                </button>
+
+          
 
             </div>
 
-        </div>
         </section>
 
         <section class="why-choose-section">
@@ -668,7 +871,7 @@
                 </div>
             </div>
         </section>
-        <section class="elementor-section animated-slow elementor-invisible" data-animation="fadeInUp" style="background-color:#f9f9f9;">
+        <section class="elementor-section animated-slow elementor-invisible" data-animation="fadeInUp" style="background-color:#e6f9f7;">
             <div class="faq-container">
                 <div class="pattern-layer">
                     <div class="pattern" style="background-image: url(/static/assets/images/shape/shape-26.png);"></div>
@@ -759,7 +962,7 @@
                     </div>
                 </div>
             </div>
-           
+        </div>
         </section>   
         <section class="agent-section mt-5 mb-5">
             <div class="auto-container">

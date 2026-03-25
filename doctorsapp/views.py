@@ -103,7 +103,11 @@ def home(request):
         'patient': patient,  
         'clinics':clinics,
         'doctors': doctors ,
-        'doctor_data' : doctor_data
+        'doctor_data' : doctor_data,
+        'patients_count': Patient.objects.count(),
+        'doctors_count': Doctor.objects.count(),
+        'clinics_count': Clinic.objects.count(),
+    
     }
     return render(request, 'base.html', context)
 User = get_user_model()
