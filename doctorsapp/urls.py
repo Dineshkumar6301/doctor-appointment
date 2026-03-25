@@ -88,6 +88,7 @@ urlpatterns = [
     path('clinics/dashboard/', views.clinic_dashboard, name='clinic_admin_dashboard'),
     path('clinics/appointments/', views.clinic_appointment_list, name='clinic_appointment_list'),
     path('clinics/listings/', views.clinic_listing, name='clinic_listing'),
+    path('api/reviews/', views.get_reviews, name='get_reviews'),
 
     
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

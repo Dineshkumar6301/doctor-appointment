@@ -2749,3 +2749,24 @@ def doctor_revenue_dashboard(request, doctor_id):
     }
 
     return render(request, "doctorrevenue_dashboard.html", context)
+
+
+
+
+from django.http import JsonResponse
+from .models import SubmitReview
+
+def get_reviews(request):
+    reviews = SubmitReview.objects.all()
+
+    data = []
+    for r in reviews:
+        data.append({
+            "name": r.name if r.name else "Anonymous",
+            "role": "Patient",
+            "message": r.message,   # ✅ FIXED
+            "rating": r.rating,
+            "doctor": str(r.doctor) if r.doctor else ""
+        })
+
+    return JsonResponse(data, safe=False)

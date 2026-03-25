@@ -311,3 +311,131 @@
   font-weight: 500;
   text-decoration: none;
 }
+
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f4f7fb;
+}
+
+/* Section */
+.testimonials {
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.testimonials h2 {
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.subtitle {
+  color: #6b7280;
+  margin-top: 10px;
+}
+
+/* Slider */
+.slider {
+  overflow: hidden;
+  margin-top: 40px;
+}
+
+.slider-track {
+  display: flex;
+  gap: 25px;
+  animation: scroll 30s linear infinite;
+}
+
+.slider-track:hover {
+  animation-play-state: paused;
+}
+
+/* Card */
+.card {
+  min-width: 320px;
+  padding: 25px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+  text-align: left;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+}
+
+/* Text */
+.message {
+  font-size: 15px;
+  color: #374151;
+  line-height: 1.6;
+}
+
+.user {
+  margin-top: 15px;
+  font-weight: 600;
+}
+
+.role {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+/* Stars */
+.stars {
+  color: #fbbf24;
+  margin-top: 8px;
+}
+
+/* Scroll animation */
+@keyframes scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .card {
+    min-width: 260px;
+  }
+}
+
+/* Remove extra vertical spacing */
+.testimonials {
+  padding: 40px 0 !important; /* reduce top/bottom space */
+  margin: 0;
+}
+
+/* Remove heading gaps */
+.testimonials h2 {
+  margin: 0;
+  margin-bottom: 8px;
+}
+
+.testimonials .subtitle {
+  margin: 0;
+  margin-bottom: 20px;
+}
+
+/* Remove container side gaps */
+.container {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Remove card gaps */
+.slider-track {
+  gap: 0 !important; /* 🔥 removes space between cards */
+}
+
+/* Optional: small controlled spacing instead of full gap */
+.card {
+  margin-right: 10px; /* clean controlled spacing */
+}
+
+/* Remove bottom space */
+.slider {
+  margin: 0;
+}

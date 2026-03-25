@@ -61,7 +61,31 @@
     float: right;
         }
   
+.slider {
+  overflow: hidden;
+  position: relative;
+  max-width: 1000px;
+  margin: auto;
+  cursor: grab;
+}
 
+.slider:active {
+  cursor: grabbing;
+}
+
+.slider-track {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+  will-change: transform;
+  transition: transform 0.3s ease;
+}
+
+/* Smooth scrolling animation */
+@keyframes scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
 @media (max-width: 767px) {
   .banner-section.style-two .bg-layer {
     position: relative !important;
@@ -718,13 +742,11 @@
                             📍 {{ doctor.city }}, {{ doctor.state }}
                         </div>
 
-                        <!-- BUTTON -->
-                        <a href="{% url 'doctor_detail' doctor.slug %}" 
-                            class="btn-primary"
-                            style="padding:6px 12px; font-size:13px;">
+                       <a href="{% url 'doctor_detail' doctor.slug %}" 
+                            class="btn"
+                            style="background:#e6f9f7; color:#0f766e; padding:6px 12px; border-radius:6px;">
                             View Profile →
-                        </a>
-
+                            </a>
                     </div>
                 </div>
 
@@ -774,7 +796,17 @@
                 </div>
             </div>
         </section>
-        <section class="elementor-section animated-slow elementor-invisible" data-animation="fadeInUp" style="background-color:#e6f9f7;">
+        <section class="testimonials" style="background-color:#e6f9f7;">
+            <div class="container">
+                <h2>What Our Users Say</h2>
+                <p class="subtitle">Trusted by patients and healthcare providers</p>
+
+                <div class="slider">
+                <div class="slider-track" id="sliderTrack"></div>
+                </div>
+            </div>
+        </section>
+        <section class="elementor-section animated-slow elementor-invisible" data-animation="fadeInUp" style="background-color:#ffffff;">
             <div class="faq-container">
                 <div class="pattern-layer">
                     <div class="pattern" style="background-image: url(/static/assets/images/shape/shape-26.png);"></div>
@@ -1158,5 +1190,91 @@ function autoScroll() {
 // Auto scroll every 3 seconds
 setInterval(autoScroll, 3000);
 </script>
+
+<script>
+let isDown = false;
+let startX;
+let scrollLeft;
+
+async function loadReviews() {
+    const res = await fetch("/api/reviews/");
+    const reviews = await res.json();
+
+    const track = document.getElementById("sliderTrack");
+    const slider = document.querySelector(".slider");
+
+    track.innerHTML = "";
+
+    reviews.forEach(r => {
+        const stars = "★".repeat(r.rating) + "☆".repeat(5 - r.rating);
+
+        const card = document.createElement("div");
+        card.className = "card";
+
+        card.innerHTML = `
+            <div class="message">"${r.message}"</div>
+            <div class="stars">${stars}</div>
+            <div class="user">${r.name}</div>
+            <div class="role">${r.role}</div>
+        `;
+
+        track.appendChild(card);
+    });
+
+    // 🔥 AUTO SPEED BASED ON COUNT
+    const speed = Math.max(20, reviews.length * 8);
+
+    if (reviews.length >= 3) {
+        track.innerHTML += track.innerHTML;
+        track.style.animation = `scroll ${speed}s linear infinite`;
+        track.style.justifyContent = "flex-start";
+    } else {
+        track.style.animation = "none";
+        track.style.justifyContent = "center";
+    }
+
+    // 🔥 PAUSE ON HOVER
+    slider.addEventListener("mouseenter", () => {
+        track.style.animationPlayState = "paused";
+    });
+
+    slider.addEventListener("mouseleave", () => {
+        track.style.animationPlayState = "running";
+    });
+
+    // 🔥 DRAG / SWIPE SUPPORT
+    slider.addEventListener('mousedown', (e) => {
+        isDown = true;
+        startX = e.pageX;
+        scrollLeft = slider.scrollLeft;
+        track.style.animation = "none";
+    });
+
+    slider.addEventListener('mouseleave', () => isDown = false);
+    slider.addEventListener('mouseup', () => isDown = false);
+
+    slider.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const walk = (e.pageX - startX) * 2;
+        slider.scrollLeft = scrollLeft - walk;
+    });
+
+    // 🔥 MOBILE TOUCH
+    slider.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].pageX;
+        scrollLeft = slider.scrollLeft;
+        track.style.animation = "none";
+    });
+
+    slider.addEventListener('touchmove', (e) => {
+        const walk = (e.touches[0].pageX - startX) * 2;
+        slider.scrollLeft = scrollLeft - walk;
+    });
+}
+
+document.addEventListener("DOMContentLoaded", loadReviews);
+</script>
+
 </body>
 </html> 
