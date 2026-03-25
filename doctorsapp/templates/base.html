@@ -653,131 +653,92 @@
             </div>
         
         </section>
-        <section class="process-style-two" 
-                style="background-color:#e6f9f7; padding:20px 0; margin:0;">
+        <section class="doctor-section">
+        <div class="auto-container">
 
-            <div class="auto-container">
+            <div class="sec-title centred">
+            <h2>Our Top Doctors</h2>
+            </div>
 
-                <!-- TITLE -->
-                <div class="sec-title centred" style="margin-bottom:10px;">
-                    <h2 style="margin-bottom:0;">Our Top Doctors</h2>
-                </div>
+            <div class="doctor-wrapper">
 
-                <!-- WRAPPER -->
-                <div class="doctor-wrapper" style="margin-top:0; position:relative;">
-                    
-                    <!-- LEFT BUTTON -->
-                    <button class="scroll-btn left" onclick="scrollDoctors(-1)" 
-                            style="
-                            position:absolute;
-                            top:50%;
-                            left:-40px;
-                            transform:translateY(-50%);
-                            z-index:10;
-                            background:#39cabb;
-                            color:#fff;
-                            border:none;
-                            width:35px;
-                            height:35px;
-                            border-radius:50%;
-                            box-shadow:0 4px 10px rgba(0,0,0,0.1);
-                            ">
-                        ‹
-                    </button>
-                
-                    <!-- SCROLL AREA -->
-                    <div class="doctor-scroll" id="doctorScroll" style="padding:5px 0;">
+            <!-- LEFT BUTTON -->
+            <button class="scroll-btn left" onclick="scrollDoctors(-1)">‹</button>
 
-                        {% for item in doctor_data %}
-                        {% with doctor=item.doctor experiences=item.experiences total=item.total_experience %}
+            <!-- SCROLL AREA -->
+            <div class="doctor-scroll" id="doctorScroll">
 
-                        <div class="doctor-card" style="margin-bottom:10px;">
-                            
-                            <!-- IMAGE -->
-                            <div class="doc-img">
-                                {% if doctor.profile_image %}
-                                    <img src="{{ doctor.profile_image.url }}">
-                                {% else %}
-                                    <img src="/static/assets/images/default-doctor.png">
-                                {% endif %}
+                {% for item in doctor_data %}
+                {% with doctor=item.doctor experiences=item.experiences total=item.total_experience %}
 
-                                {% if doctor.is_verified %}
-                                <span class="verified-badge">✔</span>
-                                {% endif %}
-                            </div>
+                <div class="doctor-card">
 
-                            <!-- CONTENT -->
-                            <div class="doc-content">
-
-                                <div class="top">
-                                    <h4 style="margin-bottom:2px;">
-                                        {{ doctor.user.get_full_name }}
-                                    </h4>
-                                    <span class="rating">⭐ {{ doctor.average_rating }}</span>
-                                </div>
-
-                                <p class="special" style="margin-bottom:5px;">
-                                    {{ doctor.specialization }}
-                                </p>
-
-                                <!-- EXPERIENCE -->
-                                <div class="total-exp" style="margin-bottom:5px;">
-                                    {{ total }} experience
-                                </div>
-
-                                <div class="experience">
-                                    {% for exp in experiences|slice:":2" %}
-                                    <div class="exp-item">
-                                        <strong>{{ exp.designation }}</strong>
-                                        <span>{{ exp.hospital_name }}</span>
-                                        <small>{{ exp.duration }}</small>
-                                    </div>
-                                    {% endfor %}
-                                </div>
-
-                                <!-- LOCATION -->
-                                <div class="location" style="margin:5px 0;">
-                                    📍 {{ doctor.city }}, {{ doctor.state }}
-                                </div>
-
-                                <!-- BUTTON -->
-                                <a href="{% url 'doctor_detail' doctor.slug %}" 
-                                class="btn-primary"
-                                style="padding:6px 12px; font-size:13px;">
-                                    View Profile →
-                                </a>
-
-                            </div>
-                        </div>
-
-                        {% endwith %}
-                        {% endfor %}
-
+                <!-- IMAGE -->
+                    <div class="doc-img">
+                        {% if doctor.profile_image %}
+                            <img src="{{ doctor.profile_image.url }}">
+                            {% else %}
+                                <img src="/static/assets/images/default-doctor.png">
+                            {% endif %}
+                            {% if doctor.is_verified %}
+                            <span class="verified-badge">✔</span>
+                            {% endif %}
                     </div>
 
-                </div>
-                <button class="scroll-btn right" onclick="scrollDoctors(1)" 
-                            style="
-                            position:absolute;
-                            top:56%;
-                            right:-40px;
-                            transform:translateY(-50%);
-                            z-index:10;
-                            background:#39cabb;
-                            color:#fff;
-                            border:none;
-                            width:35px;
-                            height:35px;
-                            border-radius:50%;
-                            box-shadow:0 4px 10px rgba(0,0,0,0.1);
-                            ">
-                        ‹
-                </button>
+                            <!-- CONTENT -->
+                    <div class="doc-content">
 
-          
+                        <div class="top">
+                            <h4 style="margin-bottom:2px;">
+                                {{ doctor.user.get_full_name }}
+                            </h4>
+                            <span class="rating">⭐ {{ doctor.average_rating }}</span>
+                        </div>
+
+                        <p class="special" style="margin-bottom:5px;">
+                            {{ doctor.specialization }}
+                        </p>
+                        <!-- EXPERIENCE -->
+                        <div class="total-exp" style="margin-bottom:5px;">
+                            {{ total }} experience
+                        </div>
+
+                        <div class="experience">
+                            {% for exp in experiences|slice:":2" %}
+                            <div class="exp-item">
+                                <strong>{{ exp.designation }}</strong>
+                                    <span>{{ exp.hospital_name }}</span>
+                                    <small>{{ exp.duration }}</small>
+                            </div>
+                                {% endfor %}
+                        </div>
+
+                            <!-- LOCATION -->
+                        <div class="location" style="margin:5px 0;">
+                            📍 {{ doctor.city }}, {{ doctor.state }}
+                        </div>
+
+                        <!-- BUTTON -->
+                        <a href="{% url 'doctor_detail' doctor.slug %}" 
+                            class="btn-primary"
+                            style="padding:6px 12px; font-size:13px;">
+                            View Profile →
+                        </a>
+
+                    </div>
+                </div>
+
+                {% endwith %}
+                {% endfor %}
+
+                </div>
+
+                </div>
+            <button class="scroll-btn right" onclick="scrollDoctors(1)">›</button>
 
             </div>
 
+        </div>
         </section>
 
         <section class="why-choose-section">
@@ -1164,35 +1125,38 @@ document.addEventListener('DOMContentLoaded', function () {
     (function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93aeed4e8fe32e87',t:'MTc0NjQzNDM2Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();
 </script>
 <script>
-let scrollContainer = document.getElementById("doctorScroll");
+const container = document.getElementById('doctorScroll');
+
 let scrollAmount = 0;
 
 function autoScroll() {
-    if (!scrollContainer) return;
+    const card = container.querySelector('.doctor-card');
+    if (!card) return;
 
-    scrollAmount += 320; // card width
+    const cardWidth = card.offsetWidth + 20; // gap
 
-    if (scrollAmount >= scrollContainer.scrollWidth - scrollContainer.clientWidth) {
-        scrollAmount = 0; // reset to start
+    let visibleCards = 4;
+
+    if (window.innerWidth <= 576) {
+        visibleCards = 1;
+    } else if (window.innerWidth <= 992) {
+        visibleCards = 2;
     }
 
-    scrollContainer.scrollTo({
+    scrollAmount += cardWidth;
+
+    if (scrollAmount >= container.scrollWidth - container.clientWidth) {
+        scrollAmount = 0; // reset
+    }
+
+    container.scrollTo({
         left: scrollAmount,
         behavior: "smooth"
     });
 }
 
-// auto scroll every 3 seconds
+// Auto scroll every 3 seconds
 setInterval(autoScroll, 3000);
-
-// button scroll
-function scrollDoctors(direction) {
-    scrollContainer.scrollBy({
-        left: direction * 320,
-        behavior: "smooth"
-    });
-}
 </script>
-
 </body>
 </html> 
