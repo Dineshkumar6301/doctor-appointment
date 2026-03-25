@@ -134,189 +134,156 @@
             </div>
    
             <!-- Header Lower -->
-        <div class="header-lower">
-            <div class="auto-container">
-                <div class="outer-box">
+            <div class="header-lower">
+                <div class="auto-container">
+                    <div class="outer-box">
 
-                    <!-- Logo -->
+                        <!-- Logo -->
                         <div class="logo-box">
                             <figure class="logo">
                                 <a href="{% url 'home' %}"><img src="{% static 'assets/images/logo-3.png' %}" alt="Logo"></a>
                             </figure>
                         </div>
 
-                    <!-- Menu -->
-                    <div class="menu-area">
+                        <!-- Menu -->
+                        <div class="menu-area">
 
-                        <div class="mobile-nav-toggler">
-                            <i class="icon-bar"></i>
-                            <i class="icon-bar"></i>
-                            <i class="icon-bar"></i>
+                            <div class="mobile-nav-toggler">
+                                <i class="icon-bar"></i>
+                                <i class="icon-bar"></i>
+                                <i class="icon-bar"></i>
+                            </div>
+
+                            <nav class="main-menu navbar-expand-md navbar-light">
+                                <div class="collapse navbar-collapse clearfix" id="navbarSupportedContent">
+
+                                    <ul class="navigation clearfix">
+
+                                        <li><a href="{% url 'home' %}">Home</a></li>
+
+                                        {% if user.is_authenticated %}
+
+                                            <!-- Clinic -->
+                                            {% if user.role == "clinic_admin" or user.is_clinic %}
+                                            <li class="dropdown">
+                                                <a href="{% url 'clinic_admin_dashboard' %}">Clinic</a>
+                                                <ul>
+                                                    <li><a href="{% url 'clinic_admin_dashboard' %}">Dashboard</a></li>
+                                                    <li><a href="{% url 'clinic_appointment_list' %}">Appointments</a></li>
+                                                    <li><a href="{% url 'clinic_listing' %}">Add Listing</a></li>
+
+                                                    {% if clinic and clinic.id %}
+                                                    <li>
+                                                        <a href="{% url 'clinic_revenue' clinic.id %}">
+                                                            Revenue Dashboard
+                                                        </a>
+                                                    </li>
+                                                    {% endif %}
+
+                                                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                                                </ul>
+                                            </li>
+                                            {% endif %}
+
+                                            <!-- Doctor -->
+                                            {% if user.doctor_profile %}
+                                            <li class="dropdown">
+                                                <a href="{% url 'doctor_dashboard' %}">Doctor</a>
+                                                <ul>
+                                                    <li class="dropdown"><a href="{% url 'doctor_dashboard' %}">Doctors Dashboard</a>
+                                                        <ul>
+                                                            <li><a href="{% url 'doctor_dashboard' %}">Dashboard</a></li>
+                                                            <li><a href="{% url 'doctor_appointment_list' %}">Appointments</a></li>
+                                                            <li><a href="{% url 'my_patients' %}">My Patients</a></li>
+                                                            <li><a href="{% url 'add_listing' %}">Add Listing</a></li>
+                                                            <li><a href="{% url 'schedule_timing' %}">Schedule Timing</a></li>
+                                                            {% if doctor and doctor.id %}
+                                                            <li>
+                                                                <a href="{% url 'doctorrevenue_dashboard' doctor.id %}">
+                                                                    Revenue Dashboard
+                                                                </a>
+                                                            </li>
+                                                            {% endif %}
+                                                                                                                
+                                                        
+                                                            <li><a href="{% url 'my_profile' %}">My Profile</a></li>
+                                                            <li><a href="{% url 'change_password' %}">Change Password</a></li>
+                                                            <li><a href="{% url 'logout' %}">Logout</a></li>
+                                                        </ul>
+                                                    </li>
+                                                    <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
+                                                    <li>
+                                                        {% if doctor and doctor.id %}
+                                                            <a href="{% url 'doctor_detail' doctor.id %}">Doctor Details</a>
+                                                        {% else %}
+                                                            <span>No details available</span>
+                                                        {% endif %}    
+                                                    </li>                               
+                                                </ul>
+                                            </li>
+                                            {% endif %}
+
+                                            <!-- Patient -->
+                                            {% if user.patient_profile %}
+                                            <li class="dropdown"><a href="{% url 'patient_dashboard' %}">Patient</a>
+                                                <ul>
+                                                    <li class="dropdown">
+                                                        <a href="{% url 'patient_dashboard' %}">Patient Dashboard</a>
+                                                        <ul>
+                                                            <li><a href="{% url 'patient_dashboard' %}">Dashboard</a></li>
+                                                            
+                                                            <li><a href="{% url 'profile' %}">My Profile</a></li>
+                                                            <li><a href="{% url 'change_password2' %}">Change Password</a></li>
+                                                            <li><a href="{% url 'logout'%}">Logout</a></li>
+                                                        </ul>
+                                                    </li>
+                                                <li> <a href="{% url 'submit_review' %}">Submit Review</a></li>
+                                                    <li><a href="{% url 'register' %}">Register Page</a></li>
+                                                </ul>
+                                            </li>
+                                            {% endif %}
+
+                                        {% endif %}
+
+                                        <!-- Pages -->
+
+                                    <li><a href="{% url 'doctor_list' %}">Find A Doctors</a></li>
+                                    <li><a href="{% url 'Clinic_list' %}">Find A Clinics</a></li>
+                                                
+                                        <li><a href="{% url 'about' %}">About Us</a></li>
+                                        <li><a href="{% url 'contact' %}">Contact Us</a></li>
+
+                            
+                                        <!-- News -->
+                                        <li class="dropdown">
+                                            <a href="#">Blogs</a>
+                                            <ul>
+                                                <li><a href="#">Blog Grid</a></li>
+                                                <li><a href="#">Blog Details</a></li>
+                                            </ul>
+                                        </li>
+                                        {% if user.is_authenticated %}
+                                            <li><a href="{% url 'logout' %}">Log Out</a></li>
+                                            {% endif %}
+                                    </ul>
+
+                                </div>
+                            </nav>
+
                         </div>
 
-                        <nav class="main-menu navbar-expand-md navbar-light">
-                            <div class="collapse navbar-collapse clearfix" id="navbarSupportedContent">
-
-                                <ul class="navigation clearfix">
-
-                                    <li><a href="{% url 'home' %}">Home</a></li>
-
-                                    {% if user.is_authenticated %}
-
-                                        <!-- Clinic -->
-                                        {% if user.role == "clinic_admin" or user.is_clinic %}
-                                        <li class="dropdown">
-                                            <a href="#">Clinic</a>
-                                            <ul>
-                                                <li><a href="{% url 'clinic_admin_dashboard' %}">Dashboard</a></li>
-                                                <li><a href="{% url 'clinic_appointment_list' %}">Appointments</a></li>
-                                                <li><a href="{% url 'clinic_listing' %}">Add Listing</a></li>
-
-                                                {% if clinic and clinic.id %}
-                                                <li>
-                                                    <a href="{% url 'clinic_revenue' clinic.id %}">
-                                                        Revenue Dashboard
-                                                    </a>
-                                                </li>
-                                                {% endif %}
-
-                                                <li><a href="{% url 'logout' %}">Logout</a></li>
-                                            </ul>
-                                        </li>
-                                        {% endif %}
-
-                                        <!-- Doctor -->
-                                        {% if user.doctor_profile %}
-                                        <li class="dropdown">
-                                            <a href="{% url 'doctor_dashboard' %}">Doctors</a>
-                                            <ul>
-                                                <li class="dropdown"><a href="{% url 'doctor_dashboard' %}">Doctors Dashboard</a>
-                                                    <ul>
-                                                        <li><a href="{% url 'doctor_dashboard' %}">Dashboard</a></li>
-                                                        <li><a href="{% url 'doctor_appointment_list' %}">Appointments</a></li>
-                                                        <li><a href="{% url 'my_patients' %}">My Patients</a></li>
-                                                        <li><a href="{% url 'add_listing' %}">Add Listing</a></li>
-                                                        <li><a href="{% url 'schedule_timing' %}">Schedule Timing</a></li>
-                                                        {% if doctor and doctor.id %}
-                                                        <li>
-                                                            <a href="{% url 'doctorrevenue_dashboard' doctor.id %}">
-                                                                Revenue Dashboard
-                                                            </a>
-                                                        </li>
-                                                        {% endif %}
-                                                                                                            
-                                                    
-                                                        <li><a href="{% url 'my_profile' %}">My Profile</a></li>
-                                                        <li><a href="{% url 'change_password' %}">Change Password</a></li>
-                                                        <li><a href="{% url 'logout' %}">Logout</a></li>
-                                                    </ul>
-                                                </li>
-                                                <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
-                                                <li>
-                                                    {% if doctor and doctor.id %}
-                                                        <a href="{% url 'doctor_detail' doctor.id %}">Doctor Details</a>
-                                                    {% else %}
-                                                        <span>No details available</span>
-                                                    {% endif %}    
-                                                </li>                               
-                                            </ul>
-                                        </li>
-                                        {% endif %}
-
-                                        <!-- Patient -->
-                                        {% if user.patient_profile %}
-                                        <li class="dropdown"><a href="{% url 'home' %}">Patients</a>
-                                            <ul>
-                                                <li class="dropdown">
-                                                    <a href="{% url 'patient_dashboard' %}">Patient Dashboard</a>
-                                                    <ul>
-                                                        <li><a href="{% url 'patient_dashboard' %}">Dashboard</a></li>
-                                                        
-                                                        <li><a href="{% url 'profile' %}">My Profile</a></li>
-                                                        <li><a href="{% url 'change_password2' %}">Change Password</a></li>
-                                                        <li><a href="{% url 'logout'%}">Logout</a></li>
-                                                    </ul>
-                                                </li>
-                                               <li> <a href="{% url 'submit_review' %}">Submit Review</a></li>
-                                                <li><a href="{% url 'register' %}">Register Page</a></li>
-                                            </ul>
-                                        </li>
-                                        {% endif %}
-
-                                    {% endif %}
-
-                                    <!-- Pages -->
-                                    <li class="dropdown">
-                                        <a href="#">Pages</a>
-                                        <div class="megamenu">
-                                            <div class="row clearfix">
-
-                                                <div class="col-lg-6 column">
-                                                    <ul>
-                                                        <li><h4>Page List 01</h4></li>
-                                                        <li><a href="{% url 'about' %}">About Us</a></li>
-                                                        <li><a href="{% url 'contact' %}">Contact Us</a></li>
-                                                    </ul>
-                                                </div>
-
-                                                <div class="col-lg-6 column">
-                                                    <ul>
-                                                        <li><h4>Page List 02</h4></li>
-                                                        <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
-
-                                                        {% if doctor and doctor.slug %}
-                                                        <li>
-                                                            <a href="{% url 'doctor_detail' doctor.slug %}">
-                                                                Doctor Details
-                                                            </a>
-                                                        </li>
-                                                        {% endif %}
-
-                                                        <li><a href="{% url 'Clinic_list' %}">Clinic List</a></li>
-
-                                                        {% if clinic and clinic.slug %}
-                                                        <li>
-                                                            <a href="{% url 'clinic' clinic.id clinic.slug %}">
-                                                                Clinic Details
-                                                            </a>
-                                                        </li>
-                                                        {% endif %}
-
-                                                    </ul>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </li>
-
-                                    <!-- News -->
-                                    <li class="dropdown">
-                                        <a href="#">News</a>
-                                        <ul>
-                                            <li><a href="#">Blog Grid</a></li>
-                                            <li><a href="#">Blog Details</a></li>
-                                        </ul>
-                                    </li>
-
-                                </ul>
-
-                            </div>
-                        </nav>
+                        <!-- Button -->
+                        <div class="btn-box">
+                            {% if not user.is_authenticated %}
+                            <a href="{% url 'register' %}" class="theme-btn-one">
+                                <i class="icon-image"></i>Join Now
+                            </a>
+                            {% endif %}
+                        </div>
 
                     </div>
-
-                    <!-- Button -->
-                    <div class="btn-box">
-                        {% if not user.is_authenticated %}
-                        <a href="{% url 'register' %}" class="theme-btn-one">
-                            <i class="icon-image"></i>Join Now
-                        </a>
-                        {% endif %}
-                    </div>
-
                 </div>
             </div>
-        </div>
 
             <div class="sticky-header">
                 <div class="auto-container">
@@ -330,7 +297,11 @@
                             <nav class="main-menu clearfix"></nav>
                         </div>
                         <div class="btn-box">
-                            <a href="{% url 'register' %}" class="theme-btn-one"><i class="icon-image"></i>Join Now</a>
+                            {% if not user.is_authenticated %}
+                        <a href="{% url 'register' %}" class="theme-btn-one">
+                            <i class="icon-image"></i>Join Now
+                        </a>
+                        {% endif %}                    
                         </div>
                     </div>
                 </div>
@@ -345,11 +316,13 @@
                 
                 <div class="menu-outer"></div>
                 <div class="btn-box" style="background: transparent;">
+                    {% if not user.is_authenticated %}
                     <a href="{% url 'register' %}"
                     class="theme-btn-one"
                     style="background:#2ec4b6; box-shadow:none; filter:none; border:none;">
                         <i class="icon-image"></i> Join Now
                     </a>
+                    {% endif%}
                 </div>
 
                 <div class="contact-info">
@@ -562,15 +535,33 @@
             </div>
         
         </section>
-        <section class="doctor-section">
-            <div class="auto-container">
+        <section class="process-style-two bg-color-3 centred" 
+         style="padding: 50px 0; position: relative; overflow: hidden;">
 
-                <div class="sec-title centred">
+            <div class="pattern-layer" 
+                style="position:absolute; top:0; left:0; width:100%; height:100%; max-height:300px; z-index:0;">
+
+                <div class="pattern-1" style="background-image: url(/static/assets/images/shape/shape-39.png); position:absolute; top:0; left:0; width:120px; height:120px; background-size:contain; background-repeat:no-repeat;"></div>
+
+                <div class="pattern-2" style="background-image: url(/static/assets/images/shape/shape-40.png); position:absolute; top:0; right:0; width:120px; height:120px; background-size:contain; background-repeat:no-repeat;"></div>
+
+                <div class="pattern-3" style="background-image: url(/static/assets/images/shape/shape-41.png); position:absolute; bottom:0; left:0; width:120px; height:120px; background-size:contain; background-repeat:no-repeat;"></div>
+
+                <div class="pattern-4" style="background-image: url(/static/assets/images/shape/shape-42.png); position:absolute; bottom:0; right:0; width:120px; height:120px; background-size:contain; background-repeat:no-repeat;"></div>
+
+            </div>
+
+            <div class="auto-container" style="position:relative; z-index:2;">
+
+                <div class="sec-title centred" style="margin-bottom:20px;">
                     <h2>Our Top Doctors</h2>
                 </div>
-                <div class="doctor-wrapper">
+
+                <div class="doctor-wrapper" style="margin-top:10px;">
+                    
                     <!-- LEFT BUTTON -->
                     <button class="scroll-btn left" onclick="scrollDoctors(-1)">‹</button>
+
                     <div class="doctor-scroll" id="doctorScroll">
 
                         {% for item in doctor_data %}
@@ -647,7 +638,7 @@
         <section class="why-choose-section">
             <div class="auto-container">
                 <div class="sec-title centred">
-                    <h2>Why Choose Doctpro?</h2>
+                    <h2>Why Choose Docpro?</h2>
                 </div>
                 <div class="row clearfix">
                     <div class="col-md-3 col-sm-6">
@@ -768,11 +759,9 @@
                     </div>
                 </div>
             </div>
-        </section>
-        <!-- faq-section end -->
-        
-        <!-- Agent Section -->
-        <section class="agent-section mb-5">
+           
+        </section>   
+        <section class="agent-section mt-5 mb-5">
             <div class="auto-container">
                 <div class="inner-container bg-color-2 p-4 rounded shadow">
                     <div class="row g-4 align-items-center">
@@ -866,17 +855,38 @@
                         <div class="col-lg-3 col-md-6 col-sm-12">
                             <h5 class="text-white fw-bold mb-3">Contacts</h5>
                             <ul class="list-unstyled footer-links">
-                                <li><i class="fas fa-map-marker-alt me-2"></i> Flat 20, Reynolds Neck, North Helenaville, FV77 8WS</li>
-                                <li><i class="fas fa-phone me-2"></i> <a href="tel:23055873407">+2(305) 587-3407</a></li>
-                                <li><i class="fas fa-envelope me-2"></i> <a href="mailto:info@docpro.com">info@docpro.com</a></li>
+                               <li>
+                                    <i class="fas fa-map-marker-alt me-2" style="color:#39cabb;"></i>
+                                    Flat 20, Reynolds Neck, North Helenaville, FV77 8WS
+                                </li>
+
+                                <li>
+                                    <i class="fas fa-phone me-2" style="color:#39cabb;"></i>
+                                    <a href="tel:23055873407">+2(305) 587-3407</a>
+                                </li>
+
+                                <li>
+                                    <i class="fas fa-envelope me-2" style="color:#39cabb;"></i>
+                                    <a href="mailto:info@docpro.com">info@docpro.com</a>
+                                </li>
                             </ul>
                             <div class="socail-links">
                                 <div class="d-flex justify-content-center justify-content-md-start mt-3">
-                                    <a href="" style="margin-right:15px;"><i class="fab fa-twitter"></i></a>
-                                    <a href="" style="margin-right:15px;"><i class="fab fa-facebook-square"></i></a>
-                                    <a href="" style="margin-right:15px;"><i class="fab fa-pinterest-p"></i></a>
-                                    <a href="" style="margin-right:15px;"><i class="fab fa-instagram"></i></a>
-                                    <a href=""><i class="fab fa-youtube"></i></a>
+                                    <a href="" style="margin-right:15px; color:#fff; font-size:18px;">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                    <a href="" style="margin-right:15px; color:#fff; font-size:18px;">
+                                        <i class="fab fa-facebook-square"></i>
+                                    </a>
+                                    <a href="" style="margin-right:15px; color:#fff; font-size:18px;">
+                                        <i class="fab fa-pinterest-p"></i>
+                                    </a>
+                                    <a href="" style="margin-right:15px; color:#fff; font-size:18px;">
+                                        <i class="fab fa-instagram"></i>
+                                    </a>
+                                    <a href="" style="color:#fff; font-size:18px;">
+                                        <i class="fab fa-youtube"></i>
+                                    </a>
                                 </div>
 
                             </div>
