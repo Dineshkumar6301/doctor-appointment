@@ -526,6 +526,7 @@ body {
     font-size: 20px;
     margin-bottom: 10px;
     color: #0f172a;
+    text-align: center;
 }
 
 .service-card p {
@@ -538,7 +539,7 @@ body {
 .explore-link {
     display: inline-flex;
     align-items: center;
-    margin-top: 20px;
+    margin-bottom: 20px;
     font-weight: 600;
     color: #39cabb;
     text-decoration: none;
