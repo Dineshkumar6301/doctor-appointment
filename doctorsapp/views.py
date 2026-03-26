@@ -296,7 +296,7 @@ def doctor_dashboard_view(request):
     except Doctor.DoesNotExist:
         return HttpResponse("Doctor profile not found.", status=404)
 
-    clinic = doctor.owned_clinics.all()  # ✅ FIX
+    clinic = doctor.owned_clinics.all()
 
     if request.method == 'POST':
         form = DoctorProfileForm(request.POST, request.FILES, instance=doctor)
@@ -305,25 +305,30 @@ def doctor_dashboard_view(request):
     else:
         form = DoctorProfileForm(instance=doctor)
 
+    # ✅ MAIN QUERYSET (ONLY THIS DOCTOR)
     appointments_qs = Appointment.objects.filter(
         doctor=doctor,
         payment_status="paid"
     ).select_related('patient')
 
+    # Order
     appointments = appointments_qs.order_by('-appointment_datetime')
 
-    patient_ids = Appointment.objects.filter(doctor=doctor)\
-        .values_list('patient_id', flat=True).distinct()
+    # ✅ PATIENT COUNT (ONLY THIS DOCTOR)
+    total_patients = appointments_qs.values_list(
+        'patient_id', flat=True
+    ).distinct().count()
 
-    total_patients = Patient.objects.filter(id__in=patient_ids).count()
+    # ✅ APPOINTMENT COUNT (ONLY THIS DOCTOR)
+    appointment_count = appointments_qs.count()
 
+    # (Optional: if staff should be doctor-specific, adjust this)
     total_staffs = User.objects.filter(
         is_staff=True,
         is_doctor=False
     ).count()
 
-    appointment_count = appointments_qs.count()
-
+    # Pagination
     paginator = Paginator(appointments, 5)
     page_number = request.GET.get('page')
     appointments = paginator.get_page(page_number)
