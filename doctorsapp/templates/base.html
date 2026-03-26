@@ -120,6 +120,10 @@ p {
   }
 }
 
+.process-style-two {
+    padding: 10px 0 20px !important;  /* was 40px 0 */
+    position: relative;
+}
 </style>
 </head>
 <body>
@@ -376,7 +380,7 @@ p {
                         <li><a href="#"><span class="fab fa-facebook-square" style="color: #39cabb"></span></a></li>
                         <li><a href="#"><span class="fab fa-pinterest-p" style="color: #39cabb"></span></a></li>
                         <li><a href="#"><span class="fab fa-instagram" style="color: #39cabb"></span></a></li>
-                        <li><a href="#"><span class="fab fa-youtube" style="color: #39cabb"></span></a></li>
+                        <li><a href="#"><span class="fab fa-youtube" style="color:#39cabb"></span></a></li>
                     </ul>
                 </div>
             </nav>
@@ -523,43 +527,43 @@ p {
                 <div class="pattern-4" style="background-image: url(/static/assets/images/shape/shape-42.png);"></div>
             </div>
             <div class="container">
-    <h2 class="section-title">Complete Healthcare Solutions</h2>
-    <p class="section-subtitle">
-        Everything you need for your healthcare journey, all in one place
-    </p>
+                <h2 class="section-title">Complete Healthcare Solutions</h2>
+                <p class="section-subtitle">
+                    Everything you need for your healthcare journey, all in one place
+                </p>
 
-    <div class="services-grid">
+                <div class="services-grid">
 
-        <!-- Find Doctors -->
-        <div class="service-card">
-            <div class="icon">
-                <i class="fas fa-user-md"></i>
+                    <!-- Find Doctors -->
+                    <div class="service-card">
+                        <div class="icon">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <h3>Find Doctors</h3>
+                        <p>
+                            Search from verified doctors and access their details instantly.
+                        </p>
+                        <a href="{% url 'doctor_list' %}" class="explore-link">
+                            Explore <span>→</span>
+                        </a>
+                    </div>
+
+                    <!-- Clinics -->
+                    <div class="service-card">
+                        <div class="icon">
+                            <i class="fas fa-clinic-medical"></i>
+                        </div>
+                        <h3>Clinics</h3>
+                        <p>
+                            Discover trusted clinics near you with seamless connectivity.
+                        </p>
+                        <a href="{% url 'Clinic_list' %}" class="explore-link">
+                            Explore <span>→</span>
+                        </a>
+                    </div>
+
+                </div>
             </div>
-            <h3>Find Doctors</h3>
-            <p>
-                Search from verified doctors and access their details instantly.
-            </p>
-            <a href="{% url 'doctor_list' %}" class="explore-link">
-                Explore <span>→</span>
-            </a>
-        </div>
-
-        <!-- Clinics -->
-        <div class="service-card">
-            <div class="icon">
-                <i class="fas fa-clinic-medical"></i>
-            </div>
-            <h3>Clinics</h3>
-            <p>
-                Discover trusted clinics near you with seamless connectivity.
-            </p>
-            <a href="{% url 'Clinic_list' %}" class="explore-link">
-                Explore <span>→</span>
-            </a>
-        </div>
-
-    </div>
-</div>
         
         </section>
         <!-- about-style-two -->
