@@ -20,7 +20,7 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Stylesheets -->
     <link href="{% static 'assets/css/font-awesome-all.css' %}" rel="stylesheet">
@@ -54,6 +54,17 @@
         <script src="{% static 'assets/js/jquery-ui.js' %}"></script>
         <script src="{% static 'assets/js/script.js' %}"></script>
      <style>
+        body {
+  font-family: 'Poppins', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+}
+
+p {
+  font-weight: 400;
+}
         .mobile-menu .navigation li.dropdown > a::after {
     content: "▼";
     font-family: 'Font Awesome 5 Free';
@@ -361,11 +372,11 @@
                 
                 <div class="social-links">
                     <ul class="clearfix">
-                        <li><a href="#"><span class="fab fa-twitter" style="color: #ffff"></span></a></li>
-                        <li><a href="#"><span class="fab fa-facebook-square" style="color: #ffff"></span></a></li>
-                        <li><a href="#"><span class="fab fa-pinterest-p" style="color: #ffff"></span></a></li>
-                        <li><a href="#"><span class="fab fa-instagram" style="color: #ffff"></span></a></li>
-                        <li><a href="#"><span class="fab fa-youtube" style="color: #ffff"></span></a></li>
+                        <li><a href="#"><span class="fab fa-twitter" style="color: #39cabb"></span></a></li>
+                        <li><a href="#"><span class="fab fa-facebook-square" style="color: #39cabb"></span></a></li>
+                        <li><a href="#"><span class="fab fa-pinterest-p" style="color: #39cabb"></span></a></li>
+                        <li><a href="#"><span class="fab fa-instagram" style="color: #39cabb"></span></a></li>
+                        <li><a href="#"><span class="fab fa-youtube" style="color:#39cabb"></span></a></li>
                     </ul>
                 </div>
             </nav>
@@ -504,43 +515,52 @@
 
         </section>
 
-        <section class="services-section" style="background-color:#e6f9f7;">
-        <div class="container">
-            <h2 class="section-title">Complete Healthcare Solutions</h2>
-            <p class="section-subtitle">
-            Everything you need for your healthcare journey, all in one place
-            </p>
+        <section class="process-style-two bg-color-3 centred">
+            <div class="pattern-layer">
+                <div class="pattern-1" style="background-image: url(/static/assets/images/shape/shape-39.png);"></div>
+                <div class="pattern-2" style="background-image: url(/static/assets/images/shape/shape-40.png);"></div>
+                <div class="pattern-3" style="background-image: url(/static/assets/images/shape/shape-41.png);"></div>
+                <div class="pattern-4" style="background-image: url(/static/assets/images/shape/shape-42.png);"></div>
+            </div>
+            <div class="container">
+    <h2 class="section-title">Complete Healthcare Solutions</h2>
+    <p class="section-subtitle">
+        Everything you need for your healthcare journey, all in one place
+    </p>
 
-            <div class="services-grid">
+    <div class="services-grid">
 
-            <!-- Find Doctors -->
-            <div class="service-card">
-                <div class="icon">
+        <!-- Find Doctors -->
+        <div class="service-card">
+            <div class="icon">
                 <i class="fas fa-user-md"></i>
-                </div>
-                <h3>Find Doctors</h3>
-                <p>
-                Search from verified doctors.
-                Get their contact details instantly.
-                </p>
-                <a href="{% url 'doctor_list' %}" class="explore-link">Explore →</a>
             </div>
-
-            <!-- Clinics -->
-            <div class="service-card">
-                <div class="icon">
-                <i class="fas fa-clinic-medical"></i>
-                </div>
-                <h3>Clinics</h3>
-                <p>
-                Find trusted clinics near you with verified details and
-                instant connection to healthcare providers.
-                </p>
-                <a href="{% url 'Clinic_list' %}" class="explore-link">Explore →</a>
-            </div>
-
-            </div>
+            <h3>Find Doctors</h3>
+            <p>
+                Search from verified doctors and access their details instantly.
+            </p>
+            <a href="{% url 'doctor_list' %}" class="explore-link">
+                Explore <span>→</span>
+            </a>
         </div>
+
+        <!-- Clinics -->
+        <div class="service-card">
+            <div class="icon">
+                <i class="fas fa-clinic-medical"></i>
+            </div>
+            <h3>Clinics</h3>
+            <p>
+                Discover trusted clinics near you with seamless connectivity.
+            </p>
+            <a href="{% url 'Clinic_list' %}" class="explore-link">
+                Explore <span>→</span>
+            </a>
+        </div>
+
+    </div>
+</div>
+        
         </section>
         <!-- about-style-two -->
         <section class="about-style-two">
@@ -647,28 +667,28 @@
                 </div>
                 <div class="row clearfix">
                 <div class="col-lg-3 col-md-6 col-sm-12 feature-block">
-                    <div class="feature-box">
+                    <div class="feature-box" style="background-color:#e6f9f7;">
                         <img src="/static/assets/images/icons/book.png" alt="Booking Icon">
                         <h4>Quick Appointment Booking</h4>
                         <p>Filter by specialty, view doctor profiles with credentials and ratings, and pick a time that fits your schedule.</p>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6 col-sm-12 feature-block">
-                    <div class="feature-box">
+                <div class="col-lg-3 col-md-6 col-sm-12 feature-block " >
+                    <div class="feature-box" style="background-color:#e6f9f7;">
                     <img src="/static/assets/images/icons/video.png" alt="Video Icon">
                     <h4>Secure Video Consultations</h4>
                     <p>Enjoy HD video visits from home — complete care without stepping out.</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 col-sm-12 feature-block">
-                    <div class="feature-box">
+                    <div class="feature-box" style="background-color:#e6f9f7;">
                         <img src="/static/assets/images/icons/prescription.png" alt="Prescription Icon">
                         <h4>Prescription & Records</h4>
                         <p>Get e‑prescriptions, and access visit summaries/medical history anytime.</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 col-sm-12 feature-block">
-                    <div class="feature-box">
+                    <div class="feature-box"style="background-color:#e6f9f7;">
                         <img src="/static/assets/images/icons/family -1.png" alt="Family Icon">
                         <h4>Family Profiles</h4>
                         <p>Manage appointments for your whole family — children, elders, you.</p>
@@ -762,40 +782,61 @@
 
         </div>
         </section>
-
         <section class="why-choose-section">
-            <div class="auto-container">
-                <div class="sec-title centred">
-                    <h2>Why Choose Docpro?</h2>
-                </div>
-                <div class="row clearfix">
-                    <div class="col-md-3 col-sm-6">
-                        <div class="icon-feature">
-                            <img src="/static/assets/images/icons/certified.png" alt="Certified Icon">
-                                <p>Certified & Experienced Doctors</p>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6">
-                        <div class="icon-feature">
-                        <img src="/static/assets/images/icons/encrypted.png" alt="">
-                        <p>Safe, Encrypted Platform</p>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6">
-                        <div class="icon-feature">
-                        <img src="/static/assets/images/icons/24-7.png" alt="">
-                        <p>24/7 Access from Anywhere</p>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6">
-                        <div class="icon-feature">
-                        <img src="/static/assets/images/icons/rupee.png" alt="">
-                        <p>Affordable Fees, No Hidden Charges</p>
-                        </div>
-                    </div>
+    <div class="auto-container">
+        <div class="sec-title centred">
+            <h2>Why Choose Docpro?</h2>
+        </div>
+
+        <div class="row clearfix">
+
+            <!-- CARD 1 -->
+            <div class="col-md-3 col-sm-6">
+               <div class="icon-feature"
+                    style="opacity:0; transform:translateY(20px); transition:all 0.3s cubic-bezier(0.22,1,0.36,1); background:#e6f9f7;"
+                    onmouseover="this.style.transform='translateY(-6px) scale(1.02)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.08)'"
+                    onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='none'; this.style.background='#e6f9f7';">
+                    <img src="/static/assets/images/icons/certified.png">
+                    <p>Certified & Experienced Doctors</p>
                 </div>
             </div>
-        </section>
+
+            <!-- CARD 2 -->
+            <div class="col-md-3 col-sm-6">
+                <div class="icon-feature"
+                    style="opacity:0; transform:translateY(20px); transition:all 0.3s cubic-bezier(0.22,1,0.36,1); background:#e6f9f7;"
+                    onmouseover="this.style.transform='translateY(-6px) scale(1.02)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.08)'"
+                    onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='none'; this.style.background='#e6f9f7';">
+                    <img src="/static/assets/images/icons/encrypted.png">
+                    <p>Safe, Encrypted Platform</p>
+                </div>
+            </div>
+
+            <!-- CARD 3 -->
+            <div class="col-md-3 col-sm-6">
+                <div class="icon-feature"
+                    style="opacity:0; transform:translateY(20px); transition:all 0.3s cubic-bezier(0.22,1,0.36,1); background:#e6f9f7;"
+                    onmouseover="this.style.transform='translateY(-6px) scale(1.02)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.08)'"
+                    onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='none'; this.style.background='#e6f9f7';">
+                    <img src="/static/assets/images/icons/24-7.png">
+                    <p>24/7 Access from Anywhere</p>
+                </div>
+            </div>
+
+            <!-- CARD 4 -->
+            <div class="col-md-3 col-sm-6">
+                <div class="icon-feature"
+                    style="opacity:0; transform:translateY(20px); transition:all 0.3s cubic-bezier(0.22,1,0.36,1); background:#e6f9f7;"
+                    onmouseover="this.style.transform='translateY(-6px) scale(1.02)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.08)'"
+                    onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='none'; this.style.background='#e6f9f7';">
+                    <img src="/static/assets/images/icons/rupee.png">
+                    <p>Affordable Fees, No Hidden Charges</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
         <section class="testimonials" style="background-color:#e6f9f7;">
             <div class="container">
                 <h2>What Our Users Say</h2>
@@ -1010,19 +1051,19 @@
                             </ul>
                             <div class="socail-links">
                                 <div class="d-flex justify-content-center justify-content-md-start mt-3">
-                                    <a href="" style="margin-right:15px; color:#fff; font-size:18px;">
+                                    <a href="" style="margin-right:15px; color:#39cabb; font-size:18px;">
                                         <i class="fab fa-twitter"></i>
                                     </a>
-                                    <a href="" style="margin-right:15px; color:#fff; font-size:18px;">
+                                    <a href="" style="margin-right:15px; color:#39cabb; font-size:18px;">
                                         <i class="fab fa-facebook-square"></i>
                                     </a>
-                                    <a href="" style="margin-right:15px; color:#fff; font-size:18px;">
+                                    <a href="" style="margin-right:15px; color:#39cabb; font-size:18px;">
                                         <i class="fab fa-pinterest-p"></i>
                                     </a>
-                                    <a href="" style="margin-right:15px; color:#fff; font-size:18px;">
+                                    <a href="" style="margin-right:15px; color:#39cabb; font-size:18px;">
                                         <i class="fab fa-instagram"></i>
                                     </a>
-                                    <a href="" style="color:#fff; font-size:18px;">
+                                    <a href="" style="color:#39cabb; font-size:18px;">
                                         <i class="fab fa-youtube"></i>
                                     </a>
                                 </div>
@@ -1274,6 +1315,62 @@ async function loadReviews() {
 }
 
 document.addEventListener("DOMContentLoaded", loadReviews);
+</script>
+<script>
+(function () {
+
+  const elements = document.querySelectorAll(
+    " .service-card, .feature-box, .doctor-card, .faq-item, .processing-block, .icon-feature, .content-box, .image-column, .content-column"
+  );
+
+  // Apply initial styles via JS (no CSS needed)
+  elements.forEach((el, index) => {
+    el.style.opacity = "0";
+    el.style.transform = "translateY(40px)";
+    el.style.transition = "all 0.8s ease";
+    el.style.transitionDelay = (index % 4) * 0.15 + "s"; // stagger
+  });
+
+  // Scroll animation
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = "1";
+          entry.target.style.transform = "translateY(0)";
+        }
+      });
+    },
+    {
+      threshold: 0.15,
+    }
+  );
+
+  elements.forEach((el) => observer.observe(el));
+
+  // Hover effect (cards auto-detect)
+  const cards = document.querySelectorAll(
+    ".service-card, .feature-box, .doctor-card"
+  );
+
+  cards.forEach((card) => {
+    card.style.transition = "all 0.3s ease";
+
+    card.addEventListener("mouseenter", () => {
+      card.style.transform = "translateY(-10px)";
+      card.style.boxShadow = "0 15px 40px rgba(0,0,0,0.08)";
+    });
+
+    card.addEventListener("mouseleave", () => {
+      card.style.transform = "translateY(0)";
+      card.style.boxShadow = "none";
+    });
+  });
+
+  // Smooth scroll (global)
+  document.documentElement.style.scrollBehavior = "smooth";
+
+})();
 </script>
 
 </body>

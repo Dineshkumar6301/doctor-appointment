@@ -191,3 +191,70 @@ $(document).ready(function () {
         return false;
     });
 });
+
+
+ document.addEventListener('DOMContentLoaded', function () {
+            // Clone main navigation to mobile menu
+            const mainNav = document.querySelector('.main-menu .navigation');
+            const mobileMenuOuter = document.querySelector('.mobile-menu .menu-outer');
+            if (mainNav && mobileMenuOuter) {
+                mobileMenuOuter.innerHTML = mainNav.outerHTML;
+                console.log('Navigation cloned to mobile menu');
+            } else {
+                console.error('Main navigation or mobile menu container not found');
+            }
+
+            // jQuery for dropdown toggle
+            if (typeof jQuery !== 'undefined') {
+                $('.mobile-menu li.dropdown > a').on('click', function (e) {
+                    if ($(window).width() < 992) {
+                        e.preventDefault();
+                        const $dropdown = $(this).next('ul, .megamenu');
+                        console.log('Dropdown toggled:', $dropdown.length);
+                        $dropdown.slideToggle(300).toggleClass('active');
+                    }
+                });
+
+                // Toggle mobile menu
+                $('.mobile-nav-toggler').on('click', function () {
+                    $('.mobile-menu').addClass('active');
+                    $('.menu-backdrop').fadeIn(300);
+                    console.log('Mobile menu opened');
+                });
+
+                $('.mobile-menu .close-btn, .menu-backdrop').on('click', function () {
+                    $('.mobile-menu').removeClass('active');
+                    $('.menu-backdrop').fadeOut(300);
+                    // Close all dropdowns when closing menu
+                    $('.mobile-menu li.dropdown > ul, .mobile-menu li.dropdown > .megamenu').slideUp(300).removeClass('active');
+                    console.log('Mobile menu closed');
+                });
+            } else {
+                console.error('jQuery not loaded');
+            }
+        });
+        function toggleFaq(header) {
+            const faqItem = header.parentElement;
+            const content = faqItem.querySelector('.faq-content');
+            const icon = header.querySelector('.faq-icon');
+            
+            // Toggle active state
+            faqItem.classList.toggle('active');
+            content.classList.toggle('active');
+            
+            // Change icon
+            if (faqItem.classList.contains('active')) {
+                icon.textContent = '−';
+            } else {
+                icon.textContent = '+';
+            }
+        }
+
+        
+        document.addEventListener("DOMContentLoaded", function () {
+        const mainMenu = document.querySelector(".main-menu .navbar-collapse").innerHTML;
+        const stickyMenu = document.querySelector(".sticky-header .main-menu");
+        if (mainMenu && stickyMenu) {
+            stickyMenu.innerHTML = mainMenu;
+        }
+    });

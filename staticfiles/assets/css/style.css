@@ -51,7 +51,17 @@
 ====================================================================
 
  ***/
+body {
+  font-family: 'Poppins', sans-serif;
+}
 
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+}
+
+p {
+  font-weight: 400;
+}
  .process-style-two .pattern-layer div {
     background-size: contain; /* or cover if you want it to fill */
     background-repeat: no-repeat;
@@ -1178,9 +1188,10 @@ img {
   font-size: 40px;
   line-height: 50px;
   cursor: pointer;
-  color:#3786ff;
+  color:#e6f9f7;
   display: none;
 }
+
 
 .mobile-menu{
   position: fixed;
@@ -10818,3 +10829,26 @@ body.mobile-menu-visible .menu-backdrop {
     }
 }
 
+
+
+/* Remove default blue highlight */
+.mobile-menu .menu-box a,
+.mobile-menu .menu-box a:focus,
+.mobile-menu .menu-box a:active {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Force your color on click/focus */
+.mobile-menu .menu-box a:active,
+.mobile-menu .menu-box a:focus {
+    background: #e6f9f7 !important;
+    color: #2ec4b6 !important;
+    border-radius: 8px;
+}
+
+/* Hover */
+.mobile-menu .menu-box a:hover {
+    background: rgba(230, 249, 247, 0.4) !important;
+    color: #2ec4b6 !important;
+}

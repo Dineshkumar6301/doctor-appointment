@@ -10,7 +10,7 @@
     <title>DocPro - Clinis List</title>
     <!-- Favicon -->
     <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
-    <!-- Google Fonts -->cvxd
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <!-- Stylesheets -->
@@ -25,6 +25,28 @@
     <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
     <link href="{% static 'assets/css/responsive.css' %}" rel="stylesheet">
 </head>
+<style>
+    .filter-form input,
+.filter-form button {
+    height: 45px;
+    padding: 0 15px;
+    font-size: 14px;
+    border-radius: 7px;
+}
+
+/* Make input take full space */
+.filter-form input {
+    flex: 1;
+}
+
+/* Keep button width consistent */
+.filter-form button {
+    min-width: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+</style>
 <body>
     <div class="boxed_wrapper" style="background-color: #ffffff;">
         <!-- Preloader -->
@@ -170,16 +192,7 @@
                                                     <a href="{% url 'patient_dashboard' %}">Patient Dashboard</a>
                                                     <ul>
                                                         <li><a href="{% url 'patient_dashboard' %}">Dashboard</a></li>
-                                                        <!--
-                                                        <li><a href="{% url 'favourite_doctors' %}">Favourite Doctors</a></li>
-                                                        <li><a href="#">Schedule Timing</a></li>
-                                                        <li>
-                                                            {% if doctor %}
-                                                                <a href="{% url 'book_appointment' doctor.id %}">Book Appointment</a>
-                                                            {% endif %}
-                                                        </li>
-                                                        <li><a href="{% url 'message_dashboard' %}">Messages</a></li>
-                                                         -->
+                                                        
                                                         <li><a href="{% url 'profile' %}">My Profile</a></li>
                                                         <li><a href="{% url 'change_password2' %}">Change Password</a></li>
                                                         <li><a href="{% url 'logout'%}">Logout</a></li>
@@ -300,14 +313,14 @@
                 </div>
                 <div class="auto-container">
                     <div class="title">
-                        <h1>Clinic List</h1>
+                        <h1>CLINICS LIST</h1>
                     </div>
                 </div>
             </div>
             <div class="lower-content">
                 <ul class="bread-crumb clearfix">
-                    <li><a href="{% url 'home' %}">Home</a></li>
-                    <li>Clinics</li>
+                    <li><a href="{% url 'home' %}">HOME</a></li>
+                    <li>CLINICS</li>
                 </ul>
             </div>
         </section>
@@ -320,8 +333,10 @@
                         <div class="item-shorting clearfix">
                             <form method="get" class="filter-form mb-4 d-flex gap-2">
                                 <input type="text" name="q" placeholder="Search by name or city..." value="{{ query }}" class="form-control">
-                                
-                                <button type="submit" class="btn btn-primary">Filter</button>
+                                <button type="submit"
+        style="background:#ffffff; color:#39cabb; border:1.5px solid #000; padding:10px 18px; border-radius:7px;">
+    FILTER
+</button>
                             </form>
                             <div class="left-column pull-left">
                                 <h3>Showing {{ clinics|length }} Results</h3>

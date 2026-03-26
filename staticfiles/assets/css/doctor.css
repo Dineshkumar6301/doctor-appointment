@@ -439,3 +439,117 @@ body {
 .slider {
   margin: 0;
 }
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+/* Titles */
+.section-title {
+    font-size: 36px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.section-subtitle {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #64748b;
+}
+
+/* Grid */
+.services-grid {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+}
+
+/* Card */
+.service-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    padding: 30px 25px;
+    text-align: left;
+    transition: all 0.35s ease;
+    border: 1px solid rgba(255,255,255,0.2);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Hover Glow */
+.service-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, #00c6ff, #0072ff);
+    opacity: 0;
+    transition: 0.4s;
+    z-index: 0;
+}
+
+.service-card:hover::before {
+    opacity: 0.08;
+}
+
+.service-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+/* Icon */
+.icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0ea5e9, #6366f1);
+    color: white;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Text */
+.service-card h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: #0f172a;
+}
+
+.service-card p {
+    font-size: 14px;
+    color: #475569;
+    line-height: 1.6;
+}
+
+/* Explore Link */
+.explore-link {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 20px;
+    font-weight: 600;
+    color: #2563eb;
+    text-decoration: none;
+    gap: 6px;
+    transition: 0.3s;
+}
+
+.explore-link span {
+    transition: transform 0.3s ease;
+}
+
+.explore-link:hover span {
+    transform: translateX(6px);
+}
+
+.explore-link:hover {
+    color: #1d4ed8;
+}

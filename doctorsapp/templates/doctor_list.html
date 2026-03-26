@@ -44,6 +44,63 @@
     <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
     <link href="{% static 'assets/css/responsive.css' %}" rel="stylesheet">
 </head>
+<style>
+  /* Wrapper - reduce empty space */
+.filter-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;              /* ↓ reduced gap */
+    background: #ffffff;
+    padding: 6px 8px;      /* ↓ reduced padding */
+    border-radius: 50px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+/* Common */
+.filter-form input,
+.filter-form select,
+.filter-form button {
+    height: 44px;          /* slightly compact */
+    border-radius: 30px !important;
+    font-size: 14px;
+    border: 1.5px solid #000 !important;
+    box-sizing: border-box;
+}
+
+/* Input */
+.filter-form input {
+    flex: 2.5;
+    padding: 0 12px 0 38px;   /* ↓ tighter */
+    background: #fff url("data:image/svg+xml;utf8,<svg fill='gray' height='18' viewBox='0 0 20 20' width='18' xmlns='http://www.w3.org/2000/svg'><path d='M12.9 14.32l4.39 4.39-1.41 1.41-4.39-4.39A7.5 7.5 0 1114.32 12.9zM8.5 14A5.5 5.5 0 108.5 3a5.5 5.5 0 000 11z'/></svg>") no-repeat 12px center;
+    background-size: 15px;
+}
+
+/* Select (compact fix) */
+.filter-form select {
+    flex: 0.8 !important;
+    max-width: 140px;      /* ↑ slightly usable width */
+    padding: 0 28px 0 10px;
+    appearance: none;
+    background: #fff url("data:image/svg+xml;utf8,<svg fill='black' height='16' viewBox='0 0 20 20' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M5 7l5 5 5-5z'/></svg>") no-repeat right 8px center;
+    background-size: 14px;
+}
+
+/* Button */
+.filter-form button {
+    min-width: 110px;
+    padding: 0 14px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Remove Bootstrap spacing */
+.form-control,
+.form-select {
+    margin: 0 !important;
+}
+
+</style>
 <body>
    <div class="boxed_wrapper" style="background-color: #ffffff;">
         <!-- Preloader -->
@@ -312,7 +369,10 @@
                             <option value="{{ spec }}" {% if selected_specialization == spec %}selected{% endif %}>{{ spec }}</option>
                         {% endfor %}
                     </select>
-                    <button type="submit" class="btn btn-primary">Filter</button>
+                  <button type="submit"
+        style="background:#ffffff; color:#39cabb; border:1.5px solid #000; padding:10px 18px; border-radius:7px;">
+    FITLER
+</button>
                 </form>
                 <!-- Result Count -->
                 <h3>Showing {{ page_obj.paginator.count }} Results</h3>
