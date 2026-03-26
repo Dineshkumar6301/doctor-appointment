@@ -268,14 +268,8 @@
                                         <li><a href="{% url 'contact' %}">Contact Us</a></li>
 
                             
-                                        <!-- News -->
-                                        <li class="dropdown">
-                                            <a href="#">Blogs</a>
-                                            <ul>
-                                                <li><a href="#">Blog Grid</a></li>
-                                                <li><a href="#">Blog Details</a></li>
-                                            </ul>
-                                        </li>
+                                
+                                        
                                         {% if user.is_authenticated %}
                                             <li><a href="{% url 'logout' %}">Log Out</a></li>
                                             {% endif %}
