@@ -1806,14 +1806,22 @@ def get_available_slots(request, doctor_id):
         return JsonResponse({"slots": []})
 
     date_obj = datetime.strptime(selected_date, "%Y-%m-%d")
-
     weekday = date_obj.strftime("%A")
 
-    
+    # ✅ Fetch all slots
     slots = TimeSlot.objects.filter(
         doctor=doctor,
         day_of_week=weekday,
         is_available=True
+    )
+
+    # 🔥 FETCH ALL BOOKED TIMES ONCE (KEY FIX)
+    booked_times = set(
+        Appointment.objects.filter(
+            doctor=doctor,
+            appointment_datetime__date=date_obj.date(),
+            status__in=["Pending", "Accepted"]
+        ).values_list("appointment_datetime__time", flat=True)
     )
 
     available_slots = []
@@ -1832,17 +1840,9 @@ def get_available_slots(request, doctor_id):
             if next_time > end:
                 break
 
-            time_str = current.strftime("%H:%M")
-
-            booked = Appointment.objects.filter(
-                doctor=doctor,
-                appointment_datetime__date=date_obj.date(),
-                appointment_datetime__time=current.time(),
-                status__in=["Pending","Accepted"]
-            ).exists()
-
-            if not booked:
-                available_slots.append(time_str)
+            # ✅ CHECK IN MEMORY (NO DB HIT)
+            if current.time() not in booked_times:
+                available_slots.append(current.strftime("%H:%M"))
 
             current = next_time
 

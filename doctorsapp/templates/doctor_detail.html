@@ -72,6 +72,19 @@ background:#0d6efd;
 color:white;
 }
 
+.slot-btn.loading {
+  height: 40px;
+  background: #eee;
+  border-radius: 6px;
+  border: none;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+}
 </style>
 <body>
 
@@ -825,6 +838,16 @@ dateInput.addEventListener("change", function(){
 
 const selectedDate = this.value;
 const doctorId = "{{ doctor.id }}";
+
+// ✅ SHOW IMMEDIATELY (instant feedback)
+slotContainer.innerHTML = `
+<div class="slot-grid">
+  <div class="slot-btn loading"></div>
+  <div class="slot-btn loading"></div>
+  <div class="slot-btn loading"></div>
+  <div class="slot-btn loading"></div>
+</div>
+`;
 
 fetch(`/doctor/${doctorId}/available-slots/?date=${selectedDate}`)
 
