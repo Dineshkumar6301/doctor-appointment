@@ -347,9 +347,10 @@
                                         </div>
                                         <figure class="image-box">                   
                                             {% if clinic.image %}
-                                            <img src="{{ clinic.image.url }}" alt="{{ clinic.name }}">
+                                            {% if clinic.image and clinic.image.url %}
+                                                <img src="{{ clinic.image.url }}" alt="{{ clinic.name }}">
                                             {% else %}
-                                                <img src="{% static 'assets/images/default-clinic.png' %}" alt="No Image Available">
+                                                <img src="{% static 'assets/images/default-clinic.png' %}" alt="No Image">
                                             {% endif %}
                                         </figure>      
                                         <div class="content-box">
@@ -386,7 +387,10 @@
                                                 <p><i class="fas fa-map-marker-alt"></i>{{ clinic.address }}</p>
                                             </div>
                                             <div class="btn-box">
+                                                {% if clinic.slug %}
+
                                                 <a href="{% url 'clinic' clinic.id clinic.slug %}">Vist Now</a>
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </div>
