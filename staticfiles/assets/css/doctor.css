@@ -419,11 +419,6 @@ body {
   margin-bottom: 20px;
 }
 
-/* Remove container side gaps */
-.container {
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-}
 
 /* Remove card gaps */
 .slider-track {
@@ -441,13 +436,26 @@ body {
 }
 
 /* Container */
-.container {
-    max-width: 1200px;
-    margin: auto;
-    padding: 60px 20px;
-    text-align: center;
+/* Stats Section */
+section[style*="background:#f8fbfb"] .container {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
 
+/* Process Section */
+.process-style-two .container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+/* Testimonials Section */
+.testimonials .container {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  text-align: center;
+}
 /* Titles */
 .section-title {
     font-size: 36px;
