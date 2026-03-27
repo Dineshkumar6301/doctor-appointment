@@ -187,6 +187,23 @@ p {
     padding: 3px 7px;
     font-size: 11px;
 }
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.boxed_wrapper {
+    margin: 0;
+    padding: 0;
+}
+
+.main-header {
+    margin-top: 0;
+}
+
+.header-top {
+    margin-top: 0;
+}
 </style>
 </head>
 <body>
@@ -317,7 +334,7 @@ p {
                                                     <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
                                                     <li>
                                                         {% if doctor and doctor.id %}
-                                                            <a href="{% url 'doctor_detail' doctor.id %}">Doctor Details</a>
+                                                            <a href="{% url 'doctor_detail' doctor.slug %}">Doctor Details</a>
                                                         {% else %}
                                                             <span>No details available</span>
                                                         {% endif %}    

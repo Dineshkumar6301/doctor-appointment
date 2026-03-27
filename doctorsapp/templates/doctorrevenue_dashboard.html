@@ -122,33 +122,14 @@
                                         {% endif %}
                                         <!-- Patient Menu -->
                                         {% if patient %}
-                                        <li class = "dropdown"><a href ="">Doctors</a>
-                                            <ul>
-                                                <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
-                                                {% if doctor %}
-                                                <li>
-                                                    <a href="{% url 'doctor_detail' doctor.id %}">Doctor Details</a>
-                                                </li>
-                                                {% endif %} 
-                                            </ul>
-                                        </li>
+                                        
                                         <li class="dropdown"><a href="{% url 'home' %}">Patients</a>
                                             <ul>
                                                 <li class="dropdown">
                                                     <a href="{% url 'patient_dashboard' %}">Patient Dashboard</a>
                                                     <ul>
                                                         <li><a href="{% url 'patient_dashboard' %}">Dashboard</a></li>
-                                                        <!--
-                                                        <li><a href="{% url 'favourite_doctors' %}">Favourite Doctors</a></li>
-                                                        <li><a href="#">Schedule Timing</a></li>
-                                                      
-                                                        <li>
-                                                            {% if doctor %}
-                                                                <a href="{% url 'book_appointment' doctor.id %}">Book Appointment</a>
-                                                            {% endif %}
-                                                        </li>
-                                                        <li><a href="{% url 'message_dashboard' %}">Messages</a></li>
-                                                         -->
+                                                        
                                                         <li><a href="{% url 'profile' %}">My Profile</a></li>
                                                         <li><a href="{% url 'change_password2' %}">Change Password</a></li>
                                                         <li><a href="{% url 'logout'%}">Logout</a></li>

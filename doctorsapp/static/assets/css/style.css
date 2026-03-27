@@ -10852,3 +10852,22 @@ body.mobile-menu-visible .menu-backdrop {
     background: rgba(230, 249, 247, 0.4) !important;
     color: #2ec4b6 !important;
 }
+
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.boxed_wrapper {
+    margin: 0;
+    padding: 0;
+}
+
+.main-header {
+    margin-top: 0;
+}
+
+.header-top {
+    margin-top: 0;
+}

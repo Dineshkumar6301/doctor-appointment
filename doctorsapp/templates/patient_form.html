@@ -151,7 +151,7 @@
                                                 <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
                                                 <li>
                                                     {% if doctor and doctor.id %}
-                                                        <a href="{% url 'doctor_detail' doctor.id %}">Doctor Details</a>
+                                                        <a href="{% url 'doctor_detail' doctor.slug %}">Doctor Details</a>
                                                     {% else %}
                                                         <span>No details available</span>
                                                     {% endif %}    

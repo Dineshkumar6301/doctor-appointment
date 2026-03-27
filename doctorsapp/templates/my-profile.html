@@ -132,16 +132,7 @@
                                         {% endif %}
                                         <!-- Patient Menu -->
                                         {% if patient %}
-                                        <li class = "dropdown"><a href ="">Doctors</a>
-                                            <ul>
-                                                <li><a href="{% url 'doctor_list' %}">Doctors List</a></li>
-                                                {% if doctor %}
-                                                <li>
-                                                    <a href="{% url 'doctor_detail' doctor.id %}">Doctor Details</a>
-                                                </li>
-                                                {% endif %} 
-                                            </ul>
-                                        </li>
+                                        
                                         <li class="dropdown"><a href="{% url 'home' %}">Patients</a>
                                             <ul>
                                                 <li class="dropdown">
