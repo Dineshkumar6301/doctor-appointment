@@ -2271,7 +2271,7 @@ def update_clinic_contact(request, clinic_id):
 from django.db.models import Q
 from django.core.exceptions import MultipleObjectsReturned
 
-def Clinic_list(request):
+def clinic_list(request):
 
     doctor = None
     patient = None
