@@ -16,7 +16,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config("SECRET_KEY")
 
-DEBUG =False
+DEBUG = False
 
 ALLOWED_HOSTS = [
     "doctor-appointment-9u6e.onrender.com",

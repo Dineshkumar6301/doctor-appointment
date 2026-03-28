@@ -352,6 +352,25 @@
                 </div>
             </nav>
         </div>
+         <section class="page-title-two">
+            <div class="title-box centred bg-color-2">
+                <div class="pattern-layer">
+                    <div class="pattern-1" style="background-image: url({% static 'assets/images/shape/shape-70.png' %});"></div>
+                    <div class="pattern-2" style="background-image: url({% static 'assets/images/shape/shape-71.png' %});"></div>
+                </div>
+                <div class="auto-container">
+                    <div class="title">
+                        <h1>DOCTORS LIST</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="lower-content">
+                <ul class="bread-crumb clearfix">
+                    <li><a href="{% url 'home' %}">HOME</a></li>
+                    <li>DOCTORS</li>
+                </ul>
+            </div>
+        </section>
         <section class="clinic-section doctors-page-section">
             <div class="auto-container">
                 <!-- Filter Form -->
@@ -364,9 +383,9 @@
                         {% endfor %}
                     </select>
                   <button type="submit"
-        style="background:#ffffff; color:#39cabb; border:1.5px solid #000; padding:10px 18px; border-radius:7px;">
-    FITLER
-</button>
+                            style="background:#ffffff; color:#39cabb; border:1.5px solid #000; padding:10px 18px; border-radius:7px;">
+                        FITLER
+                    </button>
                 </form>
                 <!-- Result Count -->
                 <h3>Showing {{ page_obj.paginator.count }} Results</h3>
