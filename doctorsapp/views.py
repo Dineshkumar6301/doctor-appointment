@@ -2267,10 +2267,6 @@ def update_clinic_contact(request, clinic_id):
 
     return redirect('clinic', clinic_id=clinic.id)
 
-  
-from django.db.models import Q
-from django.core.exceptions import MultipleObjectsReturned
-
 def clinic_list(request):
 
     doctor = None
@@ -2284,22 +2280,14 @@ def clinic_list(request):
                 patient = Patient.objects.get(user=request.user)
             except Patient.DoesNotExist:
                 pass
-            except MultipleObjectsReturned:
-                patient = Patient.objects.filter(user=request.user).first()
-        except MultipleObjectsReturned:
-            doctor = Doctor.objects.filter(user=request.user).first()
 
     category_id = request.GET.get('category_id')
     query = request.GET.get('q', '').strip()
 
     clinics = Clinic.objects.all()
 
-    # Safe category filter (no crash if invalid)
     if category_id:
-        try:
-            clinics = clinics.filter(category_id=int(category_id))
-        except (ValueError, TypeError):
-            pass
+        clinics = clinics.filter(category_id=category_id)
 
     if query:
         clinics = clinics.filter(

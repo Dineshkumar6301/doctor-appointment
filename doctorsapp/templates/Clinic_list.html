@@ -319,94 +319,140 @@
         </section>
         <!-- Page Title End -->
         <!-- Clinic Section -->
-        <section class="clinic-section">
-            <div class="auto-container">
-                <div class="row clearfix">
-                    <div class="col-lg-8 col-md-12 col-sm-12 content-side">
-                        <div class="item-shorting clearfix">
-                            <form method="get" class="filter-form mb-4 d-flex gap-2">
-                                <input type="text" name="q" placeholder="Search by name or city..." value="{{ query }}" class="form-control">
-                                <button type="submit"
-        style="background:#ffffff; color:#39cabb; border:1.5px solid #000; padding:10px 18px; border-radius:7px;">
-    FILTER
-</button>
-                            </form>
-                            <div class="left-column pull-left">
-                                <h3>Showing {{ clinics|length }} Results</h3>
-                            </div>
-                        </div>
+       <section class="clinic-section">
+    <div class="auto-container">
+        <div class="row clearfix">
 
-                        <div class="wrapper list">
-                            {% for clinic in clinics %}
-                            <div class="clinic-list-content list-item">
-                                <div class="clinic-block-one">
-                                    <div class="inner-box">
-                                        <div class="pattern">
-                                            <div class="pattern-1" style="background-image: url({% static 'assets/images/shape/shape-24.png' %});"></div>
-                                            <div class="pattern-2" style="background-image: url({% static 'assets/images/shape/shape-25.png' %});"></div>
-                                        </div>
-                                        <figure class="image-box">                   
-                                            {% if clinic.image %}
-                                            {% if clinic.image and clinic.image.url %}
-                                                <img src="{{ clinic.image.url }}" alt="{{ clinic.name }}">
-                                            {% else %}
-                                                <img src="{% static 'assets/images/default-clinic.png' %}" alt="No Image">
-                                            {% endif %}
-                                        </figure>      
-                                        <div class="content-box">
-                                            <div class="like-box">
-                                                <a href="{% url 'clinic' clinic.id clinic.slug %}"><i class="far fa-heart"></i></a>
-                                            </div>
-                                            <ul class="name-box clearfix">
-                                                <li class="name">
-                                                    <h3><a href="{% url 'clinic' clinic.id clinic.slug %}">{{ clinic.name }}</a></h3>
-                                                </li>
-                                                <li><i class="icon-Trust-1"></i></li>
-                                                <li><i class="icon-Trust-2"></i></li>
-                                            </ul>
-                                            <span class="designation">{{ clinic.tagline }}</span>
-                                            <div class="text">
-                                                <p>{{ clinic.description|truncatechars:150 }}</p>
-                                            </div>
-                                            <div class="rating-box clearfix">
-                                                <ul class="rating clearfix">
-                                                    {% for i in "12345" %}
-                                                        {% if forloop.counter <= clinic.average_rating|default:0|floatformat:0 %}
-                                                            <li><i class="icon-Star text-warning"></i></li>  
-                                                        {% else %}
-                                                            <li><i class="icon-Star text-muted"></i></li> 
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                    <li><a href="{% url 'clinic' clinic.id clinic.slug %}">({{ clinic.review_count|default:"0" }})</a></li>
-                                                </ul>
-                                                <div class="link">
-                                                    <a href="{% url 'clinic' clinic.id clinic.slug %}">{{ clinic.availability|default:"Available" }}</a>
-                                                </div>
-                                            </div> 
-                                            <div class="location-box">
-                                                <p><i class="fas fa-map-marker-alt"></i>{{ clinic.address }}</p>
-                                            </div>
-                                            <div class="btn-box">
-                                                {% if clinic.slug %}
+            <div class="col-lg-8 col-md-12 col-sm-12 content-side">
 
-                                                <a href="{% url 'clinic' clinic.id clinic.slug %}">Vist Now</a>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            {% empty %}
-                            <p>No clinics found matching your search criteria.</p>
-                            {% endfor %}
-                        </div>
+                <!-- FILTER -->
+                <div class="item-shorting clearfix">
+                    <form method="get" class="filter-form mb-4 d-flex gap-2">
+                        <input type="text" name="q"
+                               placeholder="Search by name or city..."
+                               value="{{ query }}"
+                               class="form-control">
+
+                        <button type="submit"
+                                style="background:#ffffff; color:#39cabb; border:1.5px solid #000; padding:10px 18px; border-radius:7px;">
+                            FILTER
+                        </button>
+                    </form>
+
+                    <div class="left-column pull-left">
+                        <h3>Showing {{ clinics|length }} Results</h3>
                     </div>
                 </div>
-            </div>
+
+                <!-- CLINIC LIST -->
+                <div class="wrapper list">
+                    {% for clinic in clinics %}
+                    <div class="clinic-list-content list-item">
+                        <div class="clinic-block-one">
+                            <div class="inner-box">
+
+                                <!-- BACKGROUND PATTERNS -->
+                                <div class="pattern">
+                                    <div class="pattern-1"
+                                         style="background-image: url({% static 'assets/images/shape/shape-24.png' %});"></div>
+                                    <div class="pattern-2"
+                                         style="background-image: url({% static 'assets/images/shape/shape-25.png' %});"></div>
+                                </div>
+
+                                <!-- IMAGE -->
+                                <figure class="image-box">
+                                    {% if clinic.image and clinic.image.url %}
+                                        <img src="{{ clinic.image.url }}" alt="{{ clinic.name }}">
+                                    {% else %}
+                                        <img src="{% static 'assets/images/default-clinic.png' %}" alt="No Image">
+                                    {% endif %}
+                                </figure>
+
+                                <!-- CONTENT -->
+                                <div class="content-box">
+
+                                    <div class="like-box">
+                                        <a href="{% url 'clinic' clinic.id clinic.slug %}">
+                                            <i class="far fa-heart"></i>
+                                        </a>
+                                    </div>
+
+                                    <!-- NAME -->
+                                    <ul class="name-box clearfix">
+                                        <li class="name">
+                                            <h3>
+                                                <a href="{% url 'clinic' clinic.id clinic.slug %}">
+                                                    {{ clinic.name }}
+                                                </a>
+                                            </h3>
+                                        </li>
+                                        <li><i class="icon-Trust-1"></i></li>
+                                        <li><i class="icon-Trust-2"></i></li>
+                                    </ul>
+
+                                    <span class="designation">{{ clinic.tagline }}</span>
+
+                                    <!-- DESCRIPTION -->
+                                    <div class="text">
+                                        <p>{{ clinic.description|truncatechars:150 }}</p>
+                                    </div>
+
+                                    <!-- RATING -->
+                                    <div class="rating-box clearfix">
+                                        <ul class="rating clearfix">
+                                            {% for i in "12345" %}
+                                                {% if forloop.counter <= clinic.average_rating|default:0|floatformat:0 %}
+                                                    <li><i class="icon-Star text-warning"></i></li>
+                                                {% else %}
+                                                    <li><i class="icon-Star text-muted"></i></li>
+                                                {% endif %}
+                                            {% endfor %}
+                                            <li>
+                                                <a href="{% url 'clinic' clinic.id clinic.slug %}">
+                                                    ({{ clinic.review_count|default:"0" }})
+                                                </a>
+                                            </li>
+                                        </ul>
+
+                                        <div class="link">
+                                            <a href="{% url 'clinic' clinic.id clinic.slug %}">
+                                                {{ clinic.availability|default:"Available" }}
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <!-- LOCATION -->
+                                    <div class="location-box">
+                                        <p>
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            {{ clinic.address }}
+                                        </p>
+                                    </div>
+
+                                    <!-- BUTTON -->
+                                    <div class="btn-box">
+                                        {% if clinic.slug %}
+                                        <a href="{% url 'clinic' clinic.id clinic.slug %}">
+                                            Visit Now
+                                        </a>
+                                        {% endif %}
+                                    </div>
+
+                                </div> <!-- content-box -->
+
+                            </div> <!-- inner-box -->
+                        </div>
+                    </div>
+                    {% empty %}
+                        <p>No clinics found matching your search criteria.</p>
+                    {% endfor %}
+                </div>
+
+            </div> <!-- content-side -->
+
         </div>
     </div>
-        </section>
-        
+</section>
 
         <section class="agent-section mt-5 mb-5">
             <div class="auto-container">
