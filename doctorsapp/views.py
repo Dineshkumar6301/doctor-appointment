@@ -2303,6 +2303,8 @@ def clinic_list(request):
     }
 
     return render(request, 'clinic_list.html', context)
+
+
 from django.utils.http import urlencode
 from .models import Doctor, Clinic
 
@@ -2340,7 +2342,7 @@ def search_results(request):
 
         elif clinics.exists() and not doctors.exists():
             query_string = urlencode({'q': query})
-            return redirect(f"{reverse('Clinic_list')}?{query_string}")
+            return redirect(f"{reverse('clinic_list')}?{query_string}")
 
         return render(request, 'base.html', {
             'query': query,
