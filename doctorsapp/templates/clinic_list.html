@@ -430,8 +430,9 @@
                                     </div>
 
                                     <!-- BUTTON -->
-                                    <div class="btn-box">
-                                        {% if clinic.slug %}
+                                   
+                                   <div class="btn-box">
+                                        {% if clinic.id and clinic.slug %}
                                         <a href="{% url 'clinic' clinic.id clinic.slug %}">
                                             Visit Now
                                         </a>

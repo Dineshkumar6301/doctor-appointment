@@ -1717,10 +1717,21 @@ def group_schedule(time_slots):
 from django.shortcuts import get_object_or_404, redirect
 from django.db.models import Avg
 
+from django.shortcuts import get_object_or_404, redirect, render
+from django.db.models import Avg
+from django.utils.text import slugify
+
 def doctor_detail_view(request, slug):
+
     doctor = get_object_or_404(Doctor, slug=slug)
-    # ✅ SEO FIX: Redirect if slug is wrong
-    if doctor.slug != slug:
+
+    # 🔥 Ensure slug exists
+    if not doctor.slug and doctor.get_full_name():
+        doctor.slug = slugify(doctor.get_full_name())
+        doctor.save()
+
+    # ✅ SEO redirect
+    if slug and doctor.slug and slug != doctor.slug:
         return redirect('doctor_detail', slug=doctor.slug)
 
     services = Service.objects.filter(doctor=doctor)
@@ -1734,7 +1745,7 @@ def doctor_detail_view(request, slug):
 
     grouped_slots = group_schedule(time_slots)
 
-    # EXPERIENCE DATA
+    # EXPERIENCE
     experience_data = []
     for exp in experiences:
         duration = calculate_experience_years(exp.from_date, exp.to_date)
@@ -1750,21 +1761,16 @@ def doctor_detail_view(request, slug):
     doctor_profile = None
 
     if request.user.is_authenticated:
-        try:
-            patient = request.user.patient_profile
-        except:
-            patient = None
-        try:
-            doctor_profile = request.user.doctor_profile
-        except:
-            doctor_profile = None
+        patient = getattr(request.user, 'patient_profile', None)
+        doctor_profile = getattr(request.user, 'doctor_profile', None)
 
-    # APPOINTMENT BOOKING
+    # APPOINTMENT
     if request.method == 'POST':
         form = AppointmentForm(request.POST)
+
         if form.is_valid():
             if not patient:
-                messages.error(request, "You must be logged in as a patient to book an appointment.")
+                messages.error(request, "Login as patient to book appointment.")
                 return redirect('login')
 
             appointment = form.save(commit=False)
@@ -1778,7 +1784,6 @@ def doctor_detail_view(request, slug):
     else:
         form = AppointmentForm()
 
-    # REVIEWS
     total_reviews = reviews.count()
     average_rating = reviews.aggregate(avg_rating=Avg('rating'))['avg_rating'] or 0
 
@@ -1794,7 +1799,6 @@ def doctor_detail_view(request, slug):
         'total_reviews': total_reviews,
         'average_rating': round(average_rating, 2),
     })
-
 
 def get_available_slots(request, doctor_id):
 
@@ -2216,26 +2220,40 @@ def edit_clinic_overview(request, clinic_id):
 
         clinic.save()
 
-        return redirect('clinic', clinic_id=clinic.id)
-
-    return redirect('clinic', clinic_id=clinic.id)
+        return redirect('clinic', id=clinic.id, slug=clinic.slug)
+    return redirect('clinic', id=clinic.id, slug=clinic.slug)
 
 @login_required
 def delete_gallery_image(request, image_id):
     image = get_object_or_404(GalleryImage, id=image_id)
     user = request.user
     user_clinic = None
+
+    # Doctor access
     if hasattr(user, 'doctor_profile'):
         doctor = user.doctor_profile
         user_clinic = Clinic.objects.filter(doctor=doctor).first()
+
         if not user_clinic:
             user_clinic = Clinic.objects.filter(assigned_doctors=doctor).first()
-    if not user_clinic and (user.groups.filter(name='clinic_admin').exists() or user.is_superuser):
+
+    # Clinic admin access ✅ FIXED
+    if not user_clinic and (user.is_clinic or user.is_superuser):
         user_clinic = Clinic.objects.filter(admin=user).first()
+
+    # Permission check
     if not user_clinic or user_clinic != image.clinic:
         return JsonResponse({'success': False, 'error': 'Permission denied or clinic mismatch.'}, status=403)
+
     image.delete()
-    return redirect('clinic', clinic_id=user_clinic.id)
+
+    # Ensure slug exists
+    from django.utils.text import slugify
+    if not user_clinic.slug and user_clinic.name:
+        user_clinic.slug = slugify(user_clinic.name)
+        user_clinic.save()
+
+    return redirect('clinic', id=user_clinic.id, slug=user_clinic.slug)
 
 @login_required
 def update_clinic_contact(request, clinic_id):
@@ -2263,9 +2281,8 @@ def update_clinic_contact(request, clinic_id):
 
         clinic.save()
 
-        return redirect('clinic', clinic_id=clinic.id)
-
-    return redirect('clinic', clinic_id=clinic.id)
+        return redirect('clinic', id=clinic.id, slug=clinic.slug)
+    return redirect('clinic', id=clinic.id, slug=clinic.slug)
 
 def clinic_list(request):
 

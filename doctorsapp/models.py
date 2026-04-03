@@ -135,17 +135,29 @@ class Doctor(models.Model):
 
     from django.utils.text import slugify
 
+    from django.utils.text import slugify
+    from django.utils.crypto import get_random_string
+
     def save(self, *args, **kwargs):
+
+        # 1️⃣ Generate doctor_id
+        if not self.doctor_id:
+            self.doctor_id = 'DOC-' + get_random_string(6, '0123456789')
+
+        # 2️⃣ Generate slug
         if not self.slug:
-            base_slug = slugify(self.user.get_full_name())
-            slug = base_slug
-            count = 1
+            name = self.get_full_name()
 
-            while Doctor.objects.filter(slug=slug).exists():
-                slug = f"{base_slug}-{count}"
-                count += 1
+            if name:
+                base_slug = slugify(name)
+                slug = base_slug
+                count = 1
 
-            self.slug = slug
+                while Doctor.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                    slug = f"{base_slug}-{count}"
+                    count += 1
+
+                self.slug = slug
 
         super().save(*args, **kwargs)
 
@@ -153,11 +165,7 @@ class Doctor(models.Model):
     def availability_status(self):
         return "24/7 Available" if self.is_available else "Not Available"
 
-    def save(self, *args, **kwargs):
-        if not self.doctor_id:
-            self.doctor_id = 'DOC-' + get_random_string(6, '0123456789')
-        super().save(*args, **kwargs)
-
+  
 
     def get_full_name(self):
         if self.user:
@@ -234,16 +242,30 @@ class Clinic(models.Model):
     google_plus = models.URLField(blank=True, null=True)
     slug = models.SlugField(unique=True, blank=True, null=True)
 
+    
+    
+    class Meta:
+        unique_together = ('name', 'city', 'admin')
+
+    def __str__(self):
+        return self.name or f"Clinic #{self.pk}"
+    
+    from django.utils.text import slugify
+
     def save(self, *args, **kwargs):
+
         if self.name:
+            # Clean name
             self.name = self.name.strip().upper()
 
+            # Generate slug if missing
             if not self.slug:
                 base_slug = slugify(self.name)
                 slug = base_slug
                 counter = 1
 
-                while Clinic.objects.filter(slug=slug).exists():
+                # Ensure unique slug
+                while Clinic.objects.filter(slug=slug).exclude(pk=self.pk).exists():
                     slug = f"{base_slug}-{counter}"
                     counter += 1
 
@@ -251,15 +273,6 @@ class Clinic(models.Model):
 
         super().save(*args, **kwargs)
     
-    class Meta:
-        unique_together = ('name', 'city', 'admin')
-
-    def __str__(self):
-        return self.name or f"Clinic #{self.pk}"
-        
-    def save(self, *args, **kwargs):
-        self.name = self.name.strip().upper()
-        super().save(*args, **kwargs)
     
 class Branch(models.Model):
     clinic = models.ForeignKey(Clinic, related_name='branches', on_delete=models.CASCADE)

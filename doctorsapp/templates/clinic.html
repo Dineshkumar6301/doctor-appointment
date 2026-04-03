@@ -445,27 +445,38 @@
                                                 {% endif %}
                                             </section>
                                             <section>
-                                                <h4 class="mb-3">Gallery</h4>
-                                                {% if gallery_images %}
-                                                <div class="row g-3">
-                                                    {% for image in gallery_images %}
-                                                    <div class="col-md-4 col-6 position-relative">
-                                                        <img src="{{ image.image.url }}" alt="Gallery Image" class="img-fluid rounded shadow-sm" />
-                                                        {% if user.is_authenticated and is_doctor %}
-                                                        <form method="POST" action="{% url 'delete_gallery_image' image.id %}" class="position-absolute top-0 end-0 m-2" onsubmit="return confirm('Delete this image?');">
-                                                            {% csrf_token %}
-                                                            <button type="submit" class="btn btn-sm btn-danger p-1">
-                                                                <i class="fas fa-trash-alt"></i>
-                                                            </button>
-                                                        </form>
-                                                        {% endif %}
-                                                    </div>
-                                                    {% endfor %}
-                                                </div>
-                                                {% else %}
-                                                <p class="text-muted fst-italic">No images uploaded.</p>
-                                                {% endif %}
-                                            </section>
+    <h4 class="mb-3">Gallery</h4>
+
+    {% if gallery_images %}
+    <div class="row g-3">
+
+        {% for image in gallery_images %}
+        <div class="col-md-4 col-6 position-relative">
+
+            <img src="{{ image.image.url }}" 
+                 class="img-fluid rounded shadow-sm" />
+
+            {% if request.user == clinic.admin or request.user.is_superuser %}
+            <form method="POST"
+                  action="{% url 'delete_gallery_image' image.id %}"
+                  class="position-absolute top-0 end-0 m-2"
+                  onsubmit="return confirm('Delete this image?');">
+
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-sm">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </form>
+            {% endif %}
+
+        </div>
+        {% endfor %}
+
+    </div>
+    {% else %}
+    <p>No images uploaded.</p>
+    {% endif %}
+</section>
                                         </div>
                                     </div>
                                     <!-- Onboard Doctors Tab -->
@@ -541,7 +552,7 @@
                                                             </div>
 
                                                             <div class="btn-box">
-                                                                <a href="{% url 'doctor_detail' doctor.id %}">Book Now</a>
+                                                                <a href="{% url 'doctor_detail' doctor.slug %}">Book Now</a>
                                                             </div>
                                                         </div>
                                                     </div>

@@ -352,14 +352,15 @@
                                 <div class="row clearfix">
                                     <!-- Doctor Select -->
                                     <div class="col-lg-12 form-group">
-                                        <label for="doctor-select">Select Doctor</label>
-                                        <select name="doctor" id="doctor-select" class="form-control" required aria-required="true">
+                                        <label for="doctor-select" class="d-block mb-2">Select Doctor</label>
+                                        <select name="doctor" id="doctor-select" class="form-control w-100" required aria-required="true">
                                             <option value="" disabled selected>Select a doctor</option>
                                             {% for doctor in available_doctors %}
                                             <option value="{{ doctor.id }}">{{ doctor.user.get_full_name }}</option>
                                             {% endfor %}
                                         </select>
                                     </div>
+                                    
                                     <!-- Rating and Review Title Grouped -->
                                     <fieldset class="col-lg-12 form-group">
                                         <legend>Rating & Review Title</legend>
