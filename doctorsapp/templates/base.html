@@ -1308,11 +1308,16 @@ function autoScroll() {
 // Auto scroll every 3 seconds
 setInterval(autoScroll, 3000);
 </script>
-
 <script>
 let isDown = false;
 let startX;
 let scrollLeft;
+
+function limitWords(text, maxWords = 100) {
+    const words = text.split(/\s+/);
+    if (words.length <= maxWords) return text;
+    return words.slice(0, maxWords).join(" ") + "...";
+}
 
 async function loadReviews() {
     const res = await fetch("/api/reviews/");
@@ -1326,11 +1331,14 @@ async function loadReviews() {
     reviews.forEach(r => {
         const stars = "★".repeat(r.rating) + "☆".repeat(5 - r.rating);
 
+        // ✅ LIMIT TO 100 WORDS
+        const shortMessage = limitWords(r.message, 40);
+
         const card = document.createElement("div");
         card.className = "card";
 
         card.innerHTML = `
-            <div class="message">"${r.message}"</div>
+            <div class="message">"${shortMessage}"</div>
             <div class="stars">${stars}</div>
             <div class="user">${r.name}</div>
             <div class="role">${r.role}</div>

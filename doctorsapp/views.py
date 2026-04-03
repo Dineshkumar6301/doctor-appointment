@@ -1883,19 +1883,35 @@ def doctor_reviews(request, doctor_id):
     }
     return render(request, 'review.html', context)
 
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.db.models import Avg
+from .models import SubmitReview, Doctor
+from .forms import SubmitReviewForm
+
 @login_required
 def submit_review(request):
+
     if request.method == 'POST':
         post_data = request.POST.copy()
+
+        # 🔥 FIX IMPORTANT FIELDS
         post_data['rating'] = request.POST.get('rating')
+        post_data['terms_accepted'] = request.POST.get('terms_accepted') == 'on'
 
         form = SubmitReviewForm(post_data)
+
         if form.is_valid():
+
             review = form.save(commit=False)
             review.patient = request.user
-            review.doctor = form.cleaned_data['doctor'] 
+            review.doctor = form.cleaned_data['doctor']
+
             review.save()
+
+            # ✅ Update doctor stats
             doctor_reviews = SubmitReview.objects.filter(doctor=review.doctor)
+
             review.doctor.total_reviews = doctor_reviews.count()
             review.doctor.average_rating = round(
                 doctor_reviews.aggregate(Avg('rating'))['rating__avg'] or 0, 2
@@ -1904,16 +1920,17 @@ def submit_review(request):
 
             messages.success(request, "Thank you! Your review has been submitted.")
             return redirect('submit_review')
+
         else:
+            print("FORM ERRORS:", form.errors)  # 🔥 DEBUG
             messages.error(request, "Please fix the errors in your submission.")
+
     else:
         form = SubmitReviewForm()
 
     return render(request, 'submit_review.html', {
         'form': form,
         'available_doctors': Doctor.objects.all(),
-        'patient': getattr(request.user, 'patient_profile', None),
-        'logged_in_doctor': getattr(request.user, 'doctor_profile', None),
     })
 def contact_us(request):
     doctor = None
