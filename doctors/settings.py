@@ -19,9 +19,7 @@ SECRET_KEY = config("SECRET_KEY")
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    "doctor-appointment-9u6e.onrender.com",
-    "localhost",
-    "127.0.0.1",
+    "*"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
@@ -110,7 +108,10 @@ TEMPLATES = [
 # ==============================
 
 DATABASES = {
-    "default": dj_database_url.parse(config("DATABASE_URL"), conn_max_age=600)
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
 # ==============================
