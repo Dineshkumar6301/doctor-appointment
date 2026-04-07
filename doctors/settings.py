@@ -15,7 +15,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ==============================
 
 SECRET_KEY = config("SECRET_KEY")
-
 DEBUG = False
 
 ALLOWED_HOSTS = [
@@ -108,10 +107,7 @@ TEMPLATES = [
 # ==============================
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    "default": dj_database_url.parse(config("DATABASE_URL"), conn_max_age=600)
 }
 
 # ==============================
