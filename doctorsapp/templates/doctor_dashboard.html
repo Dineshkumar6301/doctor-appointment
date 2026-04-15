@@ -25,6 +25,55 @@
     <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
     <link href="{% static 'assets/css/responsive.css' %}" rel="stylesheet">
 </head>
+<style>
+.pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pagination.modern {
+  display: flex;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+
+.page-btn, .page-number {
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: #f5f7fa;
+  text-decoration: none;
+  color: #333;
+  font-size: 14px;
+  transition: 0.25s;
+}
+
+.page-btn:hover, .page-number:hover {
+  background: #007bff;
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.page-number.active {
+  background: linear-gradient(135deg,#007bff,#0056b3);
+  color: #fff;
+  font-weight: 600;
+}
+
+.page-btn.disabled {
+  background: #eee;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+.dots {
+  padding: 6px;
+  color: #999;
+}
+</style>
 <body>
     <div class="boxed_wrapper" style="background-color: #ffffff;">
         <!-- Preloader -->
@@ -380,21 +429,43 @@
                                         </tbody>
                                     </table>
                                     <!-- Pagination controls -->
-                                    <div class="pagination">
-                                    <span>
+                                     <div class="pagination-wrapper">
+                                    <div class="pagination modern">
+
                                         {% if appointments.has_previous %}
-                                        <a href="?page=1">First</a>
-                                        <a href="?page={{ appointments.previous_page_number }}">Previous</a>
+                                        <a class="page-btn" href="?page=1">«</a>
+                                        <a class="page-btn" href="?page={{ appointments.previous_page_number }}">‹</a>
+                                        {% else %}
+                                        <span class="page-btn disabled">«</span>
+                                        <span class="page-btn disabled">‹</span>
                                         {% endif %}
 
-                                        Page {{ appointments.number }} of {{ appointments.paginator.num_pages }}
+                                        {% for num in appointments.paginator.page_range %}
+                                        {% if num == appointments.number %}
+                                            <span class="page-number active">{{ num }}</span>
+
+                                        {% elif num >= appointments.number|add:'-2' and num <= appointments.number|add:'2' %}
+                                            <a class="page-number" href="?page={{ num }}">{{ num }}</a>
+
+                                        {% elif num == 1 or num == appointments.paginator.num_pages %}
+                                            <a class="page-number" href="?page={{ num }}">{{ num }}</a>
+
+                                        {% elif num == appointments.number|add:'-3' or num == appointments.number|add:'3' %}
+                                            <span class="dots">...</span>
+                                        {% endif %}
+                                        {% endfor %}
 
                                         {% if appointments.has_next %}
-                                        <a href="?page={{ appointments.next_page_number }}">Next</a>
-                                        <a href="?page={{ appointments.paginator.num_pages }}">Last</a>
+                                        <a class="page-btn" href="?page={{ appointments.next_page_number }}">›</a>
+                                        <a class="page-btn" href="?page={{ appointments.paginator.num_pages }}">»</a>
+                                        {% else %}
+                                        <span class="page-btn disabled">›</span>
+                                        <span class="page-btn disabled">»</span>
                                         {% endif %}
-                                    </span>
+
                                     </div>
+                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>

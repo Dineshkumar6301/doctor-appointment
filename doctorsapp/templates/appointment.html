@@ -496,12 +496,13 @@
                     </div>
                 </div>
             </div>
-            <div class="right-panel">
+<div class="right-panel">
 <div class="content-container">
 <div class="outer-container">
 
 <div class="appointment-list">
 
+<!-- HEADER -->
 <div class="upper-box clearfix">
 
 <div class="text pull-left">
@@ -527,20 +528,18 @@
 
 </div>
 
+<!-- ================= UPCOMING ================= -->
 <h4>Upcoming Appointments</h4>
 
 {% for appt in upcoming_appointments %}
 
 <div class="single-item card">
-
 <figure class="image-box">
-
 {% if appt.patient.profile_image %}
 <img src="{{ appt.patient.profile_image.url }}">
 {% else %}
 <img src="{% static 'assets/images/default-user.png' %}">
 {% endif %}
-
 </figure>
 
 <div class="inner">
@@ -548,382 +547,223 @@
 <h4>{{ appt.patient_name }}</h4>
 
 <ul class="info-list clearfix">
-
 <li><i class="fas fa-clock"></i> {{ appt.appointment_datetime }}</li>
-
 <li><i class="fas fa-map-marker-alt"></i> {{ appt.patient.location }}</li>
-
 <li><i class="fas fa-hourglass-start"></i> {{ appt.purpose }}</li>
-
 <li><i class="fas fa-envelope"></i>
 <a href="mailto:{{ appt.patient_email }}">{{ appt.patient_email }}</a>
 </li>
-
 <li><i class="fas fa-phone"></i>
 <a href="tel:{{ appt.patient_mobile_number }}">{{ appt.patient_mobile_number }}</a>
 </li>
 
 <li>
-
 {% if appt.appointment_mode == "online" %}
-
 <i class="fas fa-video"></i> <strong>Online</strong>
-
 {% if appt.zoom_link %}
 – <a href="{{ appt.zoom_link }}" target="_blank">Join Zoom</a>
 {% endif %}
-
 {% else %}
-
 <i class="fas fa-hospital-alt"></i> <strong>Offline</strong>
-
 {% endif %}
-
 </li>
-
 </ul>
 
 <ul class="confirm-list clearfix">
 
 {% if appt.status == 'Pending' %}
-
-<li>
-<a href="{% url 'accept_appointment' appt.id %}" class="btn btn-success">
-<i class="fas fa-check"></i> Accept
-</a>
-</li>
-
-<li>
-<a href="{% url 'cancel_appointment' appt.id %}" class="btn btn-danger">
-<i class="fas fa-times"></i> Cancel
-</a>
-</li>
+<li><a href="{% url 'accept_appointment' appt.id %}" class="btn btn-success">Accept</a></li>
+<li><a href="{% url 'cancel_appointment' appt.id %}" class="btn btn-danger">Cancel</a></li>
 
 {% elif appt.status == 'Accepted' %}
-
+<li><span class="badge bg-success">Accepted</span></li>
 <li>
-<span class="badge bg-success">Accepted</span>
-</li>
-
-<li>
-<button class="btn btn-primary add-prescription-btn"
-data-id="{{ appt.id }}">
-<i class="fas fa-notes-medical"></i> Complete
+<button class="btn btn-primary add-prescription-btn" data-id="{{ appt.id }}">
+Complete
 </button>
 </li>
 
 {% elif appt.status == 'Completed' %}
-
-<li>
-<span class="badge bg-info">Completed</span>
-</li>
-
+<li><span class="badge bg-info">Completed</span></li>
 <li>
 <button class="btn btn-secondary view-prescription-btn"
 data-text="{{ appt.prescription }}"
 data-file="{{ appt.prescription_file.url }}">
-<i class="fas fa-file-prescription"></i> View Prescription
+View Prescription
 </button>
 </li>
 
 {% elif appt.status == 'Cancelled' %}
-
-<li>
-<span class="badge bg-danger">Cancelled</span>
-</li>
-
+<li><span class="badge bg-danger">Cancelled</span></li>
 {% endif %}
 
- <button class="btn btn-warning edit-btn" 
-                                            data-id="{{ appt.id }}"
-                                            data-name="{{ appt.patient.get_full_name }}"
-                                            data-email="{{ appt.patient.user.email|default_if_none:'' }}"
-                                            data-phone="{{ appt.patient.mobile_number|default_if_none:'' }}"
-                                            data-location="{{ appt.patient.location|default_if_none:'' }}"
-                                            data-purpose="{{ appt.purpose|default_if_none:'' }}"
-                                            data-datetime="{{ appt.appointment_datetime|date:'Y-m-d\\TH:i' }}"
-                                            data-appointmentmode="{{ appt.appointment_mode }}"
-                                            data-zoomlink ="{{ appt.video_link }}"
-                                            aria-label="Edit Appointment">
-                                            <i class="fas fa-edit"></i> Edit
-                                        </button>
-
 <li>
-<a href="{% url 'delete_appointment' appt.id %}"
-class="btn btn-danger"
+<a href="{% url 'delete_appointment' appt.id %}" class="btn btn-danger"
 onclick="return confirm('Delete appointment?')">
-<i class="fas fa-trash-alt"></i> Delete
+Delete
 </a>
 </li>
 
 </ul>
-
 </div>
-
 </div>
 
 {% empty %}
-
 <p>No upcoming appointments.</p>
-
 {% endfor %}
 
-<div class="pagination">
+<!-- 🔥 UPCOMING PAGINATION -->
+<div class="pagination-wrapper">
+<div class="pagination modern">
 
 {% if upcoming_appointments.has_previous %}
-<a href="?upcoming_page={{ upcoming_appointments.previous_page_number }}">
-« Prev
-</a>
+<a class="page-btn" href="?upcoming_page=1">«</a>
+<a class="page-btn" href="?upcoming_page={{ upcoming_appointments.previous_page_number }}">‹</a>
+{% else %}
+<span class="page-btn disabled">«</span>
+<span class="page-btn disabled">‹</span>
 {% endif %}
 
-<span>
-Page {{ upcoming_appointments.number }} of {{ upcoming_appointments.paginator.num_pages }}
-</span>
+{% for num in upcoming_appointments.paginator.page_range %}
+{% if num == upcoming_appointments.number %}
+<span class="page-number active">{{ num }}</span>
+{% elif num >= upcoming_appointments.number|add:'-2' and num <= upcoming_appointments.number|add:'2' %}
+<a class="page-number" href="?upcoming_page={{ num }}">{{ num }}</a>
+{% elif num == 1 or num == upcoming_appointments.paginator.num_pages %}
+<a class="page-number" href="?upcoming_page={{ num }}">{{ num }}</a>
+{% elif num == upcoming_appointments.number|add:'-3' or num == upcoming_appointments.number|add:'3' %}
+<span class="dots">...</span>
+{% endif %}
+{% endfor %}
 
 {% if upcoming_appointments.has_next %}
-<a href="?upcoming_page={{ upcoming_appointments.next_page_number }}">
-Next »
-</a>
+<a class="page-btn" href="?upcoming_page={{ upcoming_appointments.next_page_number }}">›</a>
+<a class="page-btn" href="?upcoming_page={{ upcoming_appointments.paginator.num_pages }}">»</a>
+{% else %}
+<span class="page-btn disabled">›</span>
+<span class="page-btn disabled">»</span>
 {% endif %}
 
 </div>
+</div>
 
+<!-- ================= PAST ================= -->
 <h4>Past Appointments</h4>
 
 {% for appt in past_appointments %}
 
 <div class="single-item card">
-
 <figure class="image-box">
-
 {% if appt.patient.profile_image %}
 <img src="{{ appt.patient.profile_image.url }}">
 {% else %}
 <img src="{% static 'assets/images/default-user.png' %}">
 {% endif %}
-
 </figure>
 
 <div class="inner">
-
 <h4>{{ appt.patient_name }}</h4>
 
 <ul class="info-list clearfix">
-
 <li><i class="fas fa-clock"></i> {{ appt.appointment_datetime }}</li>
-
 <li><i class="fas fa-map-marker-alt"></i> {{ appt.patient.location }}</li>
-
 <li><i class="fas fa-hourglass-start"></i> {{ appt.purpose }}</li>
-
 <li><i class="fas fa-envelope"></i> {{ appt.patient_email }}</li>
-
 <li><i class="fas fa-phone"></i> {{ appt.patient_mobile_number }}</li>
-
 </ul>
 
 <ul class="confirm-list clearfix">
-
-<li>
-<span class="badge bg-secondary">{{ appt.status }}</span>
-</li>
-
+<li><span class="badge bg-secondary">{{ appt.status }}</span></li>
 </ul>
 
 </div>
-
 </div>
 
 {% empty %}
-
 <p>No past appointments.</p>
-
 {% endfor %}
 
+<!-- 🔥 PAST PAGINATION -->
+<div class="pagination-wrapper">
+<div class="pagination modern">
+
+{% if past_appointments.has_previous %}
+<a class="page-btn" href="?past_page=1">«</a>
+<a class="page-btn" href="?past_page={{ past_appointments.previous_page_number }}">‹</a>
+{% else %}
+<span class="page-btn disabled">«</span>
+<span class="page-btn disabled">‹</span>
+{% endif %}
+
+{% for num in past_appointments.paginator.page_range %}
+{% if num == past_appointments.number %}
+<span class="page-number active">{{ num }}</span>
+{% elif num >= past_appointments.number|add:'-2' and num <= past_appointments.number|add:'2' %}
+<a class="page-number" href="?past_page={{ num }}">{{ num }}</a>
+{% elif num == 1 or num == past_appointments.paginator.num_pages %}
+<a class="page-number" href="?past_page={{ num }}">{{ num }}</a>
+{% elif num == past_appointments.number|add:'-3' or num == past_appointments.number|add:'3' %}
+<span class="dots">...</span>
+{% endif %}
+{% endfor %}
+
+{% if past_appointments.has_next %}
+<a class="page-btn" href="?past_page={{ past_appointments.next_page_number }}">›</a>
+<a class="page-btn" href="?past_page={{ past_appointments.paginator.num_pages }}">»</a>
+{% else %}
+<span class="page-btn disabled">›</span>
+<span class="page-btn disabled">»</span>
+{% endif %}
+
+</div>
+</div>
+
 </div>
 </div>
 </div>
 </div>
 
-
-<!-- PRESCRIPTION MODAL -->
-
-<div id="prescriptionModal" class="modal">
-
-<div class="modal-content">
-
-<span class="close-prescription">&times;</span>
-
-<h3>Add Prescription</h3>
-
-<form id="prescriptionForm"
-method="POST"
-enctype="multipart/form-data">
-
-{% csrf_token %}
-
-<textarea
-name="prescription"
-class="form-control"
-rows="6"
-placeholder="Write prescription"
-required></textarea>
-
-<br>
-
-<label>Upload Prescription File</label>
-
-<input
-type="file"
-name="prescription_file"
-class="form-control"
-accept=".pdf,.jpg,.png">
-
-<br>
-
-<button type="submit" class="btn btn-success">
-Save & Complete Appointment
-</button>
-
-</form>
-
-</div>
-</div>
-
-
-<!-- VIEW PRESCRIPTION MODAL -->
-
-<div id="viewPrescriptionModal" class="modal">
-
-<div class="modal-content">
-
-<span class="close-view">&times;</span>
-
-<h3>Prescription</h3>
-
-<p id="prescriptionText"></p>
-
-<a id="prescriptionFile"
-class="btn btn-primary"
-target="_blank">
-Download File
-</a>
-
-</div>
-</div>
-
-<div id="appointmentModal" class="modal">
-<div class="modal-content">
-
-<span class="close-modal">&times;</span>
-
-<h3 id="modalTitle">Add Appointment</h3>
-
-<form id="appointmentForm" method="POST">
-
-{% csrf_token %}
-
-<div class="form-group">
-<label>Patient Name</label>
-<input type="text" id="patient_name" name="patient_name" required>
-</div>
-
-<div class="form-group">
-<label>Email</label>
-<input type="email" id="email" name="email" required>
-</div>
-
-<div class="form-group">
-<label>Phone</label>
-<input type="text" id="phone" name="phone" required>
-</div>
-
-<div class="form-group">
-<label>Location</label>
-<input type="text" id="location" name="location">
-</div>
-
-<div class="form-group">
-<label>Purpose</label>
-<input type="text" id="purpose" name="purpose" required>
-</div>
-
-<div class="form-group">
-<label>Appointment Date & Time</label>
-<input type="datetime-local" id="appointment_datetime" name="appointment_datetime" required>
-</div>
-
-<div class="form-group">
-<label>Appointment Mode</label><br>
-
-<input type="radio" id="appointment_mode_online" name="appointment_mode" value="online">
-<label for="appointment_mode_online">Online</label>
-
-<input type="radio" id="appointment_mode_offline" name="appointment_mode" value="offline" checked>
-<label for="appointment_mode_offline">Offline</label>
-
-</div>
-
-<div class="form-group" id="zoom_link_group" style="display:none;">
-<label>Zoom Link</label>
-<input type="url" id="zoom_link" name="zoom_link">
-</div>
-
-<br>
-
-<button type="submit" class="btn btn-success">Save Appointment</button>
-
-<button type="button" id="cancelBtn" class="btn btn-secondary">Cancel</button>
-
-</form>
-
-</div>
-</div>
-</div>
-<script>
-
-document.querySelectorAll(".add-prescription-btn").forEach(btn=>{
-
-btn.addEventListener("click",function(){
-
-let id=this.dataset.id
-
-document.getElementById("prescriptionForm").action="/complete-appointment/"+id+"/"
-
-document.getElementById("prescriptionModal").style.display="block"
-
-})
-
-})
-
-document.querySelectorAll(".view-prescription-btn").forEach(btn=>{
-
-btn.addEventListener("click",function(){
-
-document.getElementById("prescriptionText").innerText=this.dataset.text
-
-document.getElementById("prescriptionFile").href=this.dataset.file
-
-document.getElementById("viewPrescriptionModal").style.display="block"
-
-})
-
-})
-
-document.querySelector(".close-prescription").onclick=function(){
-
-document.getElementById("prescriptionModal").style.display="none"
-
+<!-- 🔥 CSS -->
+<style>
+.pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 30px 0;
 }
-
-document.querySelector(".close-view").onclick=function(){
-
-document.getElementById("viewPrescriptionModal").style.display="none"
-
+.pagination.modern {
+  display: flex;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
 }
-
-</script>
-        </section>
+.page-btn, .page-number {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #f5f7fa;
+  text-decoration: none;
+  color: #333;
+  transition: 0.25s;
+}
+.page-btn:hover, .page-number:hover {
+  background: #28a745;
+  color: #fff;
+  transform: translateY(-2px);
+}
+.page-number.active {
+  background: linear-gradient(135deg,#28a745,#1e7e34);
+  color: #fff;
+}
+.page-btn.disabled {
+  background: #eee;
+  color: #aaa;
+}
+.dots {
+  padding: 8px;
+  color: #999;
+}
+</style>
          <section class="agent-section mt-5 mb-5">
             <div class="auto-container">
                 <div class="inner-container bg-color-2 p-4 rounded shadow">
