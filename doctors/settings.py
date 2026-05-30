@@ -18,13 +18,12 @@ SECRET_KEY = config("SECRET_KEY")
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    "*"
+    "hammerhead-app-jjkcf.ondigitalocean.app"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://doctor-appointment-9u6e.onrender.com"
+    "https://hammerhead-app-jjkcf.ondigitalocean.app"
 ]
-
 # ==============================
 # APPLICATIONS
 # ==============================
